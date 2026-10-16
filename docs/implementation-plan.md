@@ -165,7 +165,7 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu i migracje `js/game/state.
   money,                                // ze sprzedaży monet paserowi
   mission: { n, t, key: [s1, s2, s3], shards: [symbol], stageAt } | null,  // stageAt: kiedy otwiera się bieżący etap
   tombs: [{ n, lat, lon, t, opened, artifact }],   // zamknięty tylko grobowiec aktywnej misji
-  artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // półka
+  artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // artefakty w skarbcu
   lost: [{ n, t }],                     // utracone misje; paser sprzedaje artefakt od t + 7 dni
   settings: { lang, sound, haptics }
 }
@@ -313,7 +313,7 @@ Testy: `node --test` (albo `npm test`).
   - istniejące grobowce są otwarte i zachowują swoje monety;
   - jeśli gracz ma już 4 lub więcej grobowców, nie dostaje nowych ofert.
 
-**Plan E10** (zasady w GDD, „Misje”, „Półka z artefaktami”, „Paser”):
+**Plan E10** (zasady w GDD, „Misje”, „Artefakty w skarbcu” (wcześniej „Półka z artefaktami”), „Paser”):
 - **Decyzje** (2026-10-16):
   - kupowanie map, losowe symbole (10%) i losowe grobowce (20%) znikają; symbol i grobowiec są pewne po przejściu dystansu etapu;
   - dystans liczy się w linii prostej od pierwszego przeszukania etapu, a po jego wygaśnięciu od najstarszego aktywnego przeszukania z tego etapu (nie od przebytej trasy, bo PWA nie śledzi GPS przy zablokowanym ekranie);

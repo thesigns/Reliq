@@ -336,7 +336,7 @@ export class DepositScreen {
     const img = (thumb) => (thumb ? `<img alt="" src="${thumb.url}">` : '');
     let html = '';
     for (const a of artifacts) {
-      html += `<div class="ds-item ds-art">${img(this.ui.artifactThumb(a.id))}<span class="ds-name">${esc(t(`artifacts.${a.id}.name`))}</span><span class="ds-note">${esc(t('deposit.onShelf'))}</span></div>`;
+      html += `<div class="ds-item ds-art">${img(this.ui.artifactThumb(a.id))}<span class="ds-name">${esc(t(`artifacts.${a.id}.name`))}</span><span class="ds-note">${esc(t('deposit.inVault'))}</span></div>`;
     }
     for (const c of coins) {
       html += `<div class="ds-item">${img(this.ui.coinThumb(c.id))}<span class="ds-count">×${c.count}</span></div>`;

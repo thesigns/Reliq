@@ -388,59 +388,50 @@
 .fence-note { font-size: 13.5px; font-style: italic; color: #6b5034; }
 .fence-sell { white-space: nowrap; }
 
-/* The artifact shelf: three slots standing on each wooden plank. */
-.shelf { display: flex; flex-direction: column; gap: 14px; margin-bottom: 6px; }
-.shelf-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  padding: 0 4px;
-  background:
-    linear-gradient(#b0814f, #94653a) top 80px left / 100% 5px no-repeat,
-    linear-gradient(#6e4526, #4a2c18 60%, #33200f) top 85px left / 100% 8px no-repeat,
-    linear-gradient(rgba(30, 15, 5, .35), transparent) top 93px left / 100% 6px no-repeat;
-}
-.shelf-slot {
+/* The artifacts: three to a row like the coins, each picture over its name; a missing one
+   is a dashed rounded rectangle with a question mark. */
+.art-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 6px; }
+.art-slot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 2px;
+  gap: 4px;
+  padding: 4px 2px;
   border: 0;
+  border-radius: 6px;
   background: none;
   color: inherit;
   font: inherit;
   text-align: center;
 }
-.shelf-slot.known { cursor: pointer; }
-.shelf-slot.known:active .shelf-img { transform: translateY(-3px); }
-.shelf-img { width: 84px; height: 84px; display: grid; place-items: end center; transition: transform .15s ease; }
-.shelf-img img, .shelf-blank { position: relative; z-index: 1; }
-.shelf-img img {
+.art-slot.known { cursor: pointer; }
+.art-slot.known:active .art-img { transform: scale(.95); }
+.art-img { width: 84px; height: 84px; display: grid; place-items: center; transition: transform .15s ease; }
+.art-img img {
   width: 84px;
   height: 84px;
   image-rendering: pixelated;
   opacity: 0;
-  filter: drop-shadow(0 3px 2px rgba(40, 20, 5, .4));
+  filter: drop-shadow(0 4px 4px rgba(40, 20, 5, .35));
   transition: opacity .3s ease;
 }
-.shelf-img img.ready { opacity: 1; }
-.shelf-slot.carried .shelf-img img.ready { opacity: .45; filter: grayscale(.4) drop-shadow(0 3px 2px rgba(40, 20, 5, .4)); }
-.shelf-carried { display: block; font-style: italic; font-size: 12px; color: #8b1e1e; }
-.j-satchel { text-align: center; color: #8b1e1e; }
-.shelf-blank {
+.art-img img.ready { opacity: 1; }
+.art-slot.carried .art-img img.ready { opacity: .45; filter: grayscale(.4) drop-shadow(0 4px 4px rgba(40, 20, 5, .35)); }
+.art-blank {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 58px;
-  margin-bottom: 2px;
+  width: 62px;
+  height: 70px;
   border: 1.5px dashed rgba(59, 36, 20, .35);
-  border-radius: 40% 40% 6px 6px;
+  border-radius: 10px;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 22px;
   color: rgba(59, 36, 20, .35);
 }
-.shelf-name { padding-top: 14px; font-size: 13px; line-height: 1.15; }
-.shelf-slot.empty .shelf-name { color: rgba(59, 36, 20, .45); font-style: italic; }
+.art-name { font-size: 13px; line-height: 1.15; }
+.art-carried { display: block; font-style: italic; font-size: 12px; color: #8b1e1e; }
+.art-slot.empty .art-name { color: rgba(59, 36, 20, .45); font-style: italic; }
+.j-satchel { text-align: center; color: #8b1e1e; }
 .coin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 6px; }
 .coin-slot {
   display: flex;

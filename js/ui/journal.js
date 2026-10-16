@@ -98,26 +98,23 @@ export class Journal {
     return html;
   }
 
-  // The artifact shelf: one slot per mission, three to a shelf. A slot stays empty until its
-  // artifact is won (or bought from the fence); one still in the backpack shows faded.
+  // The artifacts: one place per mission, three to a row, the picture over its name. A place
+  // stays a blank until its artifact is won (or bought from the fence); one still in the
+  // backpack shows faded.
   render_artifacts() {
     const { artifacts } = this.deps.state;
     const owned = new Map(artifacts.map((a) => [a.n, a]));
     const carried = new Map(this.deps.state.satchel.artifacts.map((a) => [a.n, a]));
-    let html = `<p class="j-summary">${esc(t('journal.summary.artifacts', { artifacts: artifacts.length, missions: MISSIONS.length }))}</p><div class="shelf">`;
-    for (let i = 0; i < MISSIONS.length; i += 3) {
-      html += '<div class="shelf-row">';
-      for (const m of MISSIONS.slice(i, i + 3)) {
-        const a = owned.get(m.n), c = carried.get(m.n);
-        if (c) {
-          html += `<div class="shelf-slot carried"><span class="shelf-img"><img alt="" data-art="${c.id}"></span><span class="shelf-name">${esc(t(`artifacts.${c.id}.name`))}<span class="shelf-carried">${esc(t('journal.shelfCarried'))}</span></span></div>`;
-          continue;
-        }
-        html += a
-          ? `<button class="shelf-slot known" data-shelf="${m.n}"><span class="shelf-img"><img alt="" data-art="${a.id}"></span><span class="shelf-name">${esc(t(`artifacts.${a.id}.name`))}</span></button>`
-          : `<div class="shelf-slot empty"><span class="shelf-img"><span class="shelf-blank">?</span></span><span class="shelf-name">${esc(t('journal.unknown'))}</span></div>`;
+    let html = `<p class="j-summary">${esc(t('journal.summary.artifacts', { artifacts: artifacts.length, missions: MISSIONS.length }))}</p><div class="art-grid">`;
+    for (const m of MISSIONS) {
+      const a = owned.get(m.n), c = carried.get(m.n);
+      if (c) {
+        html += `<div class="art-slot carried"><span class="art-img"><img alt="" data-art="${c.id}"></span><span class="art-name">${esc(t(`artifacts.${c.id}.name`))}<span class="art-carried">${esc(t('journal.carried'))}</span></span></div>`;
+        continue;
       }
-      html += '</div>';
+      html += a
+        ? `<button class="art-slot known" data-artifact="${m.n}"><span class="art-img"><img alt="" data-art="${a.id}"></span><span class="art-name">${esc(t(`artifacts.${a.id}.name`))}</span></button>`
+        : `<div class="art-slot empty"><span class="art-img"><span class="art-blank">?</span></span><span class="art-name">${esc(t('journal.unknownArtifact'))}</span></div>`;
     }
     return `${html}</div>`;
   }
@@ -127,8 +124,6 @@ export class Journal {
       const thumb = this.deps.artifactThumb(img.dataset.art);
       if (!thumb) continue;
       img.src = thumb.url;
-      // Stand its base on the top of the board, just behind the front edge.
-      img.style.marginBottom = `${2 - Math.round(thumb.base * img.clientHeight)}px`;
       img.classList.add('ready');
     }
     for (const img of this.root.querySelectorAll('img[data-thumb]')) {
@@ -208,15 +203,15 @@ export class Journal {
     const notes = lore(m.artifact);
     const detailKey = `artifacts.${m.artifact}.detail`;
     const actions = [];
-    const shelf = s.artifacts.find((x) => x.n === m.n);
+    const stored = s.artifacts.find((x) => x.n === m.n);
     if (m.won) {
       if (t(detailKey) !== detailKey) notes.push({ text: t(detailKey), lore: true });
       notes.push({ text: t('notes.tombFound', { n: formatRoman(m.n), date: formatDate(m.tomb.t) }) });
-      notes.push({ text: t(shelf ? 'notes.onShelf' : 'notes.inBackpack') });
+      notes.push({ text: t(stored ? 'notes.inVault' : 'notes.inBackpack') });
       actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true }, { id: 'tomb', label: t('notes.showTomb') });
     } else {
       notes.push({ text: t('notes.lostOn', { date: formatDate(m.t) }) });
-      if (shelf) {
+      if (stored) {
         notes.push({ text: t('notes.bought') });
         actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true });
       } else {
@@ -229,7 +224,7 @@ export class Journal {
       n: m.n, artifact: m.artifact, notes, actions,
       status: { text: t(m.won ? 'notes.won' : 'notes.lost'), mark: m.won ? TICK : CROSS },
       onAction: (id) => {
-        if (id === 'view') this.deps.onViewArtifact(shelf ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' });
+        if (id === 'view') this.deps.onViewArtifact(stored ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' });
         if (id === 'tomb') { this.deps.closeMissionPage(); this.close(); this.deps.onShowTomb(m.tomb); }
         if (id === 'fence') { this.deps.closeMissionPage(); this.show('fence'); }
       },
@@ -267,8 +262,8 @@ export class Journal {
     const b = e.target.closest('button');
     if (!b || !this.root.contains(b)) return;
     if (b.dataset.coin) { this.deps.onViewCoin(b.dataset.coin); return; }
-    if (b.dataset.shelf) {
-      const a = this.deps.state.artifacts.find((x) => x.n === +b.dataset.shelf);
+    if (b.dataset.artifact) {
+      const a = this.deps.state.artifacts.find((x) => x.n === +b.dataset.artifact);
       if (a) this.deps.onViewArtifact(a);
       return;
     }

@@ -29,7 +29,7 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 - **Opisy śmieci** zachęcają do dalszych poszukiwań i bawią, zamiast zniechęcać. Na przykład bateria: „Rozładowana do zera. Ty na pewno masz więcej energii!”
 - **Polskie teksty** nie zakładają płci gracza: zniknęły formy typu „znalazłeś”, „zaszedłeś”, „zarobiłeś”.
 
-- **Skarbiec ma cztery zakładki:** Notatnik, Monety, Artefakty i Paser, a skrzynia w doku otwiera go na Notatniku. Dawna „Kolekcja” rozpadła się na monety i półkę z artefaktami, bo artefaktów z czasem będzie dużo i monety lądowałyby na dole długiej strony. Po złożeniu łupu „Otwórz skarbiec” prowadzi do artefaktów, jeśli właśnie trafił tam artefakt.
+- **Skarbiec ma cztery zakładki:** Notatnik, Monety, Artefakty i Paser, a skrzynia w doku otwiera go na Notatniku. Artefakty nie stoją już na narysowanej półce: to siatka z obrazkiem i nazwą pod spodem, a brakujący artefakt to prostokąt ze znakiem zapytania. Dawna „Kolekcja” rozpadła się na monety i artefakty, bo artefaktów z czasem będzie dużo i monety lądowałyby na dole długiej strony. Po złożeniu łupu „Otwórz skarbiec” prowadzi do artefaktów, jeśli właśnie trafił tam artefakt.
 - **Typografia:** odstępy między wierszami zależą od długości wiersza. Krótkie opisy (znaleziska, karty, komunikaty) mają ciaśniejszą interlinię, dłuższe akapity (lore, „O grze”, onboarding) nieco luźniejszą, ale już nie rozstrzeloną. Akapity równoważą długość wierszy, żeby na końcu nie zostawało pojedyncze słowo.
 
 ### Usunięte

@@ -687,7 +687,7 @@ async function onBuyArtifact(n) {
   const res = game.buyArtifact(n, clock.now());
   if (!res.ok) { deny(); return; }
   journal.refresh();
-  await viewArtifact({ id: res.artifact, n, from: 'fence' }, { button: t('reveal.toShelf'), fanfare: true });
+  await viewArtifact({ id: res.artifact, n, from: 'fence' }, { button: t('reveal.toVault'), fanfare: true });
 }
 
 function onAbandonMission() {

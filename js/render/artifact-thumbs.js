@@ -1,4 +1,4 @@
-// Still images of the low-poly models (artifacts on the shelf, coins in the collection),
+// Still images of the low-poly models (artifacts and coins in the vault, the backpack card),
 // rendered once each and cached. They keep the chunky pixels of the reveal screen.
 
 import { ArtifactRenderer } from './artifact3d.js';
@@ -9,8 +9,7 @@ const CSS_SIZE = 84;   // shown at about this size; drawn at 1 / ARTIFACT_PIXEL 
 let renderer = null;
 const cache = new Map();
 
-// { url, base }: a PNG data URL and the share of the image height left empty below the
-// model, so it can stand on a shelf. null while the GPU context is lost.
+// { url }: a PNG data URL. null while the GPU context is lost.
 function thumbnail(key, model, pose) {
   if (cache.has(key)) return cache.get(key);
   if (!renderer) {
@@ -21,12 +20,7 @@ function thumbnail(key, model, pose) {
   renderer.setModel(model);
   renderer.render(pose);
   // Read back in the same task as the draw, before the buffer is cleared.
-  const { gl, canvas } = renderer;
-  const px = new Uint8Array(canvas.width * canvas.height * 4);
-  gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, px);
-  let row = 0;   // GL rows run bottom-up: the first row with ink is the model's base
-  while (row < canvas.height && !px.subarray(row * canvas.width * 4, (row + 1) * canvas.width * 4).some((v, i) => i % 4 === 3 && v > 0)) row++;
-  const thumb = { url: canvas.toDataURL('image/png'), base: row / canvas.height };
+  const thumb = { url: renderer.canvas.toDataURL('image/png') };
   cache.set(key, thumb);
   return thumb;
 }

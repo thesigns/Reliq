@@ -14,7 +14,7 @@ Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawl
 
 Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
 
-Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
+Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty zostają w skarbcu jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
 
 Reliq nie każe biec ani bić rekordów. Nagradza ciekawość i nogi: kopać można tylko na piechotę, więc samochód nic tu nie da. Docelowo około 60 misji to rok wypraw zaczynających się od własnych drzwi.
 
@@ -131,7 +131,7 @@ Każdy wpis ma przycisk „Szczegóły”, który otwiera stronę notatnika tej 
 
 - **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 7 dni.” i przycisk „Rozpocznij misję”. Gdy artefakt poprzedniej misji jest jeszcze w plecaku, przycisk czeka, a strona mówi, żeby zanieść go do skarbca;
 - **misja w trakcie:** spacery z odhaczonymi etapami, znalezione symbole, co robić dalej, czas do końca, przycisk „Otwórz wrota” przy grobowcu i „Porzuć misję” z potwierdzeniem;
-- **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (na półce czy w plecaku), przyciski „Obejrzyj artefakt” i „Pokaż grobowiec na mapie”;
+- **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (w skarbcu czy w plecaku), przyciski „Obejrzyj artefakt” i „Pokaż grobowiec na mapie”;
 - **misja nieudana:** lore, kiedy przepadła i co z artefaktem (kiedy trafi do pasera, czy już tam czeka, czy został odkupiony), przycisk „Zajrzyj do pasera” albo „Obejrzyj artefakt”.
 
 Model 3D nie jest pokazywany przed zdobyciem artefaktu — jest nagrodą reprezentującą prawdziwy przedmiot.
@@ -198,9 +198,9 @@ Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia
 
 Zawartość plecaka nigdy nie przepada. Monety w plecaku nie liczą się jeszcze do kolekcji i paser ich nie kupi, dopóki nie trafią do skarbca.
 
-## Półka z artefaktami
+## Artefakty w skarbcu
 
-Artefakty złożone w skarbcu stoją na półce, po 3 w rzędzie. Artefakt, który jest jeszcze w plecaku, widać na półce wyblakły, z dopiskiem „w plecaku”. Półka ma w skarbcu własną zakładkę „Artefakty”, obok zakładki „Monety”: artefaktów z czasem będzie dużo, a monety mają być pod ręką. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore. Nieodkryte jeszcze miejsca na półce są puste.
+Artefakty złożone w skarbcu mają własną zakładkę „Artefakty”, obok zakładki „Monety”: artefaktów z czasem będzie dużo, a monety mają być pod ręką. Stoją po 3 w rzędzie: obrazek artefaktu, a pod nim nazwa. Brakujący artefakt to pusty prostokąt z zaokrąglonymi rogami i znakiem zapytania. Artefakt, który jest jeszcze w plecaku, widać wyblakły, z dopiskiem „w plecaku”. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore.
 
 ## Paser
 
@@ -217,7 +217,7 @@ Paser to czarny rynek w skarbcu, na osobnej zakładce „Paser”. Waluta nie ma
 
 Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte około 1,24.
 
-**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji, 7 dni po ich utracie. Kupiony artefakt trafia od razu na półkę — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu podaje każda misja w `docs/lista-misji.md`.
+**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji, 7 dni po ich utracie. Kupiony artefakt trafia od razu do skarbca — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu podaje każda misja w `docs/lista-misji.md`.
 
 ## Słownik UI (PL / EN)
 

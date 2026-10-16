@@ -52,7 +52,7 @@ node --test                   # unit tests (npm test)
   - A mission that runs out of time or is abandoned is lost (`state.lost`), with its tomb. Its artifact reaches the fence 7 days later (`fenceOffers`, `buyArtifact`), and a bought one goes straight to the shelf.
   - There is at most one closed tomb, and it always belongs to the active mission. The gate screen is `js/ui/gate.js`, its art `js/ui/gate-art.js`.
   - On the map: the ring and target around the stage's start (`seekingZone()` in `main.js`), and the mission tag beside the mission button (`missionBrief()` in `js/ui/tomb-scroll.js`).
-- **Satchel and deposit.** Coins and the tomb's artifact go into `state.satchel` (`addCoin`, `openGate`); shards belong to the mission.
+- **Satchel and deposit.** The UI calls the satchel a backpack (plecak). Coins and the tomb's artifact go into `state.satchel` (`addCoin`, `openGate`); shards belong to the mission.
   - After a find's reveal, `SatchelButton` (`js/ui/satchel.js`) flies its picture into the satchel button (a shard into the mission button), and the count ticks up when it lands. Tapping the button opens `SatchelView`, a card listing what is carried and how far the vault is. While the satchel is not empty the vault pointer pulses.
   - Inside the vault ring, with GPS accuracy ≤ `depositMaxAccuracyM`, `maybeDeposit()` in `main.js` calls `game.deposit()`, which moves everything into `state.coins` / `state.artifacts`. It waits while any other screen is open.
   - Then `DepositScreen` (`js/ui/deposit.js`) plays "Back at the vault": a 3D chest scene (`VaultScene` in `js/render/vault-scene.js`, models from `scripts/blender/chest.py`) on a timeline in scene time, so a tap speeds it up. Coins land commonest first, then the artifact; a summary closes it.

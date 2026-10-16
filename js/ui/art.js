@@ -201,20 +201,43 @@ export function compassRoseSVG() {
 </svg>`;
 }
 
-// A leather pouch tied with a brass-tipped cord: the finds carried home.
-export function satchelSVG() {
+// The backpack: an old saddle-leather rucksack, as an explorer carried a century ago. A big
+// stitched flap held by two straps with brass buckles, a pocket sewn on the front and a
+// wool blanket rolled and strapped on top. Lit from the top left like the chest.
+export function backpackSVG() {
+  const body = 'M12.5 19.5 C12.5 16.8 14.2 15.6 16.5 15.6 H39.5 C41.8 15.6 43.5 16.8 43.5 19.5 L45 45.5 C45.2 48.6 43.4 50 40.6 50 H15.4 C12.6 50 10.8 48.6 11 45.5 Z';
+  const flap = 'M12.9 17.6 C13.2 16.2 14.6 15.6 16.5 15.6 H39.5 C41.4 15.6 42.8 16.2 43.1 17.6 L43.7 30.4 C40.2 34.4 34.6 35.9 28 35.9 C21.4 35.9 15.8 34.4 12.3 30.4 Z';
+  const strap = (x) => `<rect x="${x}" y="8.4" width="3.2" height="34.2" rx=".6" fill="url(#bpS)"/>
+    <path d="M${x + 0.55} 9.2 V41.8" stroke="#a9744a" stroke-width=".45" opacity=".7"/>
+    <path d="M${x} 42 h3.2 v2.6 a1.6 1.6 0 0 1 -3.2 0 Z" fill="url(#bpS)" stroke="#1d0e06" stroke-width=".5"/>
+    <rect x="${x - 1}" y="36.6" width="5.2" height="4.4" rx=".8" fill="none" stroke="url(#bpB)" stroke-width="1.3"/>
+    <path d="M${x + 1.6} 36.9 V40.6" stroke="#f6dc95" stroke-width=".6"/>`;
   return `<svg viewBox="0 0 56 56" aria-hidden="true">
   <defs>
-    <linearGradient id="stL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a06a3c"/><stop offset=".6" stop-color="#6a3a1c"/><stop offset="1" stop-color="#3e2010"/></linearGradient>
-    <linearGradient id="stB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7dd96"/><stop offset=".5" stop-color="#c08f3d"/><stop offset="1" stop-color="#6b4716"/></linearGradient>
+    <linearGradient id="bpL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cd9558"/><stop offset=".55" stop-color="#97612f"/><stop offset="1" stop-color="#5e3818"/></linearGradient>
+    <linearGradient id="bpF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b47a42"/><stop offset=".6" stop-color="#7d4a22"/><stop offset="1" stop-color="#4f2c12"/></linearGradient>
+    <linearGradient id="bpS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6e4122"/><stop offset="1" stop-color="#3a1f0d"/></linearGradient>
+    <linearGradient id="bpW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a9668"/><stop offset=".55" stop-color="#6e6b45"/><stop offset="1" stop-color="#46442a"/></linearGradient>
+    <linearGradient id="bpB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0bc"/><stop offset=".45" stop-color="#d9a84f"/><stop offset="1" stop-color="#6b4716"/></linearGradient>
+    <radialGradient id="bpG" cx="28%" cy="18%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="bpBlur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="1.3"/></filter>
   </defs>
-  <path d="M21 18 C13 23 8.5 31 9.5 39.5 C10.5 47.5 18.5 51 28 51 C37.5 51 45.5 47.5 46.5 39.5 C47.5 31 43 23 35 18 Z" fill="url(#stL)" stroke="#1d0e06" stroke-width="1.3"/>
-  <path d="M19.5 11.5 C24 15 32 15 36.5 11.5 L35.5 18.5 C31 21 25 21 20.5 18.5 Z" fill="#7a4a28" stroke="#1d0e06" stroke-width="1.1"/>
-  <path d="M15.5 30 C14.5 38 18.5 44.5 25 46.5" fill="none" stroke="#e2bd7c" stroke-width=".8" stroke-dasharray="1.6 1.5" opacity=".75"/>
-  <path d="M20 18.3 C25 21.2 31 21.2 36 18.3" fill="none" stroke="url(#stB)" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M28 21 l-4.5 9 M28 21 l3.5 10" stroke="url(#stB)" stroke-width="1.4" stroke-linecap="round"/>
-  <circle cx="23.3" cy="30.4" r="1.6" fill="url(#stB)"/><circle cx="31.6" cy="31.3" r="1.6" fill="url(#stB)"/>
-  <circle cx="28" cy="20.8" r="2.7" fill="url(#stB)" stroke="#3a2210" stroke-width=".6"/>
+  <ellipse cx="28" cy="50.4" rx="18" ry="2.2" fill="#000" opacity=".5" filter="url(#bpBlur)"/>
+  <path d="${body}" fill="url(#bpL)" stroke="#1d0e06" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M13.4 34 L12.3 46.4 M42.6 34 L43.7 46.4" fill="none" stroke="#e7b783" stroke-width=".55" stroke-dasharray="1.3 1.1" opacity=".6"/>
+  <rect x="22.6" y="38.4" width="10.8" height="8.8" rx="1.6" fill="url(#bpF)" stroke="#2a1508" stroke-width=".7"/>
+  <rect x="23.9" y="39.7" width="8.2" height="6.2" rx="1" fill="none" stroke="#e7b783" stroke-width=".5" stroke-dasharray="1.2 1" opacity=".75"/>
+  <path d="M12.6 32 C16 36 21.4 37.6 28 37.6 C34.6 37.6 40 36 43.4 32" fill="none" stroke="#1d0e06" stroke-width="1.6" opacity=".35"/>
+  <path d="${flap}" fill="url(#bpF)" stroke="#1d0e06" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="${flap}" fill="url(#bpG)"/>
+  <path d="M14.4 29.6 C17.8 33 22.6 34.3 28 34.3 C33.4 34.3 38.2 33 41.6 29.6" fill="none" stroke="#e7b783" stroke-width=".55" stroke-dasharray="1.3 1.1" opacity=".8"/>
+  <rect x="11.6" y="8.6" width="32.8" height="8.6" rx="4.3" fill="url(#bpW)" stroke="#1d0e06" stroke-width="1.1"/>
+  <path d="M25.6 9 V16.8 M29.2 9 V16.8" stroke="#e8dcb4" stroke-width=".9" opacity=".75"/>
+  <path d="M27.4 9 V16.8" stroke="#8b2a1e" stroke-width="1.1" opacity=".85"/>
+  <ellipse cx="14.6" cy="12.9" rx="2.5" ry="4" fill="#5c5a38" stroke="#1d0e06" stroke-width=".8"/>
+  <path d="M14.6 11.3 a1.3 1.6 0 1 1 -.2 3.2 a.7 .9 0 1 1 .3 -1.6" fill="none" stroke="#2e2c1a" stroke-width=".55"/>
+  <path d="M14 10 C20 9.2 30 9 42 9.6" fill="none" stroke="#fff" stroke-width=".7" opacity=".25" stroke-linecap="round"/>
+  ${strap(18.2)}${strap(34.6)}
 </svg>`;
 }
 

@@ -336,7 +336,7 @@ Testy: `node --test` (albo `npm test`).
 
 **Menu gry** (`js/ui/menu.js`): gra zawsze startuje na stronie tytułowej z „Kontynuuj grę” (przy pierwszym uruchomieniu „Rozpocznij”, który prowadzi do onboardingu), „Ustawienia” i „O grze”, przeniesionymi ze skarbca. Menu niczego nie pauzuje: pod spodem ładuje się mapa i, jeśli skarbiec już jest, rusza GPS, więc menu pokazuje jego stan („GPS gotowy · ±8 m”). Skarbiec ma 3 zakładki: Kolekcja, Misje, Paser.
 
-**Sakwa i powrót do skarbca** (2026-10-16): monety i artefakt trafiają do sakwy, a składa się je w promieniu skarbca (GPS do 100 m). Ceremonia to scena 3D: low-poly skrzynia z `scripts/blender/chest.py` (korpus, wieko na zawiasie, stos złota), monety lecące łukiem z brzękiem i iskrami w kolorze rzadkości, artefakt zawisający nad skrzynią, trzask wieka i podsumowanie. Nowa misja dopiero po złożeniu artefaktu. Dźwięki: `clink`, `creak`, `slam`, `latch` w `audio.js`. Panel ⚙: „Sakwa: +6 monet”, „Teleport do skarbca”.
+**Plecak (wcześniej „sakwa”) i powrót do skarbca** (2026-10-16): monety i artefakt trafiają do plecaka, a składa się je w promieniu skarbca (GPS do 100 m). Ceremonia to scena 3D: low-poly skrzynia z `scripts/blender/chest.py` (korpus, wieko na zawiasie, stos złota), monety lecące łukiem z brzękiem i iskrami w kolorze rzadkości, artefakt zawisający nad skrzynią, trzask wieka i podsumowanie. Nowa misja dopiero po złożeniu artefaktu. Dźwięki: `clink`, `creak`, `slam`, `latch` w `audio.js`. Panel ⚙: „Plecak: +6 monet”, „Teleport do skarbca”.
 
 ### Otwarte kwestie (stan na 2026-10-16)
 

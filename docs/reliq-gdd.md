@@ -14,7 +14,7 @@ Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawl
 
 Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
 
-Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w sakwie, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
+Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
 
 Reliq nie każe biec ani bić rekordów. Nagradza ciekawość i nogi: kopać można tylko na piechotę, więc samochód nic tu nie da. Docelowo około 60 misji to rok wypraw zaczynających się od własnych drzwi.
 
@@ -48,7 +48,7 @@ Przeszukiwanie jest niemożliwe, jeśli błąd pozycji GPS jest większy niż 50
 
 Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie skarbu — monety. W trakcie misji przeszukanie może zamiast tego dać symbol klucza albo odkryć grobowiec (zob. „Misje”).
 
-Śmieci znikają zaraz po znalezieniu. Monety trafiają do sakwy i gracz zanosi je do skarbca (zob. „Sakwa i skarbiec”).
+Śmieci znikają zaraz po znalezieniu. Monety trafiają do plecaka i gracz zanosi je do skarbca (zob. „Plecak i skarbiec”).
 
 **Lista śmieci (65% prawdopodobieństwa):**
 
@@ -142,7 +142,7 @@ Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejd
 
 Wszystkie przeszukania misji podlegają tym samym zasadom co zwykłe szukanie: poza przeszukanym terenem i skarbcem, prędkość, dokładność GPS. Każde tworzy obszar jak zwykle.
 
-Misja kończy się sukcesem po otwarciu wrót grobowca (zob. „Wrota i klucz”). Artefakt trafia do sakwy. Następną misję można rozpocząć dopiero wtedy, gdy artefakt zostanie złożony w skarbcu — karta następnej misji jest widoczna, ale przycisk „Rozpocznij misję” czeka.
+Misja kończy się sukcesem po otwarciu wrót grobowca (zob. „Wrota i klucz”). Artefakt trafia do plecaka. Następną misję można rozpocząć dopiero wtedy, gdy artefakt zostanie złożony w skarbcu — karta następnej misji jest widoczna, ale przycisk „Rozpocznij misję” czeka.
 
 ### Limit czasu i porzucenie
 
@@ -175,25 +175,25 @@ Wrota otwiera się na miejscu — gracz musi być w promieniu 100 m od grobowca.
 
 Po otwarciu wrót gracz otrzymuje zamknięty w grobowcu artefakt.
 
-## Sakwa i skarbiec
+## Plecak i skarbiec
 
-Gracz nosi znaleziska w sakwie: monety i artefakt z otwartego grobowca. Symbole do sakwy nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku sakwy na mapie (symbol — do przycisku misji). Przycisk sakwy pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w sakwę otwiera kartę z jej zawartością (artefakt, monety z liczbą sztuk) i odległością do skarbca.
+Gracz nosi znaleziska w plecaku: monety i artefakt z otwartego grobowca. Symbole do plecaka nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku plecaka na mapie (symbol — do przycisku misji). Przycisk plecaka pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w plecak otwiera kartę z jego zawartością (artefakt, monety z liczbą sztuk) i odległością do skarbca.
 
-Gdy gracz wejdzie w promień skarbca (100 m) z czymś w sakwie, cała zawartość zostaje złożona w skarbcu. Limit GPS jest łagodniejszy niż przy szukaniu: dokładność do 100 m, bo skarbiec to zwykle dom, a w budynku sygnał słabnie. Prędkość nie ma znaczenia.
+Gdy gracz wejdzie w promień skarbca (100 m) z czymś w plecaku, cała zawartość zostaje złożona w skarbcu. Limit GPS jest łagodniejszy niż przy szukaniu: dokładność do 100 m, bo skarbiec to zwykle dom, a w budynku sygnał słabnie. Prędkość nie ma znaczenia.
 
 Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia skarbca spada i otwiera się w blasku, monety wpadają do niej jedna po drugiej (od pospolitych do najrzadszych), artefakt zawisa nad skrzynią z nazwą i wpada do niej na koniec, wieko się zatrzaskuje. Podsumowanie pokazuje, co złożono. Dotknięcie ekranu przyspiesza scenę.
 
-Zawartość sakwy nigdy nie przepada. Monety w sakwie nie liczą się jeszcze do kolekcji i paser ich nie kupi, dopóki nie trafią do skarbca.
+Zawartość plecaka nigdy nie przepada. Monety w plecaku nie liczą się jeszcze do kolekcji i paser ich nie kupi, dopóki nie trafią do skarbca.
 
 ## Półka z artefaktami
 
-Artefakty złożone w skarbcu stoją na półce, po 3 w rzędzie. Artefakt, który jest jeszcze w sakwie, widać na półce wyblakły, z dopiskiem „w sakwie”. Półka stoi na zakładce „Kolekcja”, nad monetami. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore. Nieodkryte jeszcze miejsca na półce są puste.
+Artefakty złożone w skarbcu stoją na półce, po 3 w rzędzie. Artefakt, który jest jeszcze w plecaku, widać na półce wyblakły, z dopiskiem „w plecaku”. Półka stoi na zakładce „Kolekcja”, nad monetami. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore. Nieodkryte jeszcze miejsca na półce są puste.
 
 ## Paser
 
 Paser to czarny rynek w skarbcu, na osobnej zakładce „Paser”. Waluta nie ma nazwy — w interfejsie to po prostu „Pieniądze” (Money) i „Cena” (Price) z liczbą.
 
-**Sprzedaż monet.** Gracz sprzedaje monety ze skarbca (nie z sakwy) po jednej sztuce. Sprzedana moneta znika z kolekcji (licznik spada o 1). Sprzedaż ostatniej sztuki wymaga potwierdzenia, bo moneta znika wtedy z kolekcji.
+**Sprzedaż monet.** Gracz sprzedaje monety ze skarbca (nie z plecaka) po jednej sztuce. Sprzedana moneta znika z kolekcji (licznik spada o 1). Sprzedaż ostatniej sztuki wymaga potwierdzenia, bo moneta znika wtedy z kolekcji.
 
 | Rzadkość     | Cena |
 |--------------|------|
@@ -221,7 +221,7 @@ Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte o
 | Otwórz wrota            | Open the gate       |
 | Symbol                  | Symbol              |
 | Artefakt                | Artifact            |
-| Sakwa                   | Satchel             |
+| Plecak                  | Backpack            |
 | Powrót do skarbca       | Back at the vault   |
 | Kolekcja                | Hoard               |
 | Misje (zakładka)        | Missions            |

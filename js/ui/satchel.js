@@ -1,12 +1,12 @@
 // The satchel button on the map: how many finds are carried, and the little flight of a
 // find into it (or a shard into the mission button) once its reveal closes.
 
-import { satchelSVG } from './art.js';
+import { backpackSVG } from './art.js';
 
 export class SatchelButton {
   constructor(btn) {
     this.btn = btn;
-    btn.innerHTML = `${satchelSVG()}<span class="satchel-count"></span>`;
+    btn.innerHTML = `${backpackSVG()}<span class="satchel-count"></span>`;
     this.count = btn.querySelector('.satchel-count');
     this.flying = 0;
     this.shown = -1;

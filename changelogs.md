@@ -2,7 +2,7 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
-## 0.12.0 — w przygotowaniu
+## 0.12.0 — 2026-10-16
 
 ### Nowe
 

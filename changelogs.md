@@ -23,6 +23,7 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 - **Ikona przycisku misji** to teraz notatnik poszukiwacza zamiast zwoju: oprawa z ciemnoczerwonej skóry z przeszyciem, mosiężne narożniki, gumka, zakładka-wstążka, widoczny blok kartek i wytłoczone na okładce wrota grobowca (trzy pierścienie z kropkami i zamkiem).
 - **Karta misji** wygląda jak strona z notatnika poszukiwacza: liniowany papier z czerwonym marginesem. Zamiast mapki ze ścieżką ma szkic artefaktu, taki jak w skarbcu, a numer misji jest w nagłówku („Misja II”). W skarbcu przycisk „Rozwiń mapę” nazywa się teraz „Otwórz notatnik”.
 - **Ikona skarbca** w doku to nowa, staranniej narysowana skrzynia: deski z połyskiem, nitowane żelazne okucia, mosiężne narożniki, zapięcie z zamkiem i złoty blask w szczelinie pod wiekiem.
+- **Podgląd artefaktu** nie powtarza się: zamiast „Skarb grobowca I” nad „Artefakt z grobowca” jest jedna etykieta „Artefakt z grobowca I”. Artefakt odkupiony od pasera ma nad nią „Kupiony u pasera”.
 - **Numery grobowców** są pisane cyframi rzymskimi: Grobowiec I, II, III…
 - **Symbole:** „skorupy” nazywają się teraz „symbolami”, po polsku i po angielsku („Symbols”).
 - **Podpowiedź pod wrotami** nie mówi już niejasnego „od zewnętrznego” i nie sugeruje, że kolejność na pasku symboli to klucz: „Ustaw znalezione symbole pod znacznikiem, po jednym na każdym pierścieniu. Właściwą kolejność musisz odgadnąć.”

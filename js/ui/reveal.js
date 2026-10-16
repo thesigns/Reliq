@@ -269,11 +269,13 @@ export class Reveal {
 
   // A tomb artifact. model: a generated module from js/render/models/.
   // fanfare: the moment a gate opens; otherwise a quiet look at one from the vault.
-  async viewArtifact(model, { name, desc, context = '', button = '', fanfare = false }) {
+  // tomb: the number of the tomb it came from, shown with the label.
+  async viewArtifact(model, { name, desc, context = '', button = '', fanfare = false, tomb = null }) {
     const rarity = fanfare ? 'legendary' : 'rare';
     if (!this.artifact) this.artifact = new ArtifactRenderer(this.artCanvas);
     this.artifact.setModel(model);
-    this.setInfo({ context, rarity: t('reveal.artifact'), name, desc, button });
+    const label = tomb ? t('reveal.artifactOf', { n: formatRoman(tomb) }) : t('reveal.artifact');
+    this.setInfo({ context, rarity: label, name, desc, button });
     await this.open('artifact', rarity);
     this.el('#reveal-hint').textContent = t('reveal.dragToTurn');
     if (fanfare) {

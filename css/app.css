@@ -594,13 +594,17 @@ html.inspect #app {
   letter-spacing: .42em;
   padding-left: .42em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--tone);
   text-shadow: 0 0 12px var(--glow);
 }
+/* "Artefakt z grobowca IV" is long: tighter spacing keeps it on one line. */
+.reveal[data-kind='artifact'] .reveal-rarity { letter-spacing: .26em; padding-left: .26em; }
 .reveal-rarity::before,
 .reveal-rarity::after {
   content: '';
-  width: 42px;
+  flex: 0 1 42px;
+  min-width: 14px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--tone));
 }

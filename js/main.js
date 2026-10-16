@@ -704,12 +704,13 @@ function artifactText(id) {
   return detail === key ? lore : `${lore} ${detail}`;
 }
 
-// a: { id, n, from: 'tomb' | 'fence' }, as on the shelf.
+// a: { id, n, from: 'tomb' | 'fence' }, as stored in the vault.
 function viewArtifact(a, opts = {}) {
   return reveal.viewArtifact(MODELS[a.id], {
     name: t(`artifacts.${a.id}.name`),
     desc: artifactText(a.id),
-    context: a.from === 'fence' ? t('reveal.fromFence') : t('reveal.fromTomb', { n: formatRoman(a.n) }),
+    tomb: a.n,
+    context: a.from === 'fence' ? t('reveal.fromFence') : '',
     ...opts,
   });
 }

@@ -56,8 +56,10 @@ export class EdgePointer {
   }
 
   // Shows the pointer on the border of the visible area when the target is off it.
+  // view.avoid: screen rects of map buttons. A pointer that would sit under one takes the
+  // free spot on the border closest in direction to the target.
   update(target, view, distanceText) {
-    const { w, h, top, bottom } = view;
+    const { w, h, top, bottom, avoid = [] } = view;
     const m = 34;
     const inside = target.sx > -20 && target.sx < w + 20 && target.sy > top - 20 && target.sy < h - bottom + 20;
     if (inside) {
@@ -68,10 +70,25 @@ export class EdgePointer {
     const dx = target.sx - cx, dy = target.sy - cy;
     const hx = w / 2 - m, hy = (h - bottom - top) / 2 - m;
     const k = Math.min(hx / Math.abs(dx || 1e-6), hy / Math.abs(dy || 1e-6));
-    const x = cx + dx * k, y = cy + dy * k;
+    let x = cx + dx * k, y = cy + dy * k;
+    const r = 26 + 6; // half the pointer, plus a gap
+    const blocked = (px, py) => avoid.some((b) => px + r > b.left && px - r < b.right && py + r > b.top && py - r < b.bottom);
+    if (blocked(x, y)) {
+      const aim = Math.atan2(dy, dx);
+      let best = null, bestD = Infinity;
+      const tryAt = (px, py) => {
+        if (blocked(px, py)) return;
+        const a = Math.atan2(py - cy, px - cx) - aim;
+        const d = Math.abs(Math.atan2(Math.sin(a), Math.cos(a)));
+        if (d < bestD) { bestD = d; best = [px, py]; }
+      };
+      for (let t = cx - hx; t <= cx + hx; t += 6) { tryAt(t, cy - hy); tryAt(t, cy + hy); }
+      for (let t = cy - hy; t <= cy + hy; t += 6) { tryAt(cx - hx, t); tryAt(cx + hx, t); }
+      if (best) [x, y] = best;
+    }
     this.el.hidden = false;
     this.el.style.transform = `translate(${(x - 26).toFixed(1)}px, ${(y - 26).toFixed(1)}px)`;
-    this.arrow.style.transform = `rotate(${Math.atan2(dy, dx).toFixed(3)}rad)`;
+    this.arrow.style.transform = `rotate(${Math.atan2(target.sy - y, target.sx - x).toFixed(3)}rad)`;
     if (this.dist.textContent !== distanceText) this.dist.textContent = distanceText;
   }
 }

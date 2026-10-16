@@ -774,6 +774,7 @@ function updateDebugReadout(now) {
 const READY_AFTER = new Set(['searched', 'vault', 'fast']);
 let prevStatus = null;
 let lastSlowTick = 0;
+let mapButtons = []; // screen rects the vault pointer keeps clear of, refreshed with the slow tick
 let lastScrollUpdate = 0;
 let lastFrame = performance.now();
 let lastRender = 0;
@@ -797,6 +798,12 @@ function frameLoop() {
     if (!busy) satchelUi.set(game.satchelCount());
     $('vault-pointer').classList.toggle('laden', game.satchelCount() > 0);
     maybeDeposit();
+    // In the pointer's own css px: ?inspect scales the whole app with a transform.
+    const box = $('vault-pointer').parentElement, o = box.getBoundingClientRect(), k = box.offsetWidth / o.width || 1;
+    mapButtons = ['btn-tomb', 'mission-tag', 'btn-satchel'].map($).filter((b) => !b.hidden).map((b) => {
+      const r = b.getBoundingClientRect();
+      return { left: (r.left - o.left) * k, right: (r.right - o.left) * k, top: (r.top - o.top) * k, bottom: (r.bottom - o.top) * k };
+    });
     if (sim && state.vault) devSet(DEV_SIM_KEY, JSON.stringify(frame.toGeo(sim.x, sim.y)));
     if (journal.isOpen && journal.tab === 'tombs') journal.refreshChecks();
     lastSlowTick = perf;
@@ -842,7 +849,7 @@ function frameLoop() {
   tooltip.update(cam.w);
   updateMapLabels();
   if (state.vault) {
-    vaultPointer.update(cam.toScreen(0, 0), { w: cam.w, h: cam.h, top: insets.top, bottom: insets.bottom }, est ? formatDistance(Math.hypot(est.x, est.y)) : '');
+    vaultPointer.update(cam.toScreen(0, 0), { w: cam.w, h: cam.h, top: insets.top, bottom: insets.bottom, avoid: mapButtons }, est ? formatDistance(Math.hypot(est.x, est.y)) : '');
   } else {
     $('vault-pointer').hidden = true;
   }

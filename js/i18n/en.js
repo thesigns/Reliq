@@ -43,6 +43,7 @@ export default {
 
   'btn.menu': 'Menu',
   'menu.tagline': "A treasure hunter's journal",
+  'menu.safety': 'On an expedition, watch the way ahead, not the screen. Keep out of private, fenced-off or dangerous places, and mind the traffic. Want a look at the map? Stop first.',
   'menu.continue': 'Continue',
   'menu.begin': 'Begin',
   'menu.settings': 'Settings',

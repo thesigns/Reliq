@@ -43,6 +43,7 @@ export default {
 
   'btn.menu': 'Menu',
   'menu.tagline': 'Dziennik poszukiwacza skarbów',
+  'menu.safety': 'Na wyprawie patrz przed siebie, nie w ekran. Nie wchodź na teren prywatny, ogrodzony ani niebezpieczny i uważaj na ruch uliczny. Chcesz zerknąć na mapę? Najpierw się zatrzymaj.',
   'menu.continue': 'Kontynuuj grę',
   'menu.begin': 'Rozpocznij',
   'menu.settings': 'Ustawienia',

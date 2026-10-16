@@ -284,7 +284,8 @@
   color: transparent;
   filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .85)) drop-shadow(0 0 18px rgba(240, 190, 100, .3));
 }
-.menu-tagline { margin: 2px 0 34px; font-family: var(--font-text); font-style: italic; font-size: 17px; color: rgba(234, 214, 166, .8); }
+.menu-tagline { margin: 2px 0 12px; font-family: var(--font-text); font-style: italic; font-size: 17px; color: rgba(234, 214, 166, .8); }
+.menu-safety { max-width: 300px; margin: 0 0 30px; font-family: var(--font-text); font-size: 13.5px; line-height: 1.4; text-wrap: pretty; color: rgba(234, 214, 166, .55); }
 .menu-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 .menu-actions .btn-brass { min-width: 230px; margin-bottom: 8px; }
 .menu-link {

@@ -172,6 +172,23 @@ export function menuSVG() {
 </svg>`;
 }
 
+// The debug panel's gear, in the same brass and shadow as the menu glyph beside it.
+export function gearSVG() {
+  const c = 16, teeth = 8, tip = 12.2, root = 9.4, hole = 3.9;
+  const pt = (r, a) => `${(c + Math.sin(a) * r).toFixed(2)} ${(c - Math.cos(a) * r).toFixed(2)}`;
+  let d = '';
+  for (let i = 0; i < teeth; i++) {
+    const a = (i / teeth) * Math.PI * 2;
+    d += `${i ? 'L' : 'M'}${pt(root, a - 0.3)} L${pt(tip, a - 0.17)} L${pt(tip, a + 0.17)} L${pt(root, a + 0.3)} `;
+  }
+  d += `Z M${c - hole} ${c} a${hole} ${hole} 0 1 0 ${2 * hole} 0 a${hole} ${hole} 0 1 0 ${-2 * hole} 0 Z`;
+  return `<svg viewBox="0 0 32 32" aria-hidden="true">
+  <defs><linearGradient id="dbB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dc95"/><stop offset=".55" stop-color="#c8973a"/><stop offset="1" stop-color="#6b4716"/></linearGradient></defs>
+  <path d="${d}" fill="#120a04" fill-rule="evenodd" opacity=".75" transform="translate(0 1.3)"/>
+  <path d="${d}" fill="url(#dbB)" fill-rule="evenodd"/>
+</svg>`;
+}
+
 // The close cross of every dismissable screen; drawn in currentColor so the button sets the ink.
 export function closeGlyph() {
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>';

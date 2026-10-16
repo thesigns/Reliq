@@ -33,7 +33,7 @@ import { shardSketch } from './ui/gate-art.js';
 import { Onboarding } from './ui/onboarding.js';
 import { Toast } from './ui/toast.js';
 import { Particles } from './ui/particles.js';
-import { scrollSVG, closeGlyph } from './ui/art.js';
+import { scrollSVG, closeGlyph, gearSVG } from './ui/art.js';
 import { sfx } from './ui/audio.js';
 import { haptics } from './ui/haptics.js';
 import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate, formatRoman } from './i18n/i18n.js';
@@ -955,6 +955,7 @@ function wireUi() {
 function wireDebug() {
   $('debug').hidden = false;
   $('debug').classList.toggle('real', MODE === 'real');
+  $('debug-toggle').innerHTML = gearSVG();
   $('debug-toggle').onclick = () => $('debug').classList.toggle('open');
   for (const b of $('dbg-source').querySelectorAll('button')) {
     b.classList.toggle('on', b.dataset.gps === MODE);

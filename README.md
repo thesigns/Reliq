@@ -93,7 +93,7 @@ blender -b --factory-startup -P scripts/blender/<model>.py
 
 Each script writes a generated module to `js/render/models/`. Edit the script and re-run it, never the generated file.
 
-`gallery/` shows every tomb artifact turning in 3D, tier by tier, in Polish or English. It imports the game's own models, rules and strings, so it always matches the game; on GitHub Pages it lives at `<site>/gallery/`.
+`gallery/` shows every tomb artifact turning in 3D, tier by tier, in Polish or English. It imports the game's own models, rules and strings, so it always matches the game; on GitHub Pages it lives at `<site>/gallery/`. Beside it, `gallery/fokker.html` shows a Fokker Dr.I triplane made the same way (`scripts/blender/fokker.py`), with a spinning propeller: a test of the method beyond the game.
 
 ## Deploying
 

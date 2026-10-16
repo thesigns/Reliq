@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fokker Dr.I</title>
+<link rel="icon" href="../assets/icons/favicon-64.png">
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+/* One aeroplane on a dusk sky, drawn the way the game draws its artifacts: flat-shaded
+   polygons at a low resolution, scaled up with hard pixels. */
+:root {
+  color-scheme: dark;
+  --sky-top: #1c2533;
+  --sky-low: #6b4a3a;
+  --ink: #efe3c8;
+  --muted: #b9a888;
+  --brass: #c9a35a;
+  --red: #c4271c;
+  --label: 'Cinzel', Georgia, serif;
+  --display: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+  --body: 'EB Garamond', Garamond, Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--sky-top); color: var(--ink); font-family: var(--body); font-size: 17px; }
+body { min-height: 100vh; background: linear-gradient(180deg, var(--sky-top) 0%, #2f3442 45%, var(--sky-low) 100%); }
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-block: max(20px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 18px;
+}
+nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+nav a, button {
+  font-family: var(--label); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--brass); background: rgba(0, 0, 0, 0.18); text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--brass) 45%, transparent); border-radius: 3px; padding: 7px 12px; cursor: pointer;
+}
+nav a:hover, button:hover { color: var(--ink); border-color: var(--brass); }
+a:focus-visible, button:focus-visible, canvas:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--label); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); }
+h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(32px, 7vw, 54px); letter-spacing: 0.03em; color: var(--ink); }
+h1 span { color: var(--red); }
+.stage { position: relative; }
+canvas { display: block; width: 100%; aspect-ratio: 4 / 3; max-width: 100%; image-rendering: pixelated; cursor: grab; touch-action: none; }
+canvas:active { cursor: grabbing; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+button[aria-pressed='true'] { color: var(--ink); border-color: var(--red); background: color-mix(in srgb, var(--red) 25%, transparent); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 20px; margin: 0; }
+.facts div { display: grid; gap: 2px; border-top: 1px solid color-mix(in srgb, var(--brass) 30%, transparent); padding-top: 8px; }
+.facts dt { font-family: var(--label); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.note { margin: 0; color: var(--muted); font-style: italic; font-size: 15px; max-width: 65ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./" id="back"></a><a href="../" id="play"></a></nav>
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>Fokker <span>Dr.I</span></h1>
+  </header>
+  <div class="stage"><canvas id="view" tabindex="0"></canvas></div>
+  <div class="controls">
+    <button type="button" id="engine" aria-pressed="true"></button>
+    <button type="button" id="turn" aria-pressed="true"></button>
+    <button type="button" id="reset"></button>
+  </div>
+  <dl class="facts" id="facts"></dl>
+  <p class="note" id="note"></p>
+</div>
+
+<script type="module">
+import { VS, FS, buildArtifactMesh, perspective, mul, rotX, rotY, scaleM, translate } from '../js/render/artifact3d.js';
+import { program } from '../js/render/gl.js';
+import { FOKKER } from './models/fokker.js';
+import { FOKKER_PROP } from './models/fokker-prop.js';
+
+const TEXT = {
+  pl: {
+    back: '← Skarbiec artefaktów', play: 'Do gry', eyebrow: 'Jasta 11 · wiosna 1918',
+    engineOn: 'Silnik: pracuje', engineOff: 'Silnik: wyłączony', turnOn: 'Obrót: tak', turnOff: 'Obrót: nie', reset: 'Widok od nowa',
+    facts: [['Rozpiętość', '7,19 m'], ['Długość', '5,77 m'], ['Silnik', 'rotacyjny, 9 cylindrów'], ['Model', '{tris} trójkątów']],
+    note: 'Trójpłatowiec w czerwonych barwach Manfreda von Richthofena, wymodelowany kodem w Blenderze tak jak artefakty z gry: płaskie wielokąty, kolory z palety, bez tekstur. Przeciągnij, żeby obejrzeć go z każdej strony.',
+  },
+  en: {
+    back: '← The Artifact Vault', play: 'Play', eyebrow: 'Jasta 11 · spring 1918',
+    engineOn: 'Engine: running', engineOff: 'Engine: off', turnOn: 'Turning: on', turnOff: 'Turning: off', reset: 'Reset view',
+    facts: [['Span', '7.19 m'], ['Length', '5.77 m'], ['Engine', 'rotary, 9 cylinders'], ['Model', '{tris} triangles']],
+    note: 'The triplane in the red colours of Manfred von Richthofen, modelled in code in Blender like the artifacts in the game: flat polygons, palette colours, no textures. Drag to look at it from every side.',
+  },
+};
+const L = TEXT[(navigator.language || 'en').toLowerCase().startsWith('pl') ? 'pl' : 'en'];
+document.documentElement.lang = L === TEXT.pl ? 'pl' : 'en';
+const $ = (id) => document.getElementById(id);
+$('back').textContent = L.back;
+$('play').textContent = L.play;
+$('eyebrow').textContent = L.eyebrow;
+$('reset').textContent = L.reset;
+$('note').textContent = L.note;
+const tris = (FOKKER.tris.length + FOKKER_PROP.tris.length) / 4;
+for (const [k, v] of L.facts) {
+  const d = document.createElement('div');
+  d.innerHTML = '<dt></dt><dd></dd>';
+  d.firstChild.textContent = k;
+  d.lastChild.textContent = v.replace('{tris}', tris.toLocaleString(document.documentElement.lang));
+  $('facts').appendChild(d);
+}
+
+// ---- Scene ----------------------------------------------------------------------------------
+const canvas = $('view');
+const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
+const PIXEL = 3;   // CSS pixels per rendered pixel, as in the game
+
+// Both parts keep their own coordinates; the pair is centred on the aeroplane and scaled
+// to two units across, like the game's artifacts.
+const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+for (let i = 0; i < FOKKER.verts.length; i += 3) for (let k = 0; k < 3; k++) {
+  lo[k] = Math.min(lo[k], FOKKER.verts[i + k]); hi[k] = Math.max(hi[k], FOKKER.verts[i + k]);
+}
+const centre = lo.map((v, k) => (v + hi[k]) / 2);
+const fit = 2 / Math.max(...hi.map((v, k) => v - lo[k]));
+const toScene = mul(scaleM(fit), translate(-centre[0], -centre[1], -centre[2]));
+const [px, py, pz] = FOKKER_PROP.pivot;
+
+function rotZ(t) {
+  const m = new Float32Array(16), c = Math.cos(t), s = Math.sin(t);
+  m[0] = c; m[1] = s; m[4] = -s; m[5] = c; m[10] = 1; m[15] = 1;
+  return m;
+}
+
+let prog, parts;
+function setup() {
+  prog = program(gl, VS, FS, 'fokker');
+  parts = [FOKKER, FOKKER_PROP].map((model) => {
+    const data = buildArtifactMesh(model, { fit: null });
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    for (let i = 0; i < 3; i++) { gl.enableVertexAttribArray(i); gl.vertexAttribPointer(i, 3, gl.FLOAT, false, 36, i * 12); }
+    gl.bindVertexArray(null);
+    return { vao, count: data.length / 9 };
+  });
+}
+
+const START = { yaw: -0.75, pitch: 0.32 };
+const view = { ...START, prop: 0, rpm: 1, engine: true, turning: true, idleAt: 0 };
+
+function resize() {
+  const w = Math.max(160, Math.round(canvas.clientWidth / PIXEL));
+  const h = Math.round(w * 3 / 4);
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+}
+
+function draw() {
+  resize();
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
+  gl.useProgram(prog.p);
+  const eye = [0, 0, 4.2];
+  gl.uniformMatrix4fv(prog.u.u_viewProj, false, mul(perspective((30 * Math.PI) / 180, canvas.width / canvas.height, 0.5, 20), translate(-eye[0], -eye[1], -eye[2])));
+  gl.uniform3fv(prog.u.u_eye, eye);
+  gl.uniform3fv(prog.u.u_glow, [0.12, 0.1, 0.1]);
+  const body = mul(rotX(view.pitch), mul(rotY(view.yaw), toScene));
+  const spin = mul(translate(px, py, pz), mul(rotZ(view.prop), translate(-px, -py, -pz)));
+  for (const [part, model] of [[parts[0], body], [parts[1], mul(body, spin)]]) {
+    gl.uniformMatrix4fv(prog.u.u_model, false, model);
+    gl.bindVertexArray(part.vao);
+    gl.drawArrays(gl.TRIANGLES, 0, part.count);
+  }
+}
+
+// ---- Controls -------------------------------------------------------------------------------
+const still = matchMedia('(prefers-reduced-motion: reduce)');
+let drag = null;
+canvas.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  view.yaw += (e.clientX - drag.x) * 0.01;
+  view.pitch = Math.max(-1.3, Math.min(1.3, view.pitch + (e.clientY - drag.y) * 0.008));
+  drag = { x: e.clientX, y: e.clientY };
+  view.idleAt = performance.now();
+});
+const release = () => { drag = null; view.idleAt = performance.now(); };
+canvas.addEventListener('pointerup', release);
+canvas.addEventListener('pointercancel', release);
+canvas.addEventListener('keydown', (e) => {
+  const step = { ArrowLeft: [-0.2, 0], ArrowRight: [0.2, 0], ArrowUp: [0, -0.15], ArrowDown: [0, 0.15] }[e.key];
+  if (!step) return;
+  view.yaw += step[0];
+  view.pitch = Math.max(-1.3, Math.min(1.3, view.pitch + step[1]));
+  view.idleAt = performance.now();
+  e.preventDefault();
+});
+
+function label() {
+  $('engine').textContent = view.engine ? L.engineOn : L.engineOff;
+  $('engine').setAttribute('aria-pressed', String(view.engine));
+  $('turn').textContent = view.turning ? L.turnOn : L.turnOff;
+  $('turn').setAttribute('aria-pressed', String(view.turning));
+}
+$('engine').onclick = () => { view.engine = !view.engine; label(); };
+$('turn').onclick = () => { view.turning = !view.turning; label(); };
+$('reset').onclick = () => { Object.assign(view, START); view.idleAt = 0; };
+if (still.matches) view.turning = false;
+label();
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  // The rotary winds up and runs down rather than starting and stopping dead.
+  view.rpm += ((view.engine ? 1 : 0) - view.rpm) * Math.min(1, dt * 1.5);
+  view.prop += view.rpm * 17 * dt;
+  if (view.turning && !drag && now - view.idleAt > 1500) view.yaw += 0.3 * dt;
+  if (!gl.isContextLost()) draw();
+  requestAnimationFrame(frame);
+}
+
+if (gl) {
+  setup();
+  canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
+  canvas.addEventListener('webglcontextrestored', setup);
+  requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

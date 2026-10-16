@@ -102,7 +102,7 @@
         </div>
         <nav class="journal-tabs">
           <button data-tab="coins"></button>
-          <button data-tab="tombs"></button>
+          <button data-tab="notebook"></button>
           <button data-tab="fence"></button>
         </nav>
         <div class="journal-paper"><div class="journal-page"></div></div>
@@ -213,12 +213,25 @@
         <div class="card-label"></div>
         <div class="card-sketch"></div>
         <div class="card-title"></div>
-        <ul class="checks"></ul>
-        <div class="card-symbols"></div>
-        <p class="card-msg" aria-live="polite"></p>
-        <p class="card-deadline"></p>
+        <p class="card-status" hidden></p>
+        <div class="notebook-active">
+          <ul class="checks"></ul>
+          <div class="card-symbols"></div>
+          <p class="card-msg" aria-live="polite"></p>
+          <p class="card-deadline"></p>
+        </div>
+        <div class="notebook-notes" hidden></div>
         <div class="card-actions">
           <button class="btn-brass" id="notebook-gate" hidden></button>
+          <div class="notebook-buttons"></div>
+        </div>
+        <div class="j-danger notebook-abandon" hidden>
+          <button class="btn-link danger" data-action="abandon"></button>
+          <div class="j-confirm" hidden>
+            <p></p>
+            <button class="btn-danger" data-action="abandon-yes"></button>
+            <button class="btn-link" data-action="abandon-no"></button>
+          </div>
         </div>
       </div>
     </div>

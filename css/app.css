@@ -733,6 +733,20 @@ html.inspect #app {
     linear-gradient(170deg, #f7ebcd, #e8d4a6);
 }
 .notebook-page .card-sketch { width: 150px; height: 150px; margin: 4px auto 0; }
+/* A long page scrolls inside the card. */
+.notebook-page { max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+.card-status { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0 0; font-family: var(--font-text); font-style: italic; font-size: 16px; color: var(--oxblood); }
+.card-status svg { flex: none; width: 15px; height: 15px; }
+.card-status[hidden], .notebook-active[hidden], .notebook-notes[hidden], .notebook-abandon[hidden] { display: none; }
+.notebook-notes { margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(59, 36, 20, .35); font-family: var(--font-text); }
+.notebook-notes p { margin: 0 0 8px; font-size: 16px; line-height: 1.4; }
+.notebook-notes .nb-lore { font-style: italic; color: #4a2e18; }
+.notebook-notes .nb-fact { color: #3b2414; }
+.notebook-buttons { display: flex; flex-direction: column; align-items: stretch; gap: 2px; width: 100%; }
+.notebook-buttons .btn-brass { margin-top: 10px; min-width: 0; padding-left: 10px; padding-right: 10px; font-size: 12px; letter-spacing: .14em; }
+.notebook-buttons .btn-link { letter-spacing: .12em; }
+.notebook-buttons .btn-brass:disabled { filter: grayscale(.7) brightness(.85); }
+.notebook-abandon { margin-top: 14px; }
 .notebook-page .card-sketch svg { height: 100%; }
 .card-sketch svg { width: 100%; height: auto; display: block; }
 .card-title {
@@ -1064,7 +1078,7 @@ html.inspect #app {
 .card-overlay {
   position: absolute;
   inset: 0;
-  z-index: 40;
+  z-index: 48;   /* above the vault journal, so a notebook page can open over it */
   display: grid;
   place-items: center;
   padding: calc(var(--safe-top) + 70px) 0 calc(var(--safe-bottom) + 40px);
@@ -1114,7 +1128,7 @@ html.inspect #app {
 .sv-count { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: #7a4a22; }
 .card-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .card-actions .btn-brass { margin-top: 10px; min-width: 0; width: 100%; }
-.card-actions .btn-brass:not(.ready) { filter: grayscale(.6) brightness(.85); }
+#notebook-gate:not(.ready) { filter: grayscale(.6) brightness(.85); }
 /* The close cross: one button in the top right corner of every screen that can simply be dismissed. */
 .btn-x {
   position: relative;
@@ -1220,9 +1234,8 @@ html.inspect #app {
   .reveal-rays, .medallion.ready .m-sheen, .medallion.ready::after { animation: none; }
 }
 
-/* ---------- Key symbols (notebook, journal, gate) ---------- */
+/* ---------- Key symbols (notebook, gate) ---------- */
 .card-symbols,
-.shards-row,
 .gate-shards { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
 .shards-label {
   margin-right: 4px;

@@ -111,15 +111,24 @@ Legendary (1% szans)
 
 Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedną aktywną misję. Misje idą w ustalonej kolejności. Ich lista z tytułami, lore i dystansami jest w `docs/lista-misji.md`. Docelowo ma ich być około 60, żeby starczyły na rok gry.
 
-### Karta misji
+### Notatnik poszukiwacza
 
-Gdy gracz nie ma aktywnej misji, w skarbcu, na zakładce „Misje”, pojawia się następna misja:
+Misje są zapisane w notatniku poszukiwacza: w skarbcu na zakładce „Notatnik”, a misja w trakcie także pod przyciskiem misji na mapie. Zakładka wygląda jak liniowana strona z odręcznymi zapiskami. Numer misji stoi cyfrą rzymską na marginesie.
 
-- tytuł, np. „Znajdź Kubek Brata Odona”;
-- szkic artefaktu tuszem (SVG narysowane na podstawie modelu 3D);
-- zdanie lore;
-- drobne ostrzeżenie: „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 7 dni.”;
-- przycisk „Rozpocznij misję”.
+Na górze strony jest jeden wpis:
+
+- „Dostępna nowa misja”: nazwa artefaktu i jego szkic tuszem (SVG narysowane na podstawie modelu 3D), wklejony jak zdjęcie;
+- albo „Misja w trakcie”: nazwa, szkic i czas, który został („Zostało: 6 d 4 h 23 min”);
+- albo „Wkrótce nowe wyprawy.”, gdy misje się skończyły.
+
+Pod nim, jeśli jakieś misje już się odbyły, jest rozdział „Odbyte misje”, od najnowszej: nazwa artefaktu i „Misja zakończona powodzeniem” (z ptaszkiem) albo „Misja zakończona niepowodzeniem” (z krzyżykiem).
+
+Każdy wpis ma przycisk „Szczegóły”, który otwiera stronę notatnika tej misji (zamykaną krzyżykiem):
+
+- **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 7 dni.” i przycisk „Rozpocznij misję”. Gdy artefakt poprzedniej misji jest jeszcze w plecaku, przycisk czeka, a strona mówi, żeby zanieść go do skarbca;
+- **misja w trakcie:** spacery z odhaczonymi etapami, znalezione symbole, co robić dalej, czas do końca, przycisk „Otwórz wrota” przy grobowcu i „Porzuć misję” z potwierdzeniem;
+- **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (na półce czy w plecaku), przyciski „Obejrzyj artefakt” i „Pokaż grobowiec na mapie”;
+- **misja nieudana:** lore, kiedy przepadła i co z artefaktem (kiedy trafi do pasera, czy już tam czeka, czy został odkupiony), przycisk „Zajrzyj do pasera” albo „Obejrzyj artefakt”.
 
 Model 3D nie jest pokazywany przed zdobyciem artefaktu — jest nagrodą reprezentującą prawdziwy przedmiot.
 
@@ -224,7 +233,7 @@ Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte o
 | Plecak                  | Backpack            |
 | Powrót do skarbca       | Back at the vault   |
 | Kolekcja                | Hoard               |
-| Misje (zakładka)        | Missions            |
+| Notatnik (zakładka)     | Notebook            |
 | Półka z artefaktami     | Artifact shelf      |
 | Paser                   | Fence               |
 | Pieniądze               | Money               |

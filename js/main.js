@@ -225,7 +225,9 @@ const renderer = new MapRenderer($('map'));
 const fx = new Particles($('fx'));
 const hud = new Hud();
 const reveal = new Reveal($('reveal'));
-const notebook = new MissionNotebook($('notebook'));
+const notebook = new MissionNotebook($('notebook'), {
+  onAbandon: () => { onAbandonMission(); notebook.close(); },
+});
 const gate = new GateScreen($('gate'));
 const tooltip = new MapTooltip($('map-tip'));
 const vaultPointer = new EdgePointer($('vault-pointer'));
@@ -266,8 +268,9 @@ const journal = new Journal($('journal'), {
   onViewCoin: (id) => reveal.viewCoin(id, state.coins[id] ?? 0),
   onShowTomb: (tb) => showTomb(tb),
   onShowNotebook: () => openNotebook(),
+  openMissionPage: (page) => notebook.openPage(page),
+  closeMissionPage: () => notebook.close(),
   onStartMission: () => onStartMission(),
-  onAbandonMission: () => onAbandonMission(),
   onViewArtifact: (a) => viewArtifact(a),
   fenceOffers: () => { const now = clock.now(); return game.fenceOffers(now).map((o) => ({ ...o, now })); },
   coinPrice: (id) => game.coinPrice(id),
@@ -806,7 +809,7 @@ function frameLoop() {
     $('vault-pointer').classList.toggle('laden', game.satchelCount() > 0);
     maybeDeposit();
     if (sim && state.vault) devSet(DEV_SIM_KEY, JSON.stringify(frame.toGeo(sim.x, sim.y)));
-    if (journal.isOpen && journal.tab === 'tombs') journal.refreshChecks();
+    if (journal.isOpen && journal.tab === 'notebook') journal.refreshNotebook();
     lastSlowTick = perf;
   }
   const th = targetHeading();

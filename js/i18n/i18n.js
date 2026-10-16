@@ -13,10 +13,11 @@ export function t(key, vars) {
 
 export const getLang = () => lang;
 
-export function formatDuration(ms) {
+// minutes: keep the minutes past a day too ("6 d 4 h 23 min"), for a clock that ticks.
+export function formatDuration(ms, { minutes = false } = {}) {
   const min = Math.max(1, Math.round(ms / 60000));
   const h = Math.floor(min / 60), m = min % 60;
-  if (h >= 24) return `${Math.floor(h / 24)} d${h % 24 ? ` ${h % 24} h` : ''}`;
+  if (h >= 24) return `${Math.floor(h / 24)} d${h % 24 ? ` ${h % 24} h` : ''}${minutes && m ? ` ${m} min` : ''}`;
   return h ? `${h} h${m ? ` ${m} min` : ''}` : `${m} min`;
 }
 

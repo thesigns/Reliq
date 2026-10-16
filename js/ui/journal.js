@@ -4,10 +4,9 @@
 import { t, formatDate, formatDuration, formatRoman } from '../i18n/i18n.js';
 import { COINS } from '../game/items.js';
 import { RULES, MISSIONS } from '../game/rules.js';
-import { renderChecks, missionStatus } from './notebook.js';
+import { TICK, CROSS } from './notebook.js';
 import { artifactSketch } from './artifact-sketch.js';
 import { MODELS } from '../render/models/index.js';
-import { shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
 
 const RARITIES = ['common', 'uncommon', 'rare', 'legendary'];
@@ -15,7 +14,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 export class Journal {
   // deps: { state, missionCheck(), missionOffer(), thumbnail(id), artifactThumb(id), onViewCoin(id),
-  //         onShowTomb(tomb), onShowNotebook(), onStartMission(), onAbandonMission(),
+  //         onShowTomb(tomb), onShowNotebook(), openMissionPage(page), closeMissionPage(),
+//         onStartMission(),
   //         onViewArtifact({ id, n, from }), fenceOffers(), coinPrice(id), onSellCoin(id),
   //         onBuyArtifact(n) }
   constructor(root, deps) {
@@ -58,20 +58,18 @@ export class Journal {
     page.innerHTML = this[`render_${tab}`]();
     page.scrollTop = 0;
     if (tab === 'coins' || tab === 'fence') this.loadThumbs();
-    if (tab === 'tombs') this.refreshChecks();
+    if (tab === 'notebook') this.refreshNotebook();
   }
 
   refresh() { if (this.isOpen) this.show(this.tab); }
 
-  // Live mission checklist while the tombs page is open.
-  refreshChecks() {
+  // The clock of the mission under way, while the Notebook is open.
+  refreshNotebook() {
     const check = this.deps.missionCheck();
-    if (!check.active) return;
-    const ul = this.el('.journal-page .checks');
-    if (ul) renderChecks(ul, check);
-    const set = (sel, text) => { const el = this.el(sel); if (el && el.textContent !== text) el.textContent = text; };
-    set('.journal-page .j-mission-status', missionStatus(check));
-    set('.journal-page .j-deadline', t('journal.tombs.left', { t: formatDuration(check.timeLeft) }));
+    const el = this.el('.journal-page .nb-left');
+    if (!check.active || !el) return;
+    const text = t('notes.left', { t: formatDuration(check.timeLeft, { minutes: true }) });
+    if (el.textContent !== text) el.textContent = text;
   }
 
   render_coins() {
@@ -136,51 +134,102 @@ export class Journal {
     }
   }
 
-  render_tombs() {
-    const s = this.deps.state;
+  // The Notebook: the mission on offer or under way, then the missions already behind, as
+  // handwritten entries on a ruled page. Each opens its own page of the notebook.
+  render_notebook() {
     const check = this.deps.missionCheck();
-    let html = '';
+    let html = '<div class="nb-page">';
     if (check.active) {
-      const name = t(`artifacts.${check.def.artifact}.name`);
-      html += `<div class="j-card j-mission"><div class="j-mission-sketch small">${artifactSketch(MODELS[check.def.artifact])}</div>
-        <h3 class="j-card-title">${esc(t('journal.tombs.mission', { name }))}</h3>
-        <ul class="checks"></ul>
-        <p class="j-mission-status">${esc(missionStatus(check))}</p>
-        <p class="j-hint j-deadline">${esc(t('journal.tombs.left', { t: formatDuration(check.timeLeft) }))}</p>
-        <div class="shards-row"><span class="shards-label">${esc(t('gate.shards'))}</span>${shardRow(check.shards, check.keyLength)}</div>
-        <button class="btn-brass btn-small" data-action="show-notebook">${esc(t('journal.tombs.openNotebook'))}</button>
-        <div class="j-danger">
-          <button class="btn-link danger" data-action="abandon">${esc(t('journal.tombs.abandon'))}</button>
-          <div class="j-confirm" hidden>
-            <p>${esc(t('journal.tombs.abandonConfirm'))}</p>
-            <button class="btn-danger" data-action="abandon-yes">${esc(t('journal.tombs.abandonYes'))}</button>
-            <button class="btn-link" data-action="abandon-no">${esc(t('settings.resetNo'))}</button>
-          </div>
-        </div></div>`;
+      const left = `<span class="nb-left">${esc(t('notes.left', { t: formatDuration(check.timeLeft, { minutes: true }) }))}</span>`;
+      html += this.entry({ n: check.n, artifact: check.def.artifact, kicker: t('notes.active'), line: left, key: 'active', sketch: true });
     } else {
       const offer = this.deps.missionOffer();
-      if (offer && !offer.done) {
-        const name = t(`artifacts.${offer.artifact}.name`);
-        html += `<div class="j-card j-offer"><div class="j-mission-sketch">${artifactSketch(MODELS[offer.artifact])}</div>
-          <h3 class="j-card-title">${esc(t('journal.tombs.find', { name }))}</h3>
-          <p class="j-lore">${esc(t(`artifacts.${offer.artifact}.lore`))}</p>
-          <p class="j-hint">${esc(t('journal.tombs.warning', { stages: RULES.keyLength + 1, symbols: RULES.keyLength, days: RULES.missionTtlMs / 864e5 }))}</p>
-          ${offer.carrying ? `<p class="j-hint j-satchel">${esc(t('journal.tombs.carrying', { name: t(`artifacts.${offer.carrying}.name`) }))}</p>` : ''}
-          <button class="btn-brass btn-small" data-action="start-mission"${offer.carrying ? ' disabled' : ''}>${esc(t('journal.tombs.start'))}</button></div>`;
+      if (offer && !offer.done) html += this.entry({ n: offer.n, artifact: offer.artifact, kicker: t('notes.available'), key: 'offer', sketch: true });
+      else html += `<p class="nb-note">${esc(t('journal.tombs.noMore'))}</p>`;
+    }
+    const past = this.pastMissions();
+    if (past.length) {
+      html += `<h3 class="nb-heading">${esc(t('notes.past'))}</h3>`;
+      for (const p of past) html += this.entry({ n: p.n, artifact: p.artifact, status: p.won ? 'won' : 'lost', key: `${p.won ? 'won' : 'lost'}:${p.n}` });
+    }
+    return `${html}</div>`;
+  }
+
+  // One entry: the mission's number in the margin, what it is about and the way to its page.
+  entry({ n, artifact, kicker, line, status, key, sketch }) {
+    const mark = status === 'won' ? TICK : CROSS;
+    return `<section class="nb-entry${sketch ? ' nb-current' : ''}">
+      <span class="nb-num">${formatRoman(n)}</span>
+      ${kicker ? `<p class="nb-kicker">${esc(kicker)}</p>` : ''}
+      ${sketch ? `<span class="nb-sketch">${artifactSketch(MODELS[artifact])}</span>` : ''}
+      <p class="nb-title">${esc(t(`artifacts.${artifact}.name`))}</p>
+      ${status ? `<p class="nb-status nb-${status}">${mark}<span>${esc(t(`notes.${status}`))}</span></p>` : ''}
+      ${line ? `<p class="nb-line">${line}</p>` : ''}
+      <p class="nb-line"><button class="nb-more" data-entry="${key}">${esc(t('notes.details'))}</button></p>
+    </section>`;
+  }
+
+  // Missions behind the player, newest first: won (its tomb opened) or lost.
+  pastMissions() {
+    const s = this.deps.state;
+    const won = s.tombs.filter((tb) => tb.opened).map((tb) => ({ n: tb.n, artifact: tb.artifact, won: true, tomb: tb }));
+    const lost = s.lost.map((l) => ({ n: l.n, artifact: MISSIONS.find((m) => m.n === l.n)?.artifact, won: false, t: l.t })).filter((m) => m.artifact);
+    return [...won, ...lost].sort((x, y) => y.n - x.n);
+  }
+
+  // The page of the notebook behind an entry's Details.
+  openEntry(key) {
+    if (key === 'active') { this.deps.onShowNotebook(); return; }
+    const s = this.deps.state;
+    const lore = (id) => [{ text: t(`artifacts.${id}.lore`), lore: true }];
+    if (key === 'offer') {
+      const offer = this.deps.missionOffer();
+      if (!offer || offer.done) return;
+      const notes = [...lore(offer.artifact),
+        { text: t('journal.tombs.warning', { stages: RULES.keyLength + 1, symbols: RULES.keyLength, days: RULES.missionTtlMs / 864e5 }) }];
+      if (offer.carrying) notes.push({ text: t('journal.tombs.carrying', { name: t(`artifacts.${offer.carrying}.name`) }) });
+      this.deps.openMissionPage({
+        n: offer.n, artifact: offer.artifact, status: { text: t('notes.available') }, notes,
+        actions: [{ id: 'start', label: t('journal.tombs.start'), primary: true, disabled: !!offer.carrying }],
+        onAction: () => {
+          this.deps.onStartMission();
+          if (this.deps.missionCheck().active) this.deps.onShowNotebook();
+        },
+      });
+      return;
+    }
+    const [kind, num] = key.split(':');
+    const m = this.pastMissions().find((p) => p.n === +num && p.won === (kind === 'won'));
+    if (!m) return;
+    const notes = lore(m.artifact);
+    const detailKey = `artifacts.${m.artifact}.detail`;
+    const actions = [];
+    const shelf = s.artifacts.find((x) => x.n === m.n);
+    if (m.won) {
+      if (t(detailKey) !== detailKey) notes.push({ text: t(detailKey), lore: true });
+      notes.push({ text: t('notes.tombFound', { n: formatRoman(m.n), date: formatDate(m.tomb.t) }) });
+      notes.push({ text: t(shelf ? 'notes.onShelf' : 'notes.inBackpack') });
+      actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true }, { id: 'tomb', label: t('notes.showTomb') });
+    } else {
+      notes.push({ text: t('notes.lostOn', { date: formatDate(m.t) }) });
+      if (shelf) {
+        notes.push({ text: t('notes.bought') });
+        actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true });
       } else {
-        html += `<p class="j-hint">${esc(t('journal.tombs.noMore'))}</p>`;
+        const offer = this.deps.fenceOffers().find((o) => o.n === m.n);
+        if (offer) notes.push({ text: offer.availableAt <= offer.now ? t('notes.fenceNow') : t('notes.fenceSoon', { t: formatDuration(offer.availableAt - offer.now) }) });
+        actions.push({ id: 'fence', label: t('notes.toFence') });
       }
     }
-    if (!s.tombs.length) return `${html}<p class="j-empty">${esc(t('journal.tombs.empty'))}</p>`;
-    html += '<ul class="tomb-list">';
-    for (const tb of [...s.tombs].sort((a, b) => b.n - a.n)) {
-      const treasure = tb.artifact ? t(`artifacts.${tb.artifact}.name`) : t(`items.${tb.coinId}.name`);
-      const line = tb.opened ? t('journal.tombs.item', { date: formatDate(tb.t), treasure }) : t('journal.tombs.closed', { date: formatDate(tb.t) });
-      const view = tb.opened && tb.artifact ? `<button class="btn-link" data-artifact="${tb.n}">${esc(t('journal.tombs.view'))}</button>` : '';
-      html += `<li><span class="tomb-num">${formatRoman(tb.n)}</span><span class="tomb-text"><b>${esc(t('tip.tomb.title', { n: formatRoman(tb.n) }))}</b><br>${esc(line)}</span>
-        <span class="tomb-actions">${view}<button class="btn-link" data-tomb="${tb.n}">${esc(t('journal.tombs.show'))}</button></span></li>`;
-    }
-    return `${html}</ul>`;
+    this.deps.openMissionPage({
+      n: m.n, artifact: m.artifact, notes, actions,
+      status: { text: t(m.won ? 'notes.won' : 'notes.lost'), mark: m.won ? TICK : CROSS },
+      onAction: (id) => {
+        if (id === 'view') this.deps.onViewArtifact(shelf ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' });
+        if (id === 'tomb') { this.deps.closeMissionPage(); this.close(); this.deps.onShowTomb(m.tomb); }
+        if (id === 'fence') { this.deps.closeMissionPage(); this.show('fence'); }
+      },
+    });
   }
 
   // Money, the artifacts of lost missions for sale, and the coins the fence will buy.
@@ -214,21 +263,12 @@ export class Journal {
     const b = e.target.closest('button');
     if (!b || !this.root.contains(b)) return;
     if (b.dataset.coin) { this.deps.onViewCoin(b.dataset.coin); return; }
-    if (b.dataset.artifact) {
-      const tb = this.deps.state.tombs.find((x) => x.n === +b.dataset.artifact);
-      if (tb) this.deps.onViewArtifact({ id: tb.artifact, n: tb.n, from: 'tomb' });
-      return;
-    }
     if (b.dataset.shelf) {
       const a = this.deps.state.artifacts.find((x) => x.n === +b.dataset.shelf);
       if (a) this.deps.onViewArtifact(a);
       return;
     }
-    if (b.dataset.tomb) {
-      const tb = this.deps.state.tombs.find((x) => x.n === +b.dataset.tomb);
-      if (tb) { this.close(); this.deps.onShowTomb(tb); }
-      return;
-    }
+    if (b.dataset.entry) { this.openEntry(b.dataset.entry); return; }
     if (b.dataset.buy) { this.deps.onBuyArtifact(+b.dataset.buy); return; }
     if (b.dataset.sell) {
       const id = b.dataset.sell;
@@ -243,11 +283,5 @@ export class Journal {
       this.deps.onSellCoin(id);
       return;
     }
-    const a = b.dataset.action;
-    if (a === 'show-notebook') { this.close(); this.deps.onShowNotebook(); }
-    if (a === 'start-mission') this.deps.onStartMission();
-    if (a === 'abandon') { sfx.click(); this.el('.j-card .j-confirm').hidden = false; b.hidden = true; }
-    if (a === 'abandon-no') { sfx.click(); this.el('.j-card .j-confirm').hidden = true; this.el('[data-action="abandon"]').hidden = false; }
-    if (a === 'abandon-yes') this.deps.onAbandonMission();
   }
 }

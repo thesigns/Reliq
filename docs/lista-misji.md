@@ -141,7 +141,7 @@ Detal (po znalezieniu): Rubiny na trzonie wciąż łapią światło.
 ### Klucz kasztelana
 
 Tytuł: Klucz kasztelana
-Model: key.js
+Model: key.js (gotowy)
 Lore: Kasztelan zamknął nim w lochu własnego brata, a potem wrzucił klucz do fosy, żeby żaden z nich nie zmienił zdania.
 Detal (po znalezieniu): Pióro klucza ma siedem zębów — po jednym na każdy zamek wieży.
 Kształt: duży żelazny klucz: ażurowe ucho w kształcie koniczyny, długi trzon z pierścieniem, rozbudowane pióro z zębami.

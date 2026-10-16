@@ -64,6 +64,7 @@ const ASSETS = [
   "js/render/models/cup.js",
   "js/render/models/helmet.js",
   "js/render/models/index.js",
+  "js/render/models/key.js",
   "js/render/models/lamp.js",
   "js/render/models/lur.js",
   "js/render/models/skydisc.js",

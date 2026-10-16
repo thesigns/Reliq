@@ -7,6 +7,7 @@ import { CLOG } from './clog.js';
 import { COMB } from './comb.js';
 import { CUP } from './cup.js';
 import { HELMET } from './helmet.js';
+import { KEY } from './key.js';
 import { LAMP } from './lamp.js';
 import { LUR } from './lur.js';
 import { SKYDISC } from './skydisc.js';
@@ -20,6 +21,7 @@ export const MODELS = {
   comb: COMB,
   cup: CUP,
   helmet: HELMET,
+  key: KEY,
   lamp: LAMP,
   lur: LUR,
   skydisc: SKYDISC,

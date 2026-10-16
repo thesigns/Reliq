@@ -162,6 +162,32 @@ def sweep(bm, path, section, mat_of, caps=(True, True), up=(0, 0, 1)):
     return rings
 
 
+def torus(bm, centre, radius, section, n, mat_of, plane='xz'):
+    """A closed ring of n bands round centre, lying in the x-z plane (facing -y) or the x-y
+    plane (facing up). section: (u, v) points, counter-clockwise, u outwards from the centre
+    and v across the plane. mat_of(k, i): band k, side i."""
+    cx, cy, cz = centre
+    rings = []
+    for k in range(n):
+        a = 2 * math.pi * k / n
+        c, s = math.cos(a), math.sin(a)
+        pts = []
+        for u, v in section:
+            r = radius + u
+            if plane == 'xz':
+                pts.append(bm.verts.new((cx + r * c, cy + v, cz + r * s)))
+            else:
+                pts.append(bm.verts.new((cx + r * c, cy + r * s, cz + v)))
+        rings.append(pts)
+    m = len(section)
+    for k in range(n):
+        a, b = rings[k], rings[(k + 1) % n]
+        for i in range(m):
+            j = (i + 1) % m
+            bm.faces.new((a[i], a[j], b[j], b[i])).material_index = mat_of(k, i)
+    return rings
+
+
 def rotate(verts, angle, axis, pivot=(0, 0, 0)):
     """Turns vertices (a nested list is fine) by angle (radians) about an axis through pivot."""
     from mathutils import Matrix, Vector

@@ -1,0 +1,116 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { Store, SAVE_KEY } from '../js/core/store.js';
+import { createState, migrate, SAVE_VERSION } from '../js/game/state.js';
+
+function fakeStorage(initial = {}) {
+  const m = new Map(Object.entries(initial));
+  return {
+    map: m,
+    getItem: (k) => (m.has(k) ? m.get(k) : null),
+    setItem: (k, v) => { m.set(k, String(v)); },
+    removeItem: (k) => { m.delete(k); },
+  };
+}
+
+const MISSION = { n: 2, t: 7, key: ['cat', 'fly', 'man'], shards: ['fly'], stageAt: 8 };
+
+test('empty storage gives a fresh state', () => {
+  const s = new Store(fakeStorage()).load(123);
+  assert.deepEqual(s, createState(123));
+});
+
+test('save and load round-trip', () => {
+  const storage = fakeStorage();
+  const store = new Store(storage);
+  const s = createState(1);
+  s.vault = { lat: 52.2, lon: 21.0, t: 5 };
+  s.searches.push({ lat: 52.21, lon: 21.01, t: 6 });
+  s.coins = { nummus: 3, eidmar: 1 };
+  s.money = 42;
+  s.mission = { ...MISSION };
+  s.tombs.push({ n: 1, lat: 52.22, lon: 21.02, t: 8, opened: true, artifact: 'cup' });
+  s.tombs.push({ n: 2, lat: 52.23, lon: 21.03, t: 9, opened: false, artifact: 'vase' });
+  s.artifacts.push({ id: 'cup', n: 1, t: 10, from: 'tomb' });
+  s.lost.push({ n: 3, t: 11 });
+  s.satchel = { coins: { ducat: 2 }, artifacts: [{ id: 'vase', n: 2, t: 12, from: 'tomb' }] };
+  s.settings.lang = 'en';
+  assert.equal(store.save(s), true);
+  assert.deepEqual(store.load(99), s);
+});
+
+test('unreadable saves are backed up, not lost', () => {
+  const storage = fakeStorage({ [SAVE_KEY]: '{not json' });
+  const s = new Store(storage).load(5);
+  assert.deepEqual(s, createState(5));
+  assert.equal(storage.map.get(`${SAVE_KEY}.unreadable`), '{not json');
+});
+
+test('saves from before missions start over', () => {
+  for (const v of [1, 2]) {
+    const raw = JSON.stringify({ v, coins: { nummus: 3 }, tombMap: { n: 1, t: 1 } });
+    const storage = fakeStorage({ [SAVE_KEY]: raw });
+    assert.deepEqual(new Store(storage).load(5), createState(5), `v${v}`);
+    assert.equal(storage.map.get(`${SAVE_KEY}.unreadable`), raw, 'kept aside');
+  }
+});
+
+test('unknown versions are rejected', () => {
+  assert.equal(migrate({ v: SAVE_VERSION + 1 }, 0), null);
+  assert.equal(migrate(null, 0), null);
+});
+
+test('migrate drops malformed entries', () => {
+  const s = migrate({
+    v: SAVE_VERSION,
+    vault: { lat: 'x', lon: 1, t: 1 },
+    searches: [{ lat: 1, lon: 2, t: 3 }, { lat: 1 }, null],
+    coins: { nummus: 2, bad: -1, worse: 1.5 },
+    money: -5,
+    mission: { n: 9, t: 1, key: ['cat', 'fly', 'man'], shards: [], stageAt: 1 },
+    tombs: [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }, { n: 2, lat: 1, lon: 2, t: 3 }, { n: 3, lat: 1, lon: 2, t: 3, opened: true, artifact: 'skull' }],
+    artifacts: [{ id: 'cup', n: 1, t: 3, from: 'tomb' }, { id: 'cup', n: 1, t: 3, from: 'gift' }, { id: 'skull', n: 4, t: 3, from: 'tomb' }],
+    lost: [{ n: 2, t: 3 }, { n: 99, t: 3 }, { n: 3 }],
+    settings: { lang: 'de', sound: false },
+  }, 0);
+  assert.equal(s.vault, null);
+  assert.deepEqual(s.searches, [{ lat: 1, lon: 2, t: 3 }]);
+  assert.deepEqual(s.coins, { nummus: 2 });
+  assert.equal(s.money, 0);
+  assert.equal(s.mission, null, 'no such mission');
+  assert.deepEqual(s.tombs, [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }]);
+  assert.deepEqual(s.artifacts, [{ id: 'cup', n: 1, t: 3, from: 'tomb' }]);
+  assert.deepEqual(s.lost, [{ n: 2, t: 3 }]);
+  assert.deepEqual(s.settings, { lang: null, sound: false, music: false, haptics: true, keepAwake: true, quality: 'full' });
+});
+
+test('a mission needs a valid key; foreign and repeated shards are dropped', () => {
+  const broken = migrate({ v: SAVE_VERSION, mission: { ...MISSION, key: ['fish', 'fish', 'cat'] } }, 0);
+  assert.equal(broken.mission, null);
+  const s = migrate({ v: SAVE_VERSION, mission: { ...MISSION, shards: ['man', 'man', 'dog'] } }, 0);
+  assert.deepEqual(s.mission, { ...MISSION, shards: ['man'] });
+});
+
+test('a closed tomb survives only with its mission', () => {
+  const tomb = { n: 2, lat: 1, lon: 2, t: 3, opened: false, artifact: 'vase' };
+  assert.deepEqual(migrate({ v: SAVE_VERSION, tombs: [tomb] }, 0).tombs, []);
+  assert.deepEqual(migrate({ v: SAVE_VERSION, mission: MISSION, tombs: [tomb] }, 0).tombs, [tomb]);
+});
+
+test('a broken satchel keeps only valid finds', () => {
+  const s = migrate({ v: SAVE_VERSION, satchel: { coins: { ducat: 2, bad: 0, worse: 'x' }, artifacts: [{ id: 'cup', n: 1, t: 3, from: 'tomb' }, { id: 'skull', n: 1, t: 3, from: 'tomb' }] } }, 0);
+  assert.deepEqual(s.satchel, { coins: { ducat: 2 }, artifacts: [{ id: 'cup', n: 1, t: 3, from: 'tomb' }] });
+  assert.deepEqual(migrate({ v: SAVE_VERSION }, 0).satchel, { coins: {}, artifacts: [] }, 'saves from before the satchel');
+});
+
+test('settings saved before new options existed get defaults', () => {
+  const s = migrate({ v: SAVE_VERSION, settings: { lang: 'pl', quality: 'ultra', keepAwake: false } }, 0);
+  assert.deepEqual(s.settings, { lang: 'pl', sound: true, music: false, haptics: true, keepAwake: false, quality: 'full' });
+});
+
+test('storage that throws never breaks the game', () => {
+  const broken = { getItem() { throw new Error('denied'); }, setItem() { throw new Error('full'); }, removeItem() {} };
+  const store = new Store(broken);
+  assert.deepEqual(store.load(1), createState(1));
+  assert.equal(store.save(createState(1)), false);
+});

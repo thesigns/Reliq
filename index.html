@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#1c100a">
+  <meta name="description" content="Reliq — poszukiwanie skarbów podczas spacerów.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Reliq">
+  <title>Reliq</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="assets/icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/Cinzel-normal-400-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/EBGaramond-italic-400-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+  <div id="app">
+    <div id="stage">
+      <canvas id="map"></canvas>
+      <canvas id="fx"></canvas>
+      <div id="grid-labels" aria-hidden="true"></div>
+      <div id="map-labels" aria-hidden="true"></div>
+      <div id="map-tip" class="map-tip" role="status" hidden>
+        <div class="tip-title"></div>
+        <div class="tip-body"></div>
+      </div>
+      <button id="vault-pointer" class="edge-pointer" data-i18n-label="btn.toVault" hidden>
+        <span class="ep-arrow"></span>
+        <span class="ep-icon"></span>
+        <span class="ep-dist"></span>
+      </button>
+    </div>
+
+    <div class="scale-bar" id="scale-bar"></div>
+
+    <div class="rose" id="rose"></div>
+
+    <header class="topbar" id="topbar">
+      <button class="menu-btn" id="btn-menu" data-i18n-label="btn.menu"></button>
+      <div class="logo">Reliq</div>
+      <div class="stat stat-right" id="stat-gps" role="group" data-i18n-label="hud.gps">
+        <span class="stat-value" id="gps-acc">±– m</span>
+        <span class="glyph" id="g-gps"></span>
+      </div>
+    </header>
+
+    <footer class="dock">
+      <div class="ribbon" id="status"><span class="ribbon-body"><span id="status-text"></span></span></div>
+      <button class="dock-btn" id="btn-journal" data-i18n-label="btn.journal"></button>
+      <div class="action">
+        <button class="medallion" id="btn-search" data-i18n-label="action.search"></button>
+      </div>
+      <button class="dock-btn" id="btn-recenter" data-i18n-label="btn.recenter"></button>
+    </footer>
+
+    <div id="reveal" class="reveal" hidden>
+      <div class="reveal-backdrop"></div>
+      <div class="reveal-rays"></div>
+      <div class="reveal-halo"></div>
+      <canvas id="reveal-particles" class="reveal-particles"></canvas>
+      <div class="reveal-stage">
+        <canvas id="reveal-coin" class="reveal-coin"></canvas>
+        <canvas id="reveal-artifact" class="reveal-artifact"></canvas>
+        <div class="paper-card" id="paper-card">
+          <div class="card-label" id="paper-label"></div>
+          <div class="card-sketch" id="paper-sketch"></div>
+          <div class="card-title" id="paper-name"></div>
+          <div class="card-desc" id="paper-desc"></div>
+        </div>
+      </div>
+      <div class="reveal-info">
+        <div class="reveal-context" id="reveal-context" style="--i:0" hidden></div>
+        <div class="reveal-rarity" id="reveal-rarity" style="--i:1"></div>
+        <h2 class="reveal-name" id="reveal-name" style="--i:2"></h2>
+        <p class="reveal-desc" id="reveal-desc" style="--i:3"></p>
+        <div class="reveal-new" id="reveal-new" style="--i:4" hidden></div>
+        <div class="reveal-hint" id="reveal-hint" style="--i:5"></div>
+        <button class="btn-brass" id="reveal-close" style="--i:6"></button>
+      </div>
+      <div class="flash"></div>
+    </div>
+
+    <button class="tomb-btn" id="btn-tomb" data-i18n-label="btn.mission" hidden></button>
+    <button class="satchel-btn" id="btn-satchel" data-i18n-label="btn.satchel" hidden></button>
+    <button class="mission-tag" id="mission-tag" hidden><span class="mt-label"></span><span class="mt-value"></span><span class="mt-bar" hidden><i></i></span></button>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+    <div class="stamp" id="stamp" aria-hidden="true" hidden></div>
+
+    <div id="journal" class="journal" role="dialog" aria-modal="true" hidden>
+      <div class="journal-backdrop"></div>
+      <div class="journal-book">
+        <div class="journal-head">
+          <h2 class="journal-title"></h2>
+          <button class="journal-close" data-i18n-label="btn.close">×</button>
+        </div>
+        <nav class="journal-tabs">
+          <button data-tab="coins"></button>
+          <button data-tab="tombs"></button>
+          <button data-tab="fence"></button>
+        </nav>
+        <div class="journal-paper"><div class="journal-page"></div></div>
+      </div>
+    </div>
+
+    <div id="satchel-view" class="scroll-overlay satchel-view" hidden>
+      <div class="scroll-backdrop"></div>
+      <div class="paper-card satchel-card">
+        <div class="card-label"></div>
+        <div class="card-title"></div>
+        <div class="sv-items"></div>
+        <p class="scroll-msg"></p>
+        <div class="card-actions"><button class="btn-link" id="satchel-close"></button></div>
+      </div>
+    </div>
+
+    <div id="deposit" class="deposit" hidden>
+      <div class="deposit-backdrop"></div>
+      <div class="deposit-stage">
+        <div class="deposit-rays"></div>
+        <div class="deposit-halo"></div>
+        <canvas class="deposit-scene"></canvas>
+        <canvas class="deposit-particles"></canvas>
+        <div class="flash"></div>
+      </div>
+      <div class="deposit-head"><div class="deposit-label"></div><h2 class="deposit-title"></h2></div>
+      <div class="deposit-callout" aria-live="polite"></div>
+      <div class="deposit-tally"><span class="dt-label"></span><span class="dt-value">0</span></div>
+      <p class="deposit-hint"></p>
+      <div class="deposit-summary">
+        <h3 class="ds-title"></h3>
+        <div class="ds-items"></div>
+        <div class="ds-actions"><button class="btn-brass" data-go="vault"></button><button class="btn-link" data-go="map"></button></div>
+      </div>
+    </div>
+
+    <div id="menu" class="menu" role="dialog" aria-modal="true" hidden>
+      <div class="menu-backdrop"></div>
+      <div class="journal-book menu-book">
+        <div class="menu-home">
+          <div class="menu-logo">Reliq</div>
+          <p class="menu-tagline" data-i18n="menu.tagline"></p>
+          <div class="menu-actions">
+            <button class="btn-brass" id="menu-play"></button>
+            <button class="menu-link" data-page="settings" data-i18n="menu.settings"></button>
+            <button class="menu-link" data-page="about" data-i18n="menu.about"></button>
+          </div>
+          <p class="menu-status" aria-live="polite"></p>
+          <p class="menu-version"></p>
+        </div>
+        <div class="menu-sub" hidden>
+          <div class="journal-head">
+            <h2 class="journal-title menu-sub-title"></h2>
+            <button class="journal-close menu-back" data-i18n-label="menu.back">‹</button>
+          </div>
+          <div class="journal-paper"><div class="journal-page menu-page"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="onboarding" class="onboarding" role="dialog" aria-modal="true" hidden>
+      <div class="onb-backdrop"></div>
+      <div class="onb-langs" role="group" data-i18n-label="onb.language">
+        <button data-lang="pl">PL</button><button data-lang="en">EN</button>
+      </div>
+      <div class="onb-sheet paper-card">
+        <div class="onb-page" data-step="letter">
+          <div class="onb-logo">Reliq</div>
+          <h2 class="onb-title" data-i18n="onb.letter.title"></h2>
+          <p class="onb-letter" data-i18n="onb.letter.body"></p>
+          <p class="onb-sign" data-i18n="onb.letter.sign"></p>
+        </div>
+        <div class="onb-page" data-step="vault">
+          <div class="onb-sketch" data-sketch="vault"></div>
+          <h2 class="onb-title" data-i18n="onb.vault.title"></h2>
+          <p class="onb-text" data-i18n="onb.vault.body"></p>
+        </div>
+        <div class="onb-page" data-step="search">
+          <div class="onb-sketch" data-sketch="search"></div>
+          <h2 class="onb-title" data-i18n="onb.search.title"></h2>
+          <p class="onb-text" data-i18n="onb.search.body"></p>
+        </div>
+        <div class="onb-page" data-step="finds">
+          <div class="onb-sketch" data-sketch="finds"></div>
+          <h2 class="onb-title" data-i18n="onb.finds.title"></h2>
+          <p class="onb-text" data-i18n="onb.finds.body"></p>
+        </div>
+        <div class="onb-page" data-step="location">
+          <div class="onb-sketch" data-sketch="location"></div>
+          <h2 class="onb-title" data-i18n="onb.location.title"></h2>
+          <p class="onb-text" data-i18n="onb.location.body"></p>
+        </div>
+        <div class="onb-dots"></div>
+        <div class="onb-actions">
+          <button class="btn-link" id="onb-skip"></button>
+          <button class="btn-brass" id="onb-next"></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="scroll" class="scroll-overlay" hidden>
+      <div class="scroll-backdrop"></div>
+      <div class="paper-card map-card">
+        <div class="card-label"></div>
+        <div class="card-sketch"></div>
+        <div class="card-title"></div>
+        <ul class="checks"></ul>
+        <div class="scroll-shards"></div>
+        <p class="scroll-msg" aria-live="polite"></p>
+        <p class="scroll-deadline"></p>
+        <div class="card-actions">
+          <button class="btn-brass" id="scroll-gate" hidden></button>
+          <button class="btn-link" id="scroll-close"></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gate" class="gate" hidden>
+      <div class="gate-backdrop"></div>
+      <div class="gate-head">
+        <div class="gate-label"></div>
+        <h2 class="gate-title"></h2>
+      </div>
+      <div class="gate-stage"></div>
+      <div class="gate-foot">
+        <div class="gate-shards"></div>
+        <p class="gate-hint" aria-live="polite"></p>
+        <button class="btn-link" id="gate-close"></button>
+      </div>
+    </div>
+
+    <aside id="debug" class="debug" hidden>
+      <button id="debug-toggle" class="debug-toggle" aria-label="Debug">⚙</button>
+      <div class="debug-body">
+        <h3>Panel testowy</h3>
+        <fieldset>
+          <legend>Źródło pozycji</legend>
+          <div class="seg" id="dbg-source">
+            <button data-gps="sim">Symulator</button>
+            <button data-gps="real">Prawdziwy GPS</button>
+          </div>
+          <div class="sim-only">
+            <label>Dokładność GPS <span id="dbg-acc-v">8 m</span>
+              <input type="range" id="dbg-acc" min="3" max="90" value="8">
+            </label>
+            <label>Przyspieszenie marszu <span id="dbg-warp-v">×8</span>
+              <input type="range" id="dbg-warp" min="1" max="30" value="8">
+            </label>
+            <label class="check"><input type="checkbox" id="dbg-noise"> Realistyczny szum (dryf, skoki)</label>
+            <label class="check"><input type="checkbox" id="dbg-signal" checked> Sygnał GPS</label>
+          </div>
+          <pre class="readout" id="dbg-readout"></pre>
+        </fieldset>
+        <fieldset>
+          <legend>Gra</legend>
+        <label>Następne znalezisko
+          <select id="dbg-result">
+            <option value="auto">Losowo (szanse z GDD)</option>
+            <option value="junk">Śmieć</option>
+            <option value="shard">Skorupa (w misji; pomija dystans)</option>
+            <option value="tomb">Grobowiec (po 3 skorupach; pomija dystans)</option>
+            <option value="nummus">Common — Nummus</option>
+            <option value="kaiyuan">Common — Kaiyuan Tongbao</option>
+            <option value="denarius">Uncommon — Denar</option>
+            <option value="eightreales">Uncommon — 8 reali</option>
+            <option value="tetradrachm">Uncommon — Tetradrachma</option>
+            <option value="ducat">Rare — Dukat</option>
+            <option value="solidus">Rare — Solidus</option>
+            <option value="doubloon">Rare — Dublon</option>
+            <option value="stater">Legendary — Stater lidyjski</option>
+            <option value="eidmar">Legendary — Aureus EID MAR</option>
+          </select>
+        </label>
+        <div class="row"><button id="dbg-hour">Czas +1 h</button><button id="dbg-lang">PL / EN</button></div>
+        <div class="row"><button id="dbg-newgame">Nowa gra</button><button id="dbg-reset">Świat demo</button></div>
+        <div class="row"><button id="dbg-here">Świat demo tutaj</button></div>
+        <div class="row"><button id="dbg-artifact">Podgląd artefaktu</button><button id="dbg-coins-add">+12 Nummus i Kaiyuan</button></div>
+        <div class="row"><button id="dbg-gate">Teleport pod wrota</button><button id="dbg-home">Teleport do skarbca</button></div>
+        <div class="row"><button id="dbg-satchel">Sakwa: +6 monet</button></div>
+        <div class="row"><button id="dbg-deadline">Limit −1 dzień</button></div>
+        <div class="row"><button id="dbg-money">+50 pieniędzy</button><button id="dbg-fence">Paser: od razu</button></div>
+        <p class="hint" id="dbg-coins"></p>
+        </fieldset>
+        <p class="hint sim-only">WASD / strzałki: marsz · Shift: bieg<br>Dwuklik: idź tam · Ctrl + dwuklik: teleport</p>
+      </div>
+    </aside>
+
+    <div id="splash" class="splash" aria-hidden="true">
+      <div class="splash-logo">Reliq</div>
+      <div class="splash-compass"></div>
+    </div>
+
+    <div id="boot-error" class="boot-error" hidden></div>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# Dependencies (none at runtime; guard against local tooling)
+node_modules/
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Blender working files (the scripts in scripts/blender/ regenerate everything)
+*.blend
+*.blend1
+__pycache__/
+*.pyc
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+*.tmp
+.cache/

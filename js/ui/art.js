@@ -1,4 +1,4 @@
-// Inline SVG artwork for the HUD: brass medallion, leather journal, compass rose, small glyphs.
+// Inline SVG artwork for the HUD: brass medallion, vault chest, map buttons, small glyphs.
 
 const f1 = (v) => v.toFixed(2);
 
@@ -172,32 +172,6 @@ export function notebookSVG() {
     <path d="${cover} M14 10 H16" fill="none" stroke="#1d0e06" stroke-width="1.2" stroke-linejoin="round"/>
     <rect x="14" y="10" width="5.2" height="42" rx="1.6" fill="none" stroke="#1d0e06" stroke-width="1.1"/>
   </g>
-</svg>`;
-}
-
-export function compassRoseSVG() {
-  const point = (angle, len, w, dark) => {
-    const a = (angle * Math.PI) / 180;
-    const tip = [50 + Math.sin(a) * len, 50 - Math.cos(a) * len];
-    const l = [50 + Math.sin(a - Math.PI / 2) * w, 50 - Math.cos(a - Math.PI / 2) * w];
-    const r = [50 + Math.sin(a + Math.PI / 2) * w, 50 - Math.cos(a + Math.PI / 2) * w];
-    return `<path d="M50 50 L${f1(l[0])} ${f1(l[1])} L${f1(tip[0])} ${f1(tip[1])} Z" fill="${dark ? '#3b2414' : '#efe0bd'}" stroke="#3b2414" stroke-width=".6"/>
-            <path d="M50 50 L${f1(r[0])} ${f1(r[1])} L${f1(tip[0])} ${f1(tip[1])} Z" fill="${dark ? '#efe0bd' : '#3b2414'}" stroke="#3b2414" stroke-width=".6"/>`;
-  };
-  let ticks = '';
-  for (let i = 0; i < 64; i++) {
-    const a = (i / 64) * Math.PI * 2;
-    const r0 = i % 8 === 0 ? 38 : 40;
-    ticks += `M${f1(50 + Math.cos(a) * r0)} ${f1(50 + Math.sin(a) * r0)} L${f1(50 + Math.cos(a) * 42)} ${f1(50 + Math.sin(a) * 42)} `;
-  }
-  return `<svg viewBox="0 0 100 100" aria-hidden="true">
-  <circle cx="50" cy="50" r="42" fill="none" stroke="#3b2414" stroke-width="1"/>
-  <circle cx="50" cy="50" r="37.5" fill="none" stroke="#3b2414" stroke-width=".5"/>
-  <path d="${ticks}" stroke="#3b2414" stroke-width=".6"/>
-  ${[45, 135, 225, 315].map((a) => point(a, 26, 5, false)).join('')}
-  ${[0, 90, 180, 270].map((a) => point(a, 44, 7, true)).join('')}
-  <circle cx="50" cy="50" r="3" fill="#efe0bd" stroke="#3b2414" stroke-width=".8"/>
-  <path d="M50 0.5 l3 6 h-6 Z" fill="#8b1e1e"/>
 </svg>`;
 }
 

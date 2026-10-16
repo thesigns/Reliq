@@ -2,9 +2,9 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
-## 0.11.0 — w przygotowaniu
+## 0.11.0 — 2026-10-16
 
-Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
+Poprawki po pierwszym spacerze testowym.
 
 ### Nowe
 
@@ -39,6 +39,7 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 
 ### Usunięte
 
+- **Róża wiatrów** w prawym górnym rogu mapy. Wyglądała jak element interfejsu i tylko zaśmiecała mapę.
 - **Czerwona przerywana linia trasy** za graczem. Przeszukane obszary i tak pokazują przebytą drogę, a linia myliła się z innymi przerywanymi liniami na mapie. Zapis gry nie przechowuje już trasy (wcześniej nawet ~250 KB po długim spacerze).
 - **Muzyka** i jej przełącznik w ustawieniach. Na głośniku telefonu prawie jej nie było słychać, a w tle i tak milkła. Efekty dźwiękowe zostały.
 - **Napis „Nowość”** przy monetach: w scenie składania łupu, w podsumowaniu i na ekranie znaleziska.

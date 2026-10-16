@@ -2,7 +2,7 @@
 
 import { t } from '../i18n/i18n.js';
 import { formatDMS } from '../core/geo.js';
-import { medallionSVG, vaultSVG, recenterSVG, compassRoseSVG, menuSVG, gpsGlyph } from './art.js';
+import { medallionSVG, vaultSVG, recenterSVG, menuSVG, gpsGlyph } from './art.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -11,7 +11,6 @@ export class Hud {
     $('btn-search').innerHTML = medallionSVG();
     $('btn-journal').innerHTML = vaultSVG();
     $('btn-recenter').innerHTML = recenterSVG();
-    $('rose').innerHTML = compassRoseSVG();
     $('btn-menu').innerHTML = menuSVG();
     $('g-gps').innerHTML = gpsGlyph();
     this.status = null;

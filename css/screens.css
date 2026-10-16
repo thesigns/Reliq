@@ -67,7 +67,7 @@
   position: absolute;
   z-index: 30;
   left: 50%;
-  /* below the mission button and the compass rose */
+  /* below the mission button and its tag */
   top: calc(var(--safe-top) + 146px);
   max-width: min(86%, 360px);
   padding: 10px 18px 11px;

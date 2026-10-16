@@ -57,6 +57,9 @@ export const MISSIONS = [
   { artifact: 'vase', tier: 'iron' },
   { artifact: 'chalice', tier: 'iron' },
   { artifact: 'key', tier: 'iron' },
+  { artifact: 'horn', tier: 'silver' },
+  { artifact: 'watch', tier: 'silver' },
+  { artifact: 'inkwell', tier: 'silver' },
 ];
 
 export const tierDef = (id) => TIERS.find((t) => t.id === id) ?? null;

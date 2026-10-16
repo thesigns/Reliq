@@ -151,7 +151,7 @@ Kształt: duży żelazny klucz: ażurowe ucho w kształcie koniczyny, długi trz
 ### Róg jarla Hrafna
 
 Tytuł: Róg jarla Hrafna
-Model: horn.js
+Model: horn.js (gotowy)
 Lore: Jarl pił z niego tylko z wrogami, z którymi zawierał pokój, i dlatego pił rzadko.
 Detal (po znalezieniu): Srebrne okucie na czubku wyrzeźbiono w głowę kruka.
 Kształt: zakrzywiony kremowy róg do picia, srebrna obręcz przy brzegu i srebrny czubek z głową kruka, dwie srebrne nóżki, na których stoi.
@@ -159,7 +159,7 @@ Kształt: zakrzywiony kremowy róg do picia, srebrna obręcz przy brzegu i srebr
 ### Zegarek kapitana
 
 Tytuł: Zegarek kapitana
-Model: watch.js
+Model: watch.js (gotowy)
 Lore: Kapitan zszedł ze statkiem na dno, a jego zegarek wypłynął sam i od tamtej pory wskazuje tę samą godzinę.
 Detal (po znalezieniu): Pod klapką wygrawerowano imię, które nie było imieniem statku.
 Kształt: srebrny zegarek kieszonkowy z uniesioną klapką, biała tarcza z czarnymi wskazówkami, koronka u góry i kawałek łańcuszka.
@@ -167,7 +167,7 @@ Kształt: srebrny zegarek kieszonkowy z uniesioną klapką, biała tarcza z czar
 ### Kałamarz poety
 
 Tytuł: Kałamarz poety
-Model: inkwell.js
+Model: inkwell.js (gotowy)
 Lore: Poeta pisał tylko nocą, a rano palił wszystko, co napisał — ocalał jeden wiersz, ukryty w kałamarzu.
 Detal (po znalezieniu): Na dnie zasechł atrament w kolorze nocnego nieba.
 Kształt: srebrny kałamarz na czterech nóżkach, z odchylonym wieczkiem i wbitym długim białym piórem.

@@ -7,11 +7,14 @@ import { CLOG } from './clog.js';
 import { COMB } from './comb.js';
 import { CUP } from './cup.js';
 import { HELMET } from './helmet.js';
+import { HORN } from './horn.js';
+import { INKWELL } from './inkwell.js';
 import { KEY } from './key.js';
 import { LAMP } from './lamp.js';
 import { LUR } from './lur.js';
 import { SKYDISC } from './skydisc.js';
 import { VASE } from './vase.js';
+import { WATCH } from './watch.js';
 
 export const MODELS = {
   abacus: ABACUS,
@@ -21,9 +24,12 @@ export const MODELS = {
   comb: COMB,
   cup: CUP,
   helmet: HELMET,
+  horn: HORN,
+  inkwell: INKWELL,
   key: KEY,
   lamp: LAMP,
   lur: LUR,
   skydisc: SKYDISC,
   vase: VASE,
+  watch: WATCH,
 };

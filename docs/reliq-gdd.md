@@ -84,7 +84,7 @@ Common (75% szans)
 
 Uncommon (20% szans)
 
-3. Denar rzymski. Mniej więcej dniówka robotnika. Ty zarobiłeś ją spacerem.
+3. Denar rzymski. Mniej więcej dniówka robotnika. Twoja wpadła za spacer.
    - EN: Roman denarius. Roughly a laborer's daily wage. You earned it with a walk.
 4. Hiszpańskie 8 reali. Gdy brakowało drobnych, cięto je na kawałki. Ta jest cała.
    - EN: Spanish piece of eight. When small change ran short, they were cut into pieces. This one is whole.

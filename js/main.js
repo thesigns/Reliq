@@ -502,7 +502,7 @@ function tombButtonArrive() {
 }
 
 async function showLoot(loot) {
-  if (loot.type === 'coin') return reveal.showCoin(loot.id, { isNew: loot.isNew });
+  if (loot.type === 'coin') return reveal.showCoin(loot.id);
   if (loot.type === 'junk') return reveal.showJunk(loot.id);
   if (loot.type === 'shard') return reveal.showShard(loot);
   if (loot.type === 'tomb') {

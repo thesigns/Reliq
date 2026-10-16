@@ -181,7 +181,7 @@ Gracz nosi znaleziska w sakwie: monety i artefakt z otwartego grobowca. Symbole 
 
 Gdy gracz wejdzie w promień skarbca (100 m) z czymś w sakwie, cała zawartość zostaje złożona w skarbcu. Limit GPS jest łagodniejszy niż przy szukaniu: dokładność do 100 m, bo skarbiec to zwykle dom, a w budynku sygnał słabnie. Prędkość nie ma znaczenia.
 
-Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia skarbca spada i otwiera się w blasku, monety wpadają do niej jedna po drugiej (od pospolitych do najrzadszych, nowe z napisem „Nowość”), artefakt zawisa nad skrzynią z nazwą i wpada do niej na koniec, wieko się zatrzaskuje. Podsumowanie pokazuje, co złożono. Dotknięcie ekranu przyspiesza scenę.
+Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia skarbca spada i otwiera się w blasku, monety wpadają do niej jedna po drugiej (od pospolitych do najrzadszych), artefakt zawisa nad skrzynią z nazwą i wpada do niej na koniec, wieko się zatrzaskuje. Podsumowanie pokazuje, co złożono. Dotknięcie ekranu przyspiesza scenę.
 
 Zawartość sakwy nigdy nie przepada. Monety w sakwie nie liczą się jeszcze do kolekcji i paser ich nie kupi, dopóki nie trafią do skarbca.
 

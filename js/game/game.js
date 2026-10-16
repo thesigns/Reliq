@@ -99,13 +99,11 @@ export class Game {
     return loot.type === 'coin' ? this.addCoin(loot.id) : loot;
   }
 
-  // Finds ride in the satchel until the player is back at the vault. isNew: a coin never
-  // seen before, neither in the vault nor in the satchel.
+  // Finds ride in the satchel until the player is back at the vault.
   addCoin(id) {
     const bag = this.state.satchel.coins;
-    const isNew = !(this.state.coins[id] > 0) && !(bag[id] > 0);
     bag[id] = (bag[id] ?? 0) + 1;
-    return { type: 'coin', id, rarity: coinById(id).rarity, isNew };
+    return { type: 'coin', id, rarity: coinById(id).rarity };
   }
 
   // ---- the satchel and the vault ----
@@ -125,14 +123,14 @@ export class Game {
     return { distance, ok };
   }
 
-  // Empties the satchel into the vault. coins: [{ id, count, rarity, isNew }], commonest
-  // first so the rarest land last; isNew: the vault had none before.
+  // Empties the satchel into the vault. coins: [{ id, count, rarity }], commonest
+  // first so the rarest land last.
   deposit(fix) {
     if (!this.depositCheck(fix).ok) return { ok: false };
     const s = this.state, bag = s.satchel;
     const order = ['common', 'uncommon', 'rare', 'legendary'];
     const coins = Object.entries(bag.coins)
-      .map(([id, count]) => ({ id, count, rarity: coinById(id).rarity, isNew: !(s.coins[id] > 0) }))
+      .map(([id, count]) => ({ id, count, rarity: coinById(id).rarity }))
       .sort((a, b) => order.indexOf(a.rarity) - order.indexOf(b.rarity));
     for (const c of coins) s.coins[c.id] = (s.coins[c.id] ?? 0) + c.count;
     const artifacts = bag.artifacts;

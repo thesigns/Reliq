@@ -53,18 +53,11 @@ test('junk is not kept, coins go into the satchel', () => {
   game.search(fixAt(300, 0), READY, T0);
   assert.deepEqual(state.satchel.coins, {});
   const c1 = game.search(fixAt(600, 0), READY, T0 + 1);
-  assert.deepEqual(c1.loot, { type: 'coin', id: 'nummus', rarity: 'common', isNew: true });
-  const c2 = game.search(fixAt(900, 0), READY, T0 + 2);
-  assert.equal(c2.loot.isNew, false, 'already in the satchel');
+  assert.deepEqual(c1.loot, { type: 'coin', id: 'nummus', rarity: 'common' });
+  game.search(fixAt(900, 0), READY, T0 + 2);
   assert.deepEqual(state.satchel.coins, { nummus: 2 });
   assert.deepEqual(state.coins, {}, 'nothing in the vault yet');
   assert.equal(game.satchelCount(), 2);
-});
-
-test('a coin already in the vault is not new', () => {
-  const { game, state } = newGame({ rng: seq(...COIN_ROLL) });
-  state.coins.nummus = 1;
-  assert.equal(game.search(fixAt(300, 0), READY, T0).loot.isNew, false);
 });
 
 test('the satchel is stored at the vault, with a looser GPS limit', () => {
@@ -79,7 +72,7 @@ test('the satchel is stored at the vault, with a looser GPS limit', () => {
   assert.equal(game.deposit(fixAt(200, 0)).ok, false);
   const r = game.deposit(fixAt(30, 0));
   assert.equal(r.ok, true);
-  assert.deepEqual(r.coins.map((c) => [c.id, c.count, c.isNew]), [['nummus', 2, false], ['ducat', 1, true], ['eidmar', 1, true]], 'rarest last');
+  assert.deepEqual(r.coins.map((c) => [c.id, c.count]), [['nummus', 2], ['ducat', 1], ['eidmar', 1]], 'rarest last');
   assert.deepEqual(r.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }]);
   assert.deepEqual(state.coins, { nummus: 3, ducat: 1, eidmar: 1 });
   assert.deepEqual(state.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }]);

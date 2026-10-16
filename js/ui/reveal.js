@@ -198,26 +198,24 @@ export class Reveal {
 
   // button: the label of an action that ends the reveal ("To the satchel"); without one the
   // screen is only looked at and closes with the cross in the corner.
-  setInfo({ context = '', rarity = '', name = '', desc = '', isNew = false, button = '' }) {
+  setInfo({ context = '', rarity = '', name = '', desc = '', button = '' }) {
     this.el('#reveal-context').textContent = context;
     this.el('#reveal-context').hidden = !context;
     this.el('#reveal-rarity').textContent = rarity;
     this.el('#reveal-name').textContent = name;
     this.el('#reveal-desc').textContent = desc;
-    this.el('#reveal-new').textContent = t('reveal.newFind');
-    this.el('#reveal-new').hidden = !isNew;
     this.el('#reveal-hint').textContent = t('reveal.tapToFlip');
     this.el('#reveal-close').textContent = button;
     this.el('#reveal-close').hidden = !button;
     this.el('#reveal-x').hidden = !!button;
   }
 
-  // options: { isNew, context } — context is an extra line, e.g. "Treasure of tomb II".
-  async showCoin(id, { isNew = false, context = '' } = {}) {
+  // options: { context } — an extra line, e.g. "Treasure of tomb II".
+  async showCoin(id, { context = '' } = {}) {
     const def = coinById(id);
     const rarity = def.rarity;
     this.setInfo({
-      context, isNew,
+      context,
       rarity: t(`rarity.${rarity}`),
       name: t(`items.${id}.name`),
       desc: t(`items.${id}.desc`),

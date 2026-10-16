@@ -65,7 +65,7 @@ export class DepositScreen {
     this.scene.add('chest-gold', CHEST_GOLD);
   }
 
-  // haul: { coins: [{ id, count, rarity, isNew }], artifacts: [{ id }] }, as game.deposit()
+  // haul: { coins: [{ id, count, rarity }], artifacts: [{ id }] }, as game.deposit()
   // returns it. ui: { coinThumb(id), artifactThumb(id) } for the summary.
   // Resolves 'vault' (open the journal) or 'map'.
   play(haul, ui) {
@@ -304,11 +304,9 @@ export class DepositScreen {
     this.particles.sparks(p.x, p.y, SPARK_COUNT[rarity], SPARKS[rarity]);
     this.heapBump = Math.min(1.2, this.heapBump + 0.5);
     if (f.first && (rarity === 'rare' || rarity === 'legendary')) sfx.chime(rarity);
-    if (f.first && f.coin.isNew) this.callout(t('deposit.newCoin', { name: t(`items.${f.coin.id}.name`) }), rarity);
   }
 
-  // A line over the scene: a new coin's name for a moment, or (hold) an artifact's name
-  // until it sinks into the chest.
+  // A line over the scene: an artifact's name, held (hold) until it sinks into the chest.
   callout(text, kind, hold = false) {
     const el = this.el('.deposit-callout');
     el.textContent = text;
@@ -341,7 +339,7 @@ export class DepositScreen {
       html += `<div class="ds-item ds-art">${img(this.ui.artifactThumb(a.id))}<span class="ds-name">${esc(t(`artifacts.${a.id}.name`))}</span><span class="ds-note">${esc(t('deposit.onShelf'))}</span></div>`;
     }
     for (const c of coins) {
-      html += `<div class="ds-item">${img(this.ui.coinThumb(c.id))}<span class="ds-count">×${c.count}</span>${c.isNew ? `<span class="ds-new">${esc(t('deposit.new'))}</span>` : ''}</div>`;
+      html += `<div class="ds-item">${img(this.ui.coinThumb(c.id))}<span class="ds-count">×${c.count}</span></div>`;
     }
     this.el('.ds-title').textContent = t('deposit.summary');
     this.el('.ds-items').innerHTML = html;

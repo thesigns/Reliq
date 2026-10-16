@@ -27,12 +27,36 @@ export const FENCE_PRICES = { common: 1, uncommon: 5, rare: 20, legendary: 100 }
 // The eight symbols on every ring of a tomb gate. Names: i18n symbols.<id>.
 export const SYMBOLS = ['fish', 'spider', 'fly', 'turtle', 'bird', 'man', 'cat', 'snake'];
 
-// Missions in order (docs/lista-misji.md). Distances are in a straight line from the
-// stage's start; price is what the fence asks for the artifact once the mission is lost.
-export const MISSIONS = [
-  { n: 1, artifact: 'cup', symbolDistance: 400, tombDistance: 800, price: 40 },
-  { n: 2, artifact: 'vase', symbolDistance: 450, tombDistance: 900, price: 60 },
-  { n: 3, artifact: 'chalice', symbolDistance: 500, tombDistance: 1000, price: 80 },
+// Mission tiers (docs/lista-misji.md), easiest first. Every mission of a tier shares its
+// walks, in a straight line from the stage's start, and the price the fence asks for its
+// artifact once the mission is lost. Names: i18n tiers.<id>.
+export const TIERS = [
+  { id: 'wood', symbolDistance: 200, tombDistance: 400, price: 20 },
+  { id: 'copper', symbolDistance: 300, tombDistance: 600, price: 30 },
+  { id: 'bronze', symbolDistance: 500, tombDistance: 1000, price: 50 },
+  { id: 'iron', symbolDistance: 800, tombDistance: 1600, price: 80 },
+  { id: 'silver', symbolDistance: 1200, tombDistance: 2400, price: 120 },
+  { id: 'gold', symbolDistance: 1700, tombDistance: 3400, price: 170 },
+  { id: 'platinum', symbolDistance: 2300, tombDistance: 4600, price: 230 },
+  { id: 'diamond', symbolDistance: 3000, tombDistance: 6000, price: 300 },
 ];
 
-export const missionDef = (n) => MISSIONS.find((m) => m.n === n) ?? null;
+// The missions in the game so far, one per artifact (docs/lista-misji.md lists the ones
+// still to be modelled). The order they are offered in is the game's: tier by tier, and
+// shuffled within a tier (Game.nextMission).
+export const MISSIONS = [
+  { artifact: 'cup', tier: 'copper' },
+  { artifact: 'vase', tier: 'iron' },
+  { artifact: 'chalice', tier: 'iron' },
+];
+
+export const tierDef = (id) => TIERS.find((t) => t.id === id) ?? null;
+
+// Everything about the mission for an artifact: { artifact, tier, rank (0 = easiest tier),
+// symbolDistance, tombDistance, price }, or null if there is no such mission.
+export function missionDef(artifact) {
+  const m = MISSIONS.find((x) => x.artifact === artifact);
+  if (!m) return null;
+  const { id, ...numbers } = tierDef(m.tier);
+  return { artifact, tier: id, rank: TIERS.findIndex((t) => t.id === id), ...numbers };
+}

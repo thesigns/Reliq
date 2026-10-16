@@ -668,8 +668,9 @@ function updateMissionTag(now) {
 
 function checkMissionLost() {
   const n = state.mission?.n ?? null;
-  if (missionSeen !== null && n === null && state.lost.some((l) => l.n === missionSeen)) {
-    const name = t(`artifacts.${missionDef(missionSeen).artifact}.name`);
+  const lost = missionSeen !== null && n === null ? state.lost.find((l) => l.n === missionSeen) : null;
+  if (lost) {
+    const name = t(`artifacts.${lost.artifact}.name`);
     toast.show(t('toast.missionLost', { name, days: RULES.fenceDelayMs / 864e5 }), 8000);
     journal.refresh();
   }
@@ -710,7 +711,7 @@ function viewArtifact(a, opts = {}) {
     name: t(`artifacts.${a.id}.name`),
     desc: artifactText(a.id),
     tomb: a.n,
-    context: a.from === 'fence' ? t('reveal.fromFence') : '',
+    context: [t('tier.label', { tier: t(`tiers.${missionDef(a.id)?.tier}`) }), a.from === 'fence' ? t('reveal.fromFence') : ''].filter(Boolean).join(' · '),
     ...opts,
   });
 }

@@ -9,7 +9,7 @@ import { artifactSketch } from './artifact-sketch.js';
 import { MODELS } from '../render/models/index.js';
 import { shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
-import { RULES } from '../game/rules.js';
+import { RULES, missionDef } from '../game/rules.js';
 
 export const TICK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 11 l4 4 l10 -11" fill="none" stroke="#3b2414" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 export const CROSS = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5 l10 10 M15 5 l-10 10" fill="none" stroke="#8b1e1e" stroke-width="2.6" stroke-linecap="round"/></svg>';
@@ -59,10 +59,10 @@ export class MissionNotebook {
     root.addEventListener('click', (e) => this.onClick(e));
   }
 
-  // The head of a mission's page: its number, the artifact's name and sketch.
+  // The head of a mission's page: its number and tier, the artifact's name and sketch.
   head(n, artifact) {
     this.n = n;
-    this.el('.card-label').textContent = t('notebook.label', { n: formatRoman(n) });
+    this.el('.card-label').textContent = t('notebook.label', { n: formatRoman(n), tier: t(`tiers.${missionDef(artifact)?.tier}`) });
     this.el('.card-title').textContent = t(`artifacts.${artifact}.name`);
     this.el('.card-sketch').innerHTML = artifactSketch(MODELS[artifact]);
     this.card.scrollTop = 0;

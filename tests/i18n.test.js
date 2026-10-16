@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import pl from '../js/i18n/pl.js';
 import en from '../js/i18n/en.js';
 import { COINS, JUNK, ARTIFACTS } from '../js/game/items.js';
-import { SYMBOLS, MISSIONS } from '../js/game/rules.js';
+import { SYMBOLS, TIERS, MISSIONS } from '../js/game/rules.js';
 import { MODELS } from '../js/render/models/index.js';
 import { COIN_MODELS } from '../js/render/models/coins.js';
 
@@ -53,7 +53,8 @@ test('every symbol and artifact has a name, every artifact lore and a model', ()
     }
   }
   for (const id of ARTIFACTS) assert.ok(MODELS[id], `${id} model`);
-  for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), `mission ${m.n} artifact`);
+  for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), `mission ${m.artifact}`);
+  for (const lang of [pl, en]) for (const { id } of TIERS) assert.ok(lang[`tiers.${id}`], `tier ${id}`);
 });
 
 test('every coin has a low-poly model', () => {

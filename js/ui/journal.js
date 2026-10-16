@@ -3,13 +3,14 @@
 
 import { t, formatDate, formatDuration, formatRoman } from '../i18n/i18n.js';
 import { COINS } from '../game/items.js';
-import { RULES, MISSIONS } from '../game/rules.js';
+import { RULES, TIERS, MISSIONS } from '../game/rules.js';
 import { TICK, CROSS } from './notebook.js';
 import { artifactSketch } from './artifact-sketch.js';
 import { MODELS } from '../render/models/index.js';
 import { sfx } from './audio.js';
 
 const RARITIES = ['common', 'uncommon', 'rare', 'legendary'];
+const tierLabel = (id) => t('tier.label', { tier: t(`tiers.${id}`) });
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export class Journal {
@@ -98,25 +99,31 @@ export class Journal {
     return html;
   }
 
-  // The artifacts: one place per mission, three to a row, the picture over its name. A place
-  // stays a blank until its artifact is won (or bought from the fence); one still in the
-  // backpack shows faded.
+  // The artifacts by tier, easiest first, like the coins by rarity: one place per mission,
+  // three to a row, the picture over its name. A place stays a blank until its artifact is
+  // won (or bought from the fence); one still in the backpack shows faded.
   render_artifacts() {
     const { artifacts } = this.deps.state;
-    const owned = new Map(artifacts.map((a) => [a.n, a]));
-    const carried = new Map(this.deps.state.satchel.artifacts.map((a) => [a.n, a]));
-    let html = `<p class="j-summary">${esc(t('journal.summary.artifacts', { artifacts: artifacts.length, missions: MISSIONS.length }))}</p><div class="art-grid">`;
-    for (const m of MISSIONS) {
-      const a = owned.get(m.n), c = carried.get(m.n);
-      if (c) {
-        html += `<div class="art-slot carried"><span class="art-img"><img alt="" data-art="${c.id}"></span><span class="art-name">${esc(t(`artifacts.${c.id}.name`))}<span class="art-carried">${esc(t('journal.carried'))}</span></span></div>`;
-        continue;
+    const owned = new Map(artifacts.map((a) => [a.id, a]));
+    const carried = new Map(this.deps.state.satchel.artifacts.map((a) => [a.id, a]));
+    let html = `<p class="j-summary">${esc(t('journal.summary.artifacts', { artifacts: artifacts.length, missions: MISSIONS.length }))}</p>`;
+    for (const tier of TIERS) {
+      const missions = MISSIONS.filter((m) => m.tier === tier.id);
+      if (!missions.length) continue;
+      html += `<h3 class="j-rarity t-${tier.id}">${esc(tierLabel(tier.id))}</h3><div class="art-grid">`;
+      for (const { artifact: id } of missions) {
+        const name = esc(t(`artifacts.${id}.name`));
+        if (carried.has(id)) {
+          html += `<div class="art-slot carried"><span class="art-img"><img alt="" data-art="${id}"></span><span class="art-name">${name}<span class="art-carried">${esc(t('journal.carried'))}</span></span></div>`;
+          continue;
+        }
+        html += owned.has(id)
+          ? `<button class="art-slot known" data-artifact="${id}"><span class="art-img"><img alt="" data-art="${id}"></span><span class="art-name">${name}</span></button>`
+          : `<div class="art-slot empty"><span class="art-img"><span class="art-blank">?</span></span><span class="art-name">${esc(t('journal.unknownArtifact'))}</span></div>`;
       }
-      html += a
-        ? `<button class="art-slot known" data-artifact="${m.n}"><span class="art-img"><img alt="" data-art="${a.id}"></span><span class="art-name">${esc(t(`artifacts.${a.id}.name`))}</span></button>`
-        : `<div class="art-slot empty"><span class="art-img"><span class="art-blank">?</span></span><span class="art-name">${esc(t('journal.unknownArtifact'))}</span></div>`;
+      html += '</div>';
     }
-    return `${html}</div>`;
+    return html;
   }
 
   async loadThumbs() {
@@ -140,28 +147,30 @@ export class Journal {
     let html = '<div class="nb-page">';
     if (check.active) {
       const left = `<span class="nb-left">${esc(t('notes.left', { t: formatDuration(check.timeLeft, { minutes: true }) }))}</span>`;
-      html += this.entry({ n: check.n, artifact: check.def.artifact, kicker: t('notes.active'), line: left, key: 'active', sketch: true });
+      html += this.entry({ n: check.n, artifact: check.def.artifact, tier: check.def.tier, kicker: t('notes.active'), line: left, key: 'active', sketch: true });
     } else {
       const offer = this.deps.missionOffer();
-      if (offer && !offer.done) html += this.entry({ n: offer.n, artifact: offer.artifact, kicker: t('notes.available'), key: 'offer', sketch: true });
+      if (offer && !offer.done) html += this.entry({ n: offer.n, artifact: offer.artifact, tier: offer.tier, kicker: t('notes.available'), key: 'offer', sketch: true });
       else html += `<p class="nb-note">${esc(t('journal.tombs.noMore'))}</p>`;
     }
     const past = this.pastMissions();
     if (past.length) {
       html += `<h3 class="nb-heading">${esc(t('notes.past'))}</h3>`;
-      for (const p of past) html += this.entry({ n: p.n, artifact: p.artifact, status: p.won ? 'won' : 'lost', key: `${p.won ? 'won' : 'lost'}:${p.n}` });
+      for (const p of past) html += this.entry({ n: p.n, artifact: p.artifact, tier: MISSIONS.find((m) => m.artifact === p.artifact)?.tier, status: p.won ? 'won' : 'lost', key: `${p.won ? 'won' : 'lost'}:${p.n}` });
     }
     return `${html}</div>`;
   }
 
-  // One entry: the mission's number in the margin, what it is about and the way to its page.
-  entry({ n, artifact, kicker, line, status, key, sketch }) {
+  // One entry: the mission's number in the margin, what it is about, its tier and the way
+  // to its page.
+  entry({ n, artifact, tier, kicker, line, status, key, sketch }) {
     const mark = status === 'won' ? TICK : CROSS;
     return `<section class="nb-entry${sketch ? ' nb-current' : ''}">
       <span class="nb-num">${formatRoman(n)}</span>
       ${kicker ? `<p class="nb-kicker">${esc(kicker)}</p>` : ''}
       ${sketch ? `<span class="nb-sketch">${artifactSketch(MODELS[artifact])}</span>` : ''}
       <p class="nb-title">${esc(t(`artifacts.${artifact}.name`))}</p>
+      ${tier ? `<p class="nb-tier t-${tier}">${esc(tierLabel(tier))}</p>` : ''}
       ${status ? `<p class="nb-status nb-${status}">${mark}<span>${esc(t(`notes.${status}`))}</span></p>` : ''}
       ${line ? `<p class="nb-line">${line}</p>` : ''}
       <p class="nb-line"><button class="nb-more" data-entry="${key}">${esc(t('notes.details'))}</button></p>
@@ -172,7 +181,7 @@ export class Journal {
   pastMissions() {
     const s = this.deps.state;
     const won = s.tombs.filter((tb) => tb.opened).map((tb) => ({ n: tb.n, artifact: tb.artifact, won: true, tomb: tb }));
-    const lost = s.lost.map((l) => ({ n: l.n, artifact: MISSIONS.find((m) => m.n === l.n)?.artifact, won: false, t: l.t })).filter((m) => m.artifact);
+    const lost = s.lost.map((l) => ({ n: l.n, artifact: l.artifact, won: false, t: l.t }));
     return [...won, ...lost].sort((x, y) => y.n - x.n);
   }
 
@@ -263,7 +272,7 @@ export class Journal {
     if (!b || !this.root.contains(b)) return;
     if (b.dataset.coin) { this.deps.onViewCoin(b.dataset.coin); return; }
     if (b.dataset.artifact) {
-      const a = this.deps.state.artifacts.find((x) => x.n === +b.dataset.artifact);
+      const a = this.deps.state.artifacts.find((x) => x.id === b.dataset.artifact);
       if (a) this.deps.onViewArtifact(a);
       return;
     }

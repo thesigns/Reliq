@@ -1,19 +1,29 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { RULES, SYMBOLS, MISSIONS, FENCE_PRICES, missionDef } from '../js/game/rules.js';
+import { RULES, SYMBOLS, TIERS, MISSIONS, FENCE_PRICES, missionDef } from '../js/game/rules.js';
 import { ARTIFACTS } from '../js/game/items.js';
 
 const DAY = 24 * 3600e3;
 
-test('missions match docs/lista-misji.md', () => {
-  const table = [[1, 'cup', 400, 800, 40], [2, 'vase', 450, 900, 60], [3, 'chalice', 500, 1000, 80]];
-  assert.equal(MISSIONS.length, table.length);
-  for (const [n, artifact, symbolDistance, tombDistance, price] of table) {
-    assert.deepEqual(missionDef(n), { n, artifact, symbolDistance, tombDistance, price }, `mission ${n}`);
-    assert.ok(ARTIFACTS.includes(artifact));
+test('tiers match docs/lista-misji.md', () => {
+  const table = [
+    ['wood', 200, 400, 20], ['copper', 300, 600, 30], ['bronze', 500, 1000, 50], ['iron', 800, 1600, 80],
+    ['silver', 1200, 2400, 120], ['gold', 1700, 3400, 170], ['platinum', 2300, 4600, 230], ['diamond', 3000, 6000, 300],
+  ];
+  assert.deepEqual(TIERS, table.map(([id, symbolDistance, tombDistance, price]) => ({ id, symbolDistance, tombDistance, price })));
+  for (const t of TIERS) {
+    assert.equal(t.tombDistance, 2 * t.symbolDistance, `${t.id}: the tomb walk is twice a symbol walk`);
+    assert.equal(t.price, t.symbolDistance / 10, `${t.id}: the fence asks a tenth of a symbol walk`);
   }
-  assert.equal(new Set(MISSIONS.map((m) => m.artifact)).size, MISSIONS.length, 'one artifact per mission');
-  assert.equal(missionDef(MISSIONS.length + 1), null);
+});
+
+test('missions match docs/lista-misji.md', () => {
+  assert.deepEqual(MISSIONS, [{ artifact: 'cup', tier: 'copper' }, { artifact: 'vase', tier: 'iron' }, { artifact: 'chalice', tier: 'iron' }]);
+  for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), m.artifact);
+  assert.equal(new Set(MISSIONS.map((m) => m.artifact)).size, MISSIONS.length, 'one mission per artifact');
+  assert.deepEqual(missionDef('cup'), { artifact: 'cup', tier: 'copper', rank: 1, symbolDistance: 300, tombDistance: 600, price: 30 });
+  assert.equal(missionDef('chalice').rank, 3);
+  assert.equal(missionDef('skull'), null);
 });
 
 test('mission timing, gate key and symbols', () => {

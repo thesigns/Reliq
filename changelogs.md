@@ -12,6 +12,9 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 
 - **Dwie nowe monety**, pierwsze z XIX wieku: pospolity krajcar austriacki (miedziany, krążył w Galicji) i legendarny rubel Konstantego (1825, srebrny, cesarza, który nigdy nie panował). W kolekcji jest teraz 12 monet, po trzy w każdej rzadkości.
 
+- **Poziomy misji:** osiem poziomów, od drewnianego do diamentowego. Poziom wyznacza dystanse spacerów (od 200/400 m do 3000/6000 m) i cenę artefaktu u pasera. Misje idą od najłatwiejszego poziomu, wewnątrz poziomu w losowej, ale stałej dla gracza kolejności, a numer misji to kolejność rozegrania. Poziom widać w notatniku, na podglądzie artefaktu i w skarbcu, gdzie artefakty są pogrupowane po poziomach. Zapis gry z poprzedniej wersji zaczyna się od nowa.
+- **Odkupiona misja** zostaje w notatniku jako nieudana, z dopiskiem, że artefakt odkupiono.
+
 ### Zmienione
 
 - **Zamykanie okien:** każde okno, które da się po prostu zamknąć, ma ten sam okrągły przycisk „X” w prawym górnym rogu. Dotyczy to ustawień, „O grze”, dziennika skarbca, karty plecaka, karty misji, wrót grobowca, podglądu monet i artefaktów oraz podsumowania „Powrót do skarbca”. Przyciski z prawdziwą akcją zostały: „Do plecaka”, „Wyrzuć”, „Otwórz wrota”, „Pokaż skarbiec”.

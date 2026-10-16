@@ -113,7 +113,26 @@ Legendary (1% szans)
 
 ## Misje
 
-Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedną aktywną misję. Misje idą w ustalonej kolejności. Ich lista z tytułami, lore i dystansami jest w `docs/lista-misji.md`. Docelowo ma ich być około 60, żeby starczyły na rok gry.
+Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedną aktywną misję. Każda misja należy do jednego z 8 poziomów, od najłatwiejszego: drewniany, miedziany, brązowy, żelazny, srebrny, złoty, platynowy, diamentowy. Poziom wyznacza dystanse spacerów i cenę artefaktu u pasera; wszystkie misje poziomu mają te same:
+
+| Poziom     | Symbol | Grobowiec | Paser |
+|------------|--------|-----------|-------|
+| Drewniany  | 200 m  | 400 m     | 20    |
+| Miedziany  | 300 m  | 600 m     | 30    |
+| Brązowy    | 500 m  | 1000 m    | 50    |
+| Żelazny    | 800 m  | 1600 m    | 80    |
+| Srebrny    | 1200 m | 2400 m    | 120   |
+| Złoty      | 1700 m | 3400 m    | 170   |
+| Platynowy  | 2300 m | 4600 m    | 230   |
+| Diamentowy | 3000 m | 6000 m    | 300   |
+
+Lista misji z poziomami, tytułami, lore i opisem modeli jest w `docs/lista-misji.md`. Na start ma być po 3 artefakty na poziom; nowe będą dochodzić z czasem.
+
+**Kolejność.** Gra proponuje misję z najniższego poziomu, na którym zostały misje nierozegrane. Wewnątrz poziomu kolejność jest losowa, ale stała dla danej gry: losuje się ją przy zakładaniu skarbca. Misja dodana później do łatwiejszego poziomu trafia do wszystkich graczy, także tych na wyższych poziomach — jako odskocznia.
+
+**Numer misji** to kolejność rozegrania: pierwsza rozpoczęta misja to Misja I i Grobowiec I, następna II itd. Poziom widać w notatniku (przy wpisie i w nagłówku strony misji), na podglądzie artefaktu i w skarbcu, gdzie artefakty są pogrupowane po poziomach.
+
+**Długie spacery.** Punkt startu etapu wygasa razem z przeszukaniem po 6 godzinach, więc każdy etap trzeba przejść w ciągu 6 godzin od jego startu. Na wysokich poziomach to wyprawa na cały dzień.
 
 ### Notatnik poszukiwacza
 
@@ -142,14 +161,14 @@ Rozpoczęcie misji czyści wszystkie przeszukane obszary, tak jakby minęło 6 g
 
 Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejdzie je jednym spacerem; można je też rozłożyć w czasie, w granicach limitu misji.
 
-**Dystans etapu.** Każda misja podaje dwa dystanse: na symbol i na grobowiec (np. 400 m i 800 m). Dystans liczy się w linii prostej od punktu startu etapu do miejsca przeszukania:
+**Dystans etapu.** Poziom misji podaje dwa dystanse: na symbol i na grobowiec (np. 800 m i 1600 m na poziomie żelaznym). Dystans liczy się w linii prostej od punktu startu etapu do miejsca przeszukania:
 
 - punktem startu jest pierwsze przeszukanie w danym etapie;
 - jeśli ten obszar wygaśnie (po 6 godzinach), punktem startu staje się najstarsze aktywne przeszukanie z tego etapu, a jeśli takiego nie ma — następne przeszukanie.
 
 **Symbol.** Przeszukanie wykonane co najmniej w dystansie symbolu od punktu startu zawsze daje symbol klucza zamiast zwykłego znaleziska (śmiecia lub monety). Jest to zawsze symbol, którego gracz jeszcze nie ma. Gra nie zdradza, na którym pierścieniu leży.
 
-**Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 450 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
+**Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 800 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
 
 **Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i zostaje na mapie na stałe jako ikona. Musi leżeć co najmniej 200 m od innych grobowców — jeśli leżałby bliżej, przeszukanie przebiega normalnie. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
 
@@ -217,7 +236,7 @@ Paser to czarny rynek w skarbcu, na osobnej zakładce „Paser”. Waluta nie ma
 
 Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte około 1,24.
 
-**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji, 7 dni po ich utracie. Kupiony artefakt trafia od razu do skarbca — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu podaje każda misja w `docs/lista-misji.md`.
+**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji, 7 dni po ich utracie. Kupiony artefakt trafia od razu do skarbca — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu wyznacza poziom misji (tabela w rozdziale „Misje”). Odkupiona misja zostaje w notatniku jako nieudana, a jej artefakt trafia do skarbca.
 
 ## Słownik UI (PL / EN)
 

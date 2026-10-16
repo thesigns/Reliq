@@ -376,6 +376,15 @@
 .r-uncommon { color: #4f5f73; }
 .r-rare { color: #9a6b12; }
 .r-legendary { color: var(--oxblood); }
+/* Tiers, from wood to diamond: the colour of the material, dark enough to read on paper. */
+.t-wood { color: #7a5230; }
+.t-copper { color: #a4532c; }
+.t-bronze { color: #8a6a2c; }
+.t-iron { color: #4f545b; }
+.t-silver { color: #6f7a84; }
+.t-gold { color: #a87b16; }
+.t-platinum { color: #5e7f8c; }
+.t-diamond { color: #2f78a2; }
 /* The fence: money, lost artifacts for sale, coins to sell. */
 .fence-money { margin: 2px 0 0; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: .06em; color: #6b4716; }
 .fence-intro, .fence-empty { text-align: center; }
@@ -517,6 +526,7 @@
   color: var(--oxblood);
 }
 .nb-title { font-size: 20px; font-weight: 600; line-height: var(--rule); color: #2a160a; }
+.nb-tier { font-size: 16px; }
 .nb-line { font-size: 16.5px; }
 .nb-status { display: flex; align-items: center; gap: 6px; font-size: 16.5px; color: #3b2414; }
 .nb-status svg { flex: none; width: 15px; height: 15px; }

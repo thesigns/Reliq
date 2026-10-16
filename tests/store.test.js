@@ -13,7 +13,7 @@ function fakeStorage(initial = {}) {
   };
 }
 
-const MISSION = { n: 2, t: 7, key: ['cat', 'fly', 'man'], shards: ['fly'], stageAt: 8 };
+const MISSION = { n: 2, artifact: 'vase', t: 7, key: ['cat', 'fly', 'man'], shards: ['fly'], stageAt: 8 };
 
 test('empty storage gives a fresh state', () => {
   const s = new Store(fakeStorage()).load(123);
@@ -25,6 +25,7 @@ test('save and load round-trip', () => {
   const store = new Store(storage);
   const s = createState(1);
   s.vault = { lat: 52.2, lon: 21.0, t: 5 };
+  s.seed = 123456789;
   s.searches.push({ lat: 52.21, lon: 21.01, t: 6 });
   s.coins = { nummus: 3, eidmar: 1 };
   s.money = 42;
@@ -32,7 +33,7 @@ test('save and load round-trip', () => {
   s.tombs.push({ n: 1, lat: 52.22, lon: 21.02, t: 8, opened: true, artifact: 'cup' });
   s.tombs.push({ n: 2, lat: 52.23, lon: 21.03, t: 9, opened: false, artifact: 'vase' });
   s.artifacts.push({ id: 'cup', n: 1, t: 10, from: 'tomb' });
-  s.lost.push({ n: 3, t: 11 });
+  s.lost.push({ n: 3, artifact: 'chalice', t: 11 });
   s.satchel = { coins: { ducat: 2 }, artifacts: [{ id: 'vase', n: 2, t: 12, from: 'tomb' }] };
   s.settings.lang = 'en';
   assert.equal(store.save(s), true);
@@ -46,8 +47,8 @@ test('unreadable saves are backed up, not lost', () => {
   assert.equal(storage.map.get(`${SAVE_KEY}.unreadable`), '{not json');
 });
 
-test('saves from before missions start over', () => {
-  for (const v of [1, 2]) {
+test('saves from before tiers start over', () => {
+  for (const v of [1, 2, 3]) {
     const raw = JSON.stringify({ v, coins: { nummus: 3 }, tombMap: { n: 1, t: 1 } });
     const storage = fakeStorage({ [SAVE_KEY]: raw });
     assert.deepEqual(new Store(storage).load(5), createState(5), `v${v}`);
@@ -67,20 +68,22 @@ test('migrate drops malformed entries', () => {
     searches: [{ lat: 1, lon: 2, t: 3 }, { lat: 1 }, null],
     coins: { nummus: 2, bad: -1, worse: 1.5 },
     money: -5,
-    mission: { n: 9, t: 1, key: ['cat', 'fly', 'man'], shards: [], stageAt: 1 },
+    seed: -4,
+    mission: { n: 9, artifact: 'skull', t: 1, key: ['cat', 'fly', 'man'], shards: [], stageAt: 1 },
     tombs: [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }, { n: 2, lat: 1, lon: 2, t: 3 }, { n: 3, lat: 1, lon: 2, t: 3, opened: true, artifact: 'skull' }],
     artifacts: [{ id: 'cup', n: 1, t: 3, from: 'tomb' }, { id: 'cup', n: 1, t: 3, from: 'gift' }, { id: 'skull', n: 4, t: 3, from: 'tomb' }],
-    lost: [{ n: 2, t: 3 }, { n: 99, t: 3 }, { n: 3 }],
+    lost: [{ n: 2, artifact: 'vase', t: 3 }, { n: 99, artifact: 'skull', t: 3 }, { n: 3, artifact: 'cup' }, { n: 4, t: 3 }],
     settings: { lang: 'de', sound: false },
   }, 0);
   assert.equal(s.vault, null);
   assert.deepEqual(s.searches, [{ lat: 1, lon: 2, t: 3 }]);
   assert.deepEqual(s.coins, { nummus: 2 });
   assert.equal(s.money, 0);
+  assert.equal(s.seed, 0);
   assert.equal(s.mission, null, 'no such mission');
   assert.deepEqual(s.tombs, [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }]);
   assert.deepEqual(s.artifacts, [{ id: 'cup', n: 1, t: 3, from: 'tomb' }]);
-  assert.deepEqual(s.lost, [{ n: 2, t: 3 }]);
+  assert.deepEqual(s.lost, [{ n: 2, artifact: 'vase', t: 3 }]);
   assert.deepEqual(s.settings, { lang: null, sound: false, haptics: true, keepAwake: true, quality: 'full' });
 });
 

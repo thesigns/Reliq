@@ -4,23 +4,25 @@
 import { SYMBOLS, RULES, missionDef } from './rules.js';
 import { ARTIFACTS } from './items.js';
 
-// v3: missions replace bought tomb maps. Older saves are not migrated (the game had not
-// been played outside yet): they are set aside and the game starts over.
-export const SAVE_VERSION = 3;
+// v4: missions by tier, named by their artifact and numbered in the order played. Older
+// saves are not migrated (the game has not been released yet): they are set aside and the
+// game starts over.
+export const SAVE_VERSION = 4;
 
 export function createState(now) {
   return {
     v: SAVE_VERSION,
     createdAt: now,
     vault: null,          // { lat, lon, t }
+    seed: 0,              // shuffles the missions within a tier; drawn when the vault is placed
     searches: [],         // [{ lat, lon, t }] — expired ones are pruned
     coins: {},            // { [coinId]: count } — in the vault; only counts above zero
     satchel: { coins: {}, artifacts: [] },  // finds carried until the player is back at the vault
     money: 0,             // from selling coins to the fence
-    mission: null,        // { n, t, key: [symbol ×3], shards: [symbol], stageAt } — stageAt: when the current stage opens
+    mission: null,        // { n, artifact, t, key: [symbol ×3], shards: [symbol], stageAt } — n: the order played; stageAt: when the current stage opens
     tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission
-    artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence' }] — the shelf
-    lost: [],             // [{ n, t }] — failed or abandoned missions; the fence sells them from t + 7 days
+    artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence' }] — in the vault
+    lost: [],             // [{ n, artifact, t }] — failed or abandoned missions; the fence sells the artifact from t + 7 days
     settings: { ...DEFAULT_SETTINGS },
   };
 }
@@ -38,6 +40,7 @@ export function migrate(raw, now) {
   if (!raw || typeof raw !== 'object' || raw.v !== SAVE_VERSION) return null;
   const s = createState(isNum(raw.createdAt) ? raw.createdAt : now);
   if (isPoint(raw.vault)) s.vault = { lat: raw.vault.lat, lon: raw.vault.lon, t: raw.vault.t };
+  if (Number.isInteger(raw.seed) && raw.seed >= 0) s.seed = raw.seed;
   if (Array.isArray(raw.searches)) s.searches = raw.searches.filter(isPoint).map(({ lat, lon, t }) => ({ lat, lon, t }));
   if (raw.coins && typeof raw.coins === 'object') {
     for (const [id, n] of Object.entries(raw.coins)) if (Number.isInteger(n) && n > 0) s.coins[id] = n;
@@ -52,9 +55,9 @@ export function migrate(raw, now) {
   }
 
   const m = raw.mission;
-  if (m && missionDef(m.n) && isNum(m.t) && isNum(m.stageAt) && isKey(m.key)) {
+  if (m && Number.isInteger(m.n) && missionDef(m.artifact) && isNum(m.t) && isNum(m.stageAt) && isKey(m.key)) {
     const shards = Array.isArray(m.shards) ? [...new Set(m.shards.filter((x) => m.key.includes(x)))] : [];
-    s.mission = { n: m.n, t: m.t, key: [...m.key], shards, stageAt: m.stageAt };
+    s.mission = { n: m.n, artifact: m.artifact, t: m.t, key: [...m.key], shards, stageAt: m.stageAt };
   }
 
   if (Array.isArray(raw.tombs)) {
@@ -67,7 +70,7 @@ export function migrate(raw, now) {
   }
   if (Array.isArray(raw.artifacts)) s.artifacts = raw.artifacts.filter(isArtifact).map(({ id, n, t, from }) => ({ id, n, t, from }));
   if (Array.isArray(raw.lost)) {
-    for (const l of raw.lost) if (l && missionDef(l.n) && isNum(l.t)) s.lost.push({ n: l.n, t: l.t });
+    for (const l of raw.lost) if (l && Number.isInteger(l.n) && missionDef(l.artifact) && isNum(l.t)) s.lost.push({ n: l.n, artifact: l.artifact, t: l.t });
   }
 
   if (raw.settings && typeof raw.settings === 'object') {

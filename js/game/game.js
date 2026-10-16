@@ -11,6 +11,14 @@ import { isInsideSearched } from './field.js';
 import { coinById } from './items.js';
 import { rollSearchLoot, rollKey, rollShard } from './loot.js';
 
+// A mission's place in this game's shuffle of its tier: a hash of the seed and the artifact.
+function shuffleKey(seed, artifact) {
+  let h = (seed ^ 0x811c9dc5) >>> 0;
+  for (let i = 0; i < artifact.length; i++) h = Math.imul(h ^ artifact.charCodeAt(i), 0x01000193) >>> 0;
+  h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d) >>> 0; h ^= h >>> 12;
+  return h >>> 0;
+}
+
 
 export class Game {
   constructor(state, { rng = cryptoRandom, onChange = () => {} } = {}) {
@@ -69,6 +77,7 @@ export class Game {
     if (this.state.vault) return { ok: false, reason: 'exists' };
     if (!fix || fix.acc > RULES.maxAccuracyM) return { ok: false, reason: 'gps' };
     this.state.vault = { lat: fix.lat, lon: fix.lon, t: now };
+    this.state.seed = Math.floor(this.rng() * 4294967296) >>> 0;
     this._frame = null;
     this.changed();
     return { ok: true };
@@ -142,11 +151,24 @@ export class Game {
 
   // ---- missions, tombs and gates ----
 
-  // The first mission neither won nor lost, or null after the last one.
+  // The next mission: of those neither won nor lost, the lowest tier first, and within a
+  // tier this game's own shuffle (fixed by the seed, so it stays put between visits; a
+  // mission added later just slots in). null once there are none left.
   nextMission() {
     const s = this.state;
-    const done = new Set([...s.artifacts, ...s.satchel.artifacts, ...s.lost].map((x) => x.n));
-    return MISSIONS.find((m) => !done.has(m.n)) ?? null;
+    const done = new Set([...s.artifacts.map((a) => a.id), ...s.satchel.artifacts.map((a) => a.id), ...s.lost.map((l) => l.artifact)]);
+    if (s.mission) done.add(s.mission.artifact);
+    const open = MISSIONS.filter((m) => !done.has(m.artifact)).map((m) => missionDef(m.artifact));
+    open.sort((a, b) => a.rank - b.rank || shuffleKey(s.seed, a.artifact) - shuffleKey(s.seed, b.artifact));
+    return open[0] ?? null;
+  }
+
+  // Missions are numbered in the order they are played: Mission I is the first one started.
+  nextNumber() {
+    const s = this.state;
+    const used = [...s.tombs, ...s.lost, ...s.artifacts, ...s.satchel.artifacts].map((x) => x.n);
+    if (s.mission) used.push(s.mission.n);
+    return Math.max(0, ...used) + 1;
   }
 
   // What the mission card shows while no mission is active: the next mission, or
@@ -156,8 +178,9 @@ export class Game {
     if (this.state.mission) return null;
     const def = this.nextMission();
     if (!def) return { done: true };
+    const offer = { ...def, n: this.nextNumber() };
     const held = this.state.satchel.artifacts[0];
-    return held ? { ...def, carrying: held.id } : def;
+    return held ? { ...offer, carrying: held.id } : offer;
   }
 
   // Starting clears the searched areas, as if 6 hours had passed, and starts the clock.
@@ -165,10 +188,11 @@ export class Game {
     if (this.state.satchel.artifacts.length) return { ok: false, reason: 'deposit' };
     const def = this.state.vault && !this.state.mission ? this.nextMission() : null;
     if (!def) return { ok: false };
+    const n = this.nextNumber();
     this.state.searches = [];
-    this.state.mission = { n: def.n, t: now, key: rollKey(this.rng), shards: [], stageAt: now };
+    this.state.mission = { n, artifact: def.artifact, t: now, key: rollKey(this.rng), shards: [], stageAt: now };
     this.changed();
-    return { ok: true, n: def.n };
+    return { ok: true, n, artifact: def.artifact };
   }
 
   abandonMission(now) {
@@ -181,9 +205,9 @@ export class Game {
 
   // The mission, its tomb and the artifact are gone; the fence gets the artifact later.
   loseMission(t) {
-    const n = this.state.mission.n;
+    const { n, artifact } = this.state.mission;
     this.state.tombs = this.state.tombs.filter((tb) => tb.n !== n || tb.opened);
-    this.state.lost.push({ n, t });
+    this.state.lost.push({ n, artifact, t });
     this.state.mission = null;
   }
 
@@ -210,7 +234,7 @@ export class Game {
   missionCheck(fix, now) {
     const m = this.state.mission;
     if (!m || !this.state.vault) return { active: false };
-    const def = missionDef(m.n);
+    const def = missionDef(m.artifact);
     const base = { active: true, n: m.n, def, shards: m.shards, keyLength: m.key.length, deadline: this.deadline(), timeLeft: this.deadline() - now };
     const tomb = this.closedTomb();
     if (tomb) return { ...base, stage: 'gate', tomb, gate: this.gateCheck(fix), ok: false };
@@ -232,7 +256,7 @@ export class Game {
   // once, from this very search: next is how far the player has to walk on from here.
   addShard(now) {
     const m = this.state.mission;
-    const def = missionDef(m.n);
+    const def = missionDef(m.artifact);
     const symbol = rollShard(m.key, m.shards, this.rng);
     m.shards.push(symbol);
     m.stageAt = now;
@@ -242,8 +266,8 @@ export class Game {
 
   // The tomb appears exactly where the player searched.
   discoverTomb(fix, now) {
-    const n = this.state.mission.n;
-    const tomb = { n, lat: fix.lat, lon: fix.lon, t: now, opened: false, artifact: missionDef(n).artifact };
+    const { n, artifact } = this.state.mission;
+    const tomb = { n, lat: fix.lat, lon: fix.lon, t: now, opened: false, artifact };
     this.state.tombs.push(tomb);
     return { type: 'tomb', tomb };
   }
@@ -289,12 +313,14 @@ export class Game {
     return { ok: true, id, price, money: this.state.money };
   }
 
-  // Artifacts of lost missions. Each is for sale from availableAt; ok: it can be bought now.
+  // Artifacts of lost missions not bought back yet. Each is for sale from availableAt; ok:
+  // it can be bought now. The price is its tier's.
   fenceOffers(now) {
-    return this.state.lost.map(({ n, t }) => {
-      const def = missionDef(n);
+    const bought = new Set(this.state.artifacts.filter((a) => a.from === 'fence').map((a) => a.n));
+    return this.state.lost.filter((l) => !bought.has(l.n)).map(({ n, artifact, t }) => {
+      const { price } = missionDef(artifact);
       const availableAt = t + RULES.fenceDelayMs;
-      return { n, artifact: def.artifact, price: def.price, availableAt, ok: now >= availableAt && this.state.money >= def.price };
+      return { n, artifact, price, availableAt, ok: now >= availableAt && this.state.money >= price };
     });
   }
 
@@ -302,7 +328,7 @@ export class Game {
     const offer = this.fenceOffers(now).find((o) => o.n === n);
     if (!offer?.ok) return { ok: false, offer };
     this.state.money -= offer.price;
-    this.state.lost = this.state.lost.filter((l) => l.n !== n);
+    // The mission stays lost in the notebook; only its artifact comes home.
     this.state.artifacts.push({ id: offer.artifact, n, t: now, from: 'fence' });
     this.changed();
     return { ok: true, artifact: offer.artifact };

@@ -221,7 +221,8 @@ export class MapRenderer {
     for (const t of s.tombs) {
       const k = t.scale ?? 1;
       if (k <= 0.01) continue;
-      n = this.pushSprite(n, t.x, t.y, 64 * k, (64 * k) / this.atlas.rects.tomb.aspect, 0, 1, 0, 0.12, 'tomb', 1, 1, 1, Math.min(1, k * 1.5));
+      // Centred on the spot where the tomb was found.
+      n = this.pushSprite(n, t.x, t.y, 52 * k, 52 * k, 0, 1, 0, 0, 'tomb', 1, 1, 1, Math.min(1, k * 1.5));
     }
     if (s.vault && (s.vault.scale ?? 1) > 0.01) {
       const k = s.vault.scale ?? 1;

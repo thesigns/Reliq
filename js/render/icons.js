@@ -168,26 +168,34 @@ function waxSeal() {
     <ellipse cx="36" cy="30" rx="13" ry="6" fill="#fff" opacity=".2" transform="rotate(-32 36 30)"/>`, 2);
 }
 
+// The tomb gate seen head-on: a stone disc with the three key rings, eight dots on each
+// where the gate carries its symbols, and the lock in the hub. Its centre is the spot where
+// the tomb was found.
 function tomb() {
   const r = rng(11);
-  const col = (x, top, broken) => {
-    const t = broken ? `M${x} ${top + 3} l2 -3 l2 2 l2 -4 l2 3 L${x + 8} 64 L${x} 64 Z` : `M${x} ${top} h8 V64 h-8 Z`;
-    return `<path d="${t}" fill="${PAPER}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>
-      <path d="M${x + 2.7} ${top + 4} V62 M${x + 5.3} ${top + 4} V62" stroke="${INK}" stroke-width=".7" opacity=".7"/>
-      <path d="M${x + 5.5} ${top + 2} h2.5 V64 h-2.5 Z" fill="#7a4e26" fill-opacity=".3"/>`;
-  };
-  return svg(120, 112, `
-    <path d="${hatch(20, 104, 66, 80, 3, 0.1, r)}" stroke="${INK}" stroke-width=".8" opacity=".35"/>
-    <path d="M22 70 h76 v7 h-76 Z M26 64 h68 v6 h-68 Z" fill="${PAPER}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>
-    ${col(31, 34)}${col(47, 34)}${col(63, 46, true)}${col(79, 34)}
-    <path d="M26 28 h48 l3 3 l-2 3 H26 Z" fill="${PAPER}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M26 28 L58 11 L68 16 l-3 4 l5 2 l-2 6 Z" fill="${PAPER}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M38 24 L57 15" stroke="${INK}" stroke-width=".8" opacity=".6"/>
-    <path d="M88 60 l6 -2 l2 6 l-6 2 Z M96 66 l5 0 l0 4 l-5 0 Z" fill="${PAPER}" stroke="${INK}" stroke-width="1.2"/>
-    <g stroke="#8b1e1e" stroke-linecap="round" fill="none">
-      <path d="M46 84 L74 106 M74 84 L46 106" stroke-width="6.5" opacity=".9"/>
-      <path d="M47 86 L72 104 M73 86 L48 104" stroke-width="2" stroke="#b8372c" opacity=".6"/>
-    </g>`);
+  const c = 50;
+  const circle = (rr) => `M${c - rr} ${c} a${rr} ${rr} 0 1 0 ${2 * rr} 0 a${rr} ${rr} 0 1 0 ${-2 * rr} 0 Z`;
+  const dots = (rr, size) => Array.from({ length: 8 }, (_, i) => {
+    const a = (i / 8) * Math.PI * 2;
+    return `<circle cx="${f1(c + Math.sin(a) * rr)}" cy="${f1(c - Math.cos(a) * rr)}" r="${size}"/>`;
+  }).join('');
+  const STONE = '#ddc898';
+  const keyhole = `M${c} ${c - 5.6} a3.2 3.2 0 0 1 1.9 5.8 l1.5 5.4 h-6.8 l1.5 -5.4 A3.2 3.2 0 0 1 ${c} ${c - 5.6} Z`;
+  return svg(100, 100, `<defs>
+      <filter id="tombShadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.6"/></filter>
+      <clipPath id="tombBand"><path d="${circle(44)} ${circle(32)}" clip-rule="evenodd"/></clipPath>
+    </defs>
+    <circle cx="${c + 2}" cy="${c + 3}" r="44" fill="#1a0a04" opacity=".35" filter="url(#tombShadow)"/>
+    <circle cx="${c}" cy="${c}" r="44" fill="${STONE}"/>
+    <path d="${hatch(c - 46, c + 46, c + 2, c + 46, 3.2, 0.3, r)}" stroke="${INK}" stroke-width="1" opacity=".45" clip-path="url(#tombBand)"/>
+    <g fill="none" stroke="${INK}">
+      <circle cx="${c}" cy="${c}" r="44" stroke-width="3.6"/>
+      <circle cx="${c}" cy="${c}" r="32" stroke-width="2.6"/>
+      <circle cx="${c}" cy="${c}" r="20.5" stroke-width="2.4"/>
+    </g>
+    <circle cx="${c}" cy="${c}" r="10" fill="${PAPER}" stroke="${INK}" stroke-width="2.2"/>
+    <g fill="${INK}">${dots(38, 3)}${dots(26.2, 2.6)}${dots(15.3, 1.9)}</g>
+    <path d="${keyhole}" fill="${INK}"/>`);
 }
 
 function needle() {

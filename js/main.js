@@ -343,8 +343,8 @@ function hitTest(sx, sy, now) {
   for (const tb of state.tombs) {
     const q = game.toLocal(tb);
     const s = cam.toScreen(q.x, q.y);
-    const d = Math.hypot(sx - s.sx, sy - (s.sy - 20));
-    if (d < 34 && (!best || d < best.d)) best = { d, kind: 'tomb', tb };
+    const d = Math.hypot(sx - s.sx, sy - s.sy);
+    if (d < 28 && (!best || d < best.d)) best = { d, kind: 'tomb', tb };
   }
   if (best) return best;
   if (!state.vault) return null;
@@ -373,7 +373,7 @@ function showTombTip(tb) {
     tb.opened
       ? t('tip.tomb.body', { date: formatDate(tb.t), treasure: treasureName(tb) })
       : t('tip.tomb.closed', { r: formatDistance(RULES.gateRadius) }),
-    () => { const s = cam.toScreen(q.x, q.y); return { sx: s.sx, sy: s.sy - 40 }; },
+    () => { const s = cam.toScreen(q.x, q.y); return { sx: s.sx, sy: s.sy - 26 }; },
   );
 }
 

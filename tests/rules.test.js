@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { RULES, SYMBOLS, TIERS, MISSIONS, FENCE_PRICES, missionDef } from '../js/game/rules.js';
+import { readFileSync } from 'node:fs';
 import { ARTIFACTS } from '../js/game/items.js';
 
 const DAY = 24 * 3600e3;
@@ -17,11 +18,23 @@ test('tiers match docs/lista-misji.md', () => {
   }
 });
 
+// The missions in the game are the list's entries whose model is marked ready, in its order.
+function readyMissions() {
+  const TIER_IDS = { Drewniany: 'wood', Miedziany: 'copper', Brązowy: 'bronze', Żelazny: 'iron', Srebrny: 'silver', Złoty: 'gold', Platynowy: 'platinum', Diamentowy: 'diamond' };
+  const doc = readFileSync(new URL('../docs/lista-misji.md', import.meta.url), 'utf8');
+  const out = [];
+  let tier = null;
+  for (const line of doc.split('\n')) {
+    const h = /^## (\S+)\s*$/.exec(line);
+    if (h) tier = TIER_IDS[h[1]] ?? null;
+    const m = /^Model: (\w+)\.js \(gotowy\)/.exec(line);
+    if (m && tier) out.push({ artifact: m[1], tier });
+  }
+  return out;
+}
+
 test('missions match docs/lista-misji.md', () => {
-  assert.deepEqual(MISSIONS, [
-    { artifact: 'comb', tier: 'wood' }, { artifact: 'clog', tier: 'wood' }, { artifact: 'abacus', tier: 'wood' },
-    { artifact: 'cup', tier: 'copper' }, { artifact: 'vase', tier: 'iron' }, { artifact: 'chalice', tier: 'iron' },
-  ]);
+  assert.deepEqual(MISSIONS, readyMissions());
   for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), m.artifact);
   assert.equal(new Set(MISSIONS.map((m) => m.artifact)).size, MISSIONS.length, 'one mission per artifact');
   assert.deepEqual(missionDef('cup'), { artifact: 'cup', tier: 'copper', rank: 1, symbolDistance: 300, tombDistance: 600, price: 30 });

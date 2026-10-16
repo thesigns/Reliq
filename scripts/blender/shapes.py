@@ -115,6 +115,84 @@ def lathe(bm, profile, segments, mat_of, centre=(0, 0, 0), axis='z', phase=0.5):
     return rings
 
 
+def circle(n, phase=0.5):
+    """A unit cross-section of n points for sweep(), counter-clockwise."""
+    return [(math.cos(2 * math.pi * (i + phase) / n), math.sin(2 * math.pi * (i + phase) / n)) for i in range(n)]
+
+
+def sweep(bm, path, section, mat_of, caps=(True, True), up=(0, 0, 1)):
+    """A tube along a path. path: (point, scale) or (point, (scale_u, scale_v)); section:
+    (u, v) points round the tube, counter-clockwise. The frame is carried along the path
+    without twisting, starting from `up`. mat_of(k, i): material of the band ending at path
+    point k on side i (k = 0 and k = len(path) are the caps)."""
+    from mathutils import Vector
+    pts = [Vector(p) for p, _ in path]
+    n = len(pts)
+    tangents = []
+    for k in range(n):
+        t = pts[min(k + 1, n - 1)] - pts[max(k - 1, 0)]
+        tangents.append(t.normalized())
+    ref = Vector(up)
+    if abs(ref.dot(tangents[0])) > 0.95:
+        ref = Vector((1, 0, 0)) if abs(tangents[0].x) < 0.9 else Vector((0, 1, 0))
+    normal = (ref - tangents[0] * ref.dot(tangents[0])).normalized()
+    rings = []
+    for k in range(n):
+        if k:
+            # Parallel transport: turn the previous normal onto the new tangent.
+            axis = tangents[k - 1].cross(tangents[k])
+            if axis.length > 1e-9:
+                angle = tangents[k - 1].angle(tangents[k])
+                from mathutils import Matrix
+                normal = (Matrix.Rotation(angle, 3, axis.normalized()) @ normal).normalized()
+        binormal = tangents[k].cross(normal)
+        s = path[k][1]
+        su, sv = s if isinstance(s, tuple) else (s, s)
+        rings.append([bm.verts.new(pts[k] + normal * (u * su) + binormal * (v * sv)) for u, v in section])
+    m = len(section)
+    for k in range(1, n):
+        a, b = rings[k - 1], rings[k]
+        for i in range(m):
+            j = (i + 1) % m
+            bm.faces.new((a[i], a[j], b[j], b[i])).material_index = mat_of(k, i)
+    if caps[0]:
+        bm.faces.new(list(reversed(rings[0]))).material_index = mat_of(0, 0)
+    if caps[1]:
+        bm.faces.new(rings[-1]).material_index = mat_of(n, 0)
+    return rings
+
+
+def rotate(verts, angle, axis, pivot=(0, 0, 0)):
+    """Turns vertices (a nested list is fine) by angle (radians) about an axis through pivot."""
+    from mathutils import Matrix, Vector
+    rot = Matrix.Rotation(angle, 3, Vector(axis).normalized())
+    p = Vector(pivot)
+    for v in _flat(verts):
+        v.co = rot @ (v.co - p) + p
+
+
+def move(verts, offset):
+    from mathutils import Vector
+    o = Vector(offset)
+    for v in _flat(verts):
+        v.co += o
+
+
+def _flat(verts):
+    for v in verts:
+        if isinstance(v, (list, tuple)):
+            yield from _flat(v)
+        else:
+            yield v
+
+
+def new_verts(bm, build):
+    """Runs build(bm) and returns the vertices it added, to move or turn them as a group."""
+    before = set(bm.verts)
+    build(bm)
+    return [v for v in bm.verts if v not in before]
+
+
 def face_toward(bm, verts, normal, mat):
     """A single-sided face (a painted decal, say) turned to face along normal. recalc cannot
     orient a face on its own, so build such faces after it and finish(recalc=False)."""

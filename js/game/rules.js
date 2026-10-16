@@ -49,6 +49,8 @@ export const MISSIONS = [
   { artifact: 'clog', tier: 'wood' },
   { artifact: 'abacus', tier: 'wood' },
   { artifact: 'cup', tier: 'copper' },
+  { artifact: 'lamp', tier: 'copper' },
+  { artifact: 'bell', tier: 'copper' },
   { artifact: 'vase', tier: 'iron' },
   { artifact: 'chalice', tier: 'iron' },
 ];

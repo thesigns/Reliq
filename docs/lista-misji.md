@@ -83,7 +83,7 @@ Detal (po znalezieniu): Polewa spłynęła po glinie zaciekami.
 ### Lampka oliwna z Aleksandrii
 
 Tytuł: Lampka oliwna z Aleksandrii
-Model: lamp.js
+Model: lamp.js (gotowy)
 Lore: Przy jej płomieniu kopista z Biblioteki przepisał ostatni zwój, zanim przyszedł pożar.
 Detal (po znalezieniu): Kopeć z knota zostawił na dziobku czarny ślad.
 Kształt: niska, wydłużona miedziana lampka: brzuszek z wieczkiem, długi dziobek na knot z jednej strony, zawinięte ucho z drugiej.
@@ -91,7 +91,7 @@ Kształt: niska, wydłużona miedziana lampka: brzuszek z wieczkiem, długi dzio
 ### Dzwonek najupartszej krowy z Tyrolu
 
 Tytuł: Dzwonek najupartszej krowy z Tyrolu
-Model: bell.js
+Model: bell.js (gotowy)
 Lore: Krowa Berta zawsze szła pod prąd stada, więc pasterz dał jej największy dzwonek w dolinie, żeby zawsze słyszeć, dokąd znowu poszła.
 Detal (po znalezieniu): Skórzany pas wytarł się tam, gdzie Berta drapała się o płoty.
 Kształt: miedziany dzwon rozszerzony u dołu, serce widoczne w środku, szeroki skórzany pas z mosiężną klamrą zawieszony u góry.

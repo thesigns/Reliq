@@ -117,7 +117,7 @@ export default {
   'map.atGate': 'Stoisz przed wrotami.',
   'gate.label': 'Wrota grobowca',
   'gate.title': 'Grobowiec {n}',
-  'gate.hint': 'Obróć pierścienie tak, by pod znacznikiem stanęły właściwe symbole — od zewnętrznego.',
+  'gate.hint': 'Ustaw znalezione symbole pod znacznikiem, po jednym na każdym pierścieniu. Właściwą kolejność musisz odgadnąć.',
   'gate.shards': 'Symbole',
   'gate.open': 'Otwórz wrota',
   'gate.far': 'Wrota są za daleko. Podejdź na {r}.',

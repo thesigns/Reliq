@@ -219,7 +219,7 @@ Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte o
 | Grobowiec               | Tomb                |
 | Wrota                   | Gate                |
 | Otwórz wrota            | Open the gate       |
-| Symbol                  | Shard               |
+| Symbol                  | Symbol              |
 | Artefakt                | Artifact            |
 | Sakwa                   | Satchel             |
 | Powrót do skarbca       | Back at the vault   |

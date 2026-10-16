@@ -196,7 +196,7 @@ Zawartość plecaka nigdy nie przepada. Monety w plecaku nie liczą się jeszcze
 
 ## Półka z artefaktami
 
-Artefakty złożone w skarbcu stoją na półce, po 3 w rzędzie. Artefakt, który jest jeszcze w plecaku, widać na półce wyblakły, z dopiskiem „w plecaku”. Półka stoi na zakładce „Kolekcja”, nad monetami. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore. Nieodkryte jeszcze miejsca na półce są puste.
+Artefakty złożone w skarbcu stoją na półce, po 3 w rzędzie. Artefakt, który jest jeszcze w plecaku, widać na półce wyblakły, z dopiskiem „w plecaku”. Półka ma w skarbcu własną zakładkę „Artefakty”, obok zakładki „Monety”: artefaktów z czasem będzie dużo, a monety mają być pod ręką. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore. Nieodkryte jeszcze miejsca na półce są puste.
 
 ## Paser
 
@@ -232,9 +232,9 @@ Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte o
 | Artefakt                | Artifact            |
 | Plecak                  | Backpack            |
 | Powrót do skarbca       | Back at the vault   |
-| Kolekcja                | Hoard               |
+| Monety (zakładka)       | Coins               |
+| Artefakty (zakładka)    | Artifacts           |
 | Notatnik (zakładka)     | Notebook            |
-| Półka z artefaktami     | Artifact shelf      |
 | Paser                   | Fence               |
 | Pieniądze               | Money               |
 | Cena                    | Price               |

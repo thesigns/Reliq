@@ -576,7 +576,8 @@ async function maybeDeposit() {
   hud.setBusy(false);
   depositing = false;
   journal.refresh();
-  if (where === 'vault') journal.open('coins');
+  // Straight to what was just stored: the shelf when an artifact came home.
+  if (where === 'vault') journal.open(haul.artifacts?.length ? 'artifacts' : 'coins');
 }
 
 // The vault is pressed into the map like a wax seal where the player stands.
@@ -928,7 +929,7 @@ function wireUi() {
     cam.flyTo(null, cam.defaultPpm, 0.7);
     $('btn-recenter').classList.remove('attention');
   };
-  $('btn-journal').onclick = () => { tooltip.hide(); journal.open('coins'); };
+  $('btn-journal').onclick = () => { tooltip.hide(); journal.open('notebook'); };
   $('btn-satchel').onclick = () => {
     sfx.click();
     tooltip.hide();

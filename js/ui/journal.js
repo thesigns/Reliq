@@ -1,5 +1,5 @@
-// The vault: a leather-bound journal with the collection (artifact shelf and coins), the
-// missions and tombs, and the fence. Settings and rules live in the game menu.
+// The vault: a leather-bound journal with four tabs: the treasure hunter's notebook, the
+// coins, the artifact shelf and the fence. Settings and rules live in the game menu.
 
 import { t, formatDate, formatDuration, formatRoman } from '../i18n/i18n.js';
 import { COINS } from '../game/items.js';
@@ -22,7 +22,7 @@ export class Journal {
     this.root = root;
     this.deps = deps;
     this.el = (sel) => root.querySelector(sel);
-    this.tab = 'coins';
+    this.tab = 'notebook';
     this.isOpen = false;
     for (const b of root.querySelectorAll('[data-tab]')) b.onclick = () => { sfx.paper(); this.show(b.dataset.tab); };
     this.el('.journal-head .btn-x').onclick = () => this.close();
@@ -57,7 +57,7 @@ export class Journal {
     const page = this.el('.journal-page');
     page.innerHTML = this[`render_${tab}`]();
     page.scrollTop = 0;
-    if (tab === 'coins' || tab === 'fence') this.loadThumbs();
+    if (tab === 'coins' || tab === 'artifacts' || tab === 'fence') this.loadThumbs();
     if (tab === 'notebook') this.refreshNotebook();
   }
 
@@ -72,16 +72,19 @@ export class Journal {
     if (el.textContent !== text) el.textContent = text;
   }
 
-  render_coins() {
-    const { coins, artifacts } = this.deps.state;
-    const total = Object.values(coins).reduce((a, b) => a + b, 0);
-    const kinds = COINS.filter((c) => coins[c.id] > 0).length;
-    let html = `<p class="j-summary">${esc(t('journal.summary', { artifacts: artifacts.length, missions: MISSIONS.length, coins: total, kinds, all: COINS.length }))}</p>`;
+  // A line about what is still in the backpack, on the way to the vault.
+  carriedHint() {
     const bag = this.deps.state.satchel;
     const carried = Object.values(bag.coins).reduce((a, b) => a + b, 0) + bag.artifacts.length;
-    if (carried) html += `<p class="j-hint j-satchel">${esc(t('journal.satchel', { n: carried }))}</p>`;
-    html += this.renderShelf();
-    html += `<h3 class="j-section">${esc(t('journal.coinsTitle'))}</h3>`;
+    return carried ? `<p class="j-hint j-satchel">${esc(t('journal.satchel', { n: carried }))}</p>` : '';
+  }
+
+  // The coins, by rarity: the ones found and a blank for each still missing.
+  render_coins() {
+    const { coins } = this.deps.state;
+    const total = Object.values(coins).reduce((a, b) => a + b, 0);
+    const kinds = COINS.filter((c) => coins[c.id] > 0).length;
+    let html = `<p class="j-summary">${esc(t('journal.summary.coins', { coins: total, kinds, all: COINS.length }))}</p>${this.carriedHint()}`;
     for (const r of RARITIES) {
       html += `<h3 class="j-rarity r-${r}">${esc(t(`rarity.${r}`))}</h3><div class="coin-grid">`;
       for (const c of COINS.filter((x) => x.rarity === r)) {
@@ -95,12 +98,13 @@ export class Journal {
     return html;
   }
 
-  // One slot per mission, three to a shelf. A slot stays empty until its artifact is won
-  // (or bought from the fence); one still in the satchel shows faded.
-  renderShelf() {
-    const owned = new Map(this.deps.state.artifacts.map((a) => [a.n, a]));
+  // The artifact shelf: one slot per mission, three to a shelf. A slot stays empty until its
+  // artifact is won (or bought from the fence); one still in the backpack shows faded.
+  render_artifacts() {
+    const { artifacts } = this.deps.state;
+    const owned = new Map(artifacts.map((a) => [a.n, a]));
     const carried = new Map(this.deps.state.satchel.artifacts.map((a) => [a.n, a]));
-    let html = `<h3 class="j-section">${esc(t('journal.shelf'))}</h3><div class="shelf">`;
+    let html = `<p class="j-summary">${esc(t('journal.summary.artifacts', { artifacts: artifacts.length, missions: MISSIONS.length }))}</p><div class="shelf">`;
     for (let i = 0; i < MISSIONS.length; i += 3) {
       html += '<div class="shelf-row">';
       for (const m of MISSIONS.slice(i, i + 3)) {

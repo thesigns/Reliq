@@ -685,7 +685,7 @@ html.inspect #app {
   transform: translateY(-140%) rotate(-12deg);
   opacity: 0;
 }
-.scroll-overlay .paper-card,
+.scroll-overlay .paper-card:not(.map-card),
 .reveal[data-kind='tomb'] .paper-card {
   background:
     var(--grain-soft),
@@ -721,6 +721,19 @@ html.inspect #app {
   color: rgba(139, 30, 30, .78);
 }
 .card-sketch { margin: 6px -6px 2px; }
+/* The mission card: a ruled page of the field notebook with a red margin, the artifact
+   sketched on it. */
+.map-card {
+  padding-left: 38px;
+  background:
+    var(--grain-soft),
+    radial-gradient(120% 90% at 30% 20%, transparent 50%, rgba(120, 80, 30, .2)),
+    linear-gradient(90deg, transparent 27px, rgba(160, 52, 40, .45) 27px 28.5px, transparent 28.5px 31px, rgba(160, 52, 40, .3) 31px 32px, transparent 32px),
+    repeating-linear-gradient(180deg, transparent 0 27px, rgba(80, 110, 150, .2) 27px 28px),
+    linear-gradient(170deg, #f7ebcd, #e8d4a6);
+}
+.map-card .card-sketch { width: 150px; height: 150px; margin: 4px auto 0; }
+.map-card .card-sketch svg { height: 100%; }
 .card-sketch svg { width: 100%; height: auto; display: block; }
 .card-title {
   margin-top: 4px;

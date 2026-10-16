@@ -110,7 +110,7 @@ export default {
   'artifacts.vase.detail': 'The marks of the ropes still show on its neck.',
   'reveal.fromTomb': 'Treasure of tomb {n}',
   'reveal.fromFence': 'Bought from the fence',
-  'map.label': 'Mission',
+  'map.label': 'Mission {n}',
   'map.title': 'Tomb {n}',
   'map.tombFound': 'The tomb is found. Its gate awaits.',
   'map.toTomb': 'The tomb is {d} away. Its gate opens only on site.',

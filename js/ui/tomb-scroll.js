@@ -1,9 +1,10 @@
-// Mission map: its walks (ticked as they are done), the shards of the key and what to do
-// next. Once the tomb is found, the map shows how far it is, and the gate can be opened
-// from here on site.
+// The mission card, a page of the field notebook: the artifact sketched from its model, the
+// walks (ticked as they are done), the symbols of the key and what to do next. Once the
+// tomb is found, the page shows how far it is, and the gate can be opened from here on site.
 
-import { t, formatDistance, formatDuration } from '../i18n/i18n.js';
-import { mapSketch } from './junk-art.js';
+import { t, formatDistance, formatDuration, formatRoman } from '../i18n/i18n.js';
+import { artifactSketch } from './artifact-sketch.js';
+import { MODELS } from '../render/models/index.js';
 import { shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
 import { RULES } from '../game/rules.js';
@@ -53,9 +54,9 @@ export class TombScroll {
 
   open(check) {
     this.n = check.n;
-    this.el('.card-label').textContent = t('map.label');
+    this.el('.card-label').textContent = t('map.label', { n: formatRoman(check.n) });
     this.el('.card-title').textContent = t(`artifacts.${check.def.artifact}.name`);
-    this.el('.card-sketch').innerHTML = mapSketch(check.n);
+    this.el('.card-sketch').innerHTML = artifactSketch(MODELS[check.def.artifact]);
     this.el('#scroll-gate').textContent = t('gate.open');
     this.update(check);
     this.root.hidden = false;

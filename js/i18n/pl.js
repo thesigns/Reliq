@@ -110,7 +110,7 @@ export default {
   'artifacts.vase.name': 'Waza z Jadeitowej Przełęczy',
   'artifacts.vase.lore': 'Karawana niosła ją na zachód przez trzy lata, a z dwudziestu wielbłądów dotarł tylko ten, który ją dźwigał.',
   'artifacts.vase.detail': 'Na szyjce wciąż widać ślady sznurów.',
-  'map.label': 'Misja',
+  'map.label': 'Misja {n}',
   'map.title': 'Grobowiec {n}',
   'map.tombFound': 'Grobowiec odnaleziony. Wrota czekają.',
   'map.toTomb': 'Do grobowca: {d}. Wrota otworzysz dopiero na miejscu.',

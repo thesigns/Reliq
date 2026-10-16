@@ -1,6 +1,4 @@
-// Ink sketches of junk finds and mission maps, in the style of an explorer's notebook.
-
-import { formatRoman } from '../i18n/i18n.js';
+// Ink sketches of junk finds, in the style of an explorer's notebook.
 
 const INK = '#3b2414';
 const RED = '#8b1e1e';
@@ -145,24 +143,3 @@ const unknown = svg(`
 export const JUNK_ART = { battery, penny, pulltab, ticket, lighter, paperclip, earring, rubberband, bottlecap, receipt };
 
 export const junkSketch = (id) => JUNK_ART[id] ?? unknown;
-
-// A torn-out map fragment: dotted route from the vault to an X beside a ruined temple.
-export function mapSketch(n) {
-  return `
-<svg viewBox="0 0 220 130" aria-hidden="true">
-  <g fill="none" stroke="${INK}" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="30" cy="104" r="8" stroke-width="1.6"/>
-    <path d="M27 104 a3 3 0 1 1 6 0 l1.5 6 h-9 Z" stroke-width="1" fill="${INK}"/>
-    <path d="M40 100 C60 90 58 72 84 68 S118 84 132 62 S160 40 174 38" stroke="${RED}" stroke-width="2.2" stroke-dasharray="5 5"/>
-    <path d="M168 28 l14 14 M182 28 l-14 14" stroke="${RED}" stroke-width="3.4"/>
-    <path d="M62 50 l10 -17 l10 17 M78 50 l8 -12 l8 12" stroke-width="1.5"/>
-    <path d="M74 36 l4 12 M76 40 l3 9 M88 42 l3 8" stroke-width=".8" opacity=".7"/>
-    <path d="M112 100 a5 5 0 1 1 1 0 M113 100 v6 M126 96 a5 5 0 1 1 1 0 M127 96 v6 M100 104 a4 4 0 1 1 1 0 M101 104 v5" stroke-width="1.3"/>
-    <path d="M186 58 h22 M188 58 v-10 M194 58 v-10 M200 58 v-7 M206 58 v-10 M186 48 h22 l-11 -7 Z" stroke-width="1.3"/>
-    <path d="M200 120 v-16 M196 108 l4 -6 l4 6" stroke-width="1.3"/>
-    <path d="M150 104 q6 -5 12 0 t12 0 M142 112 q6 -5 12 0 t12 0" stroke-width="1" opacity=".6"/>
-  </g>
-  <text x="200" y="98" text-anchor="middle" font-family="Cinzel, serif" font-weight="700" font-size="9" fill="${INK}">N</text>
-  <text x="14" y="24" font-family="Cinzel, serif" font-weight="700" font-size="17" fill="${INK}">${formatRoman(n)}</text>
-</svg>`;
-}

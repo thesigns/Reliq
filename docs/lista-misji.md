@@ -177,7 +177,7 @@ Kształt: srebrny kałamarz na czterech nóżkach, z odchylonym wieczkiem i wbit
 ### Korona zapomnianej królowej
 
 Tytuł: Korona zapomnianej królowej
-Model: crown.js
+Model: crown.js (gotowy)
 Lore: Królowa rządziła tylko dziewięć dni, a kronikarze tak się spieszyli z nowym królem, że zapomnieli wpisać jej imię.
 Detal (po znalezieniu): Jeden z rubinów jest szkłem — ktoś podmienił go jeszcze za jej życia.
 Kształt: złota obręcz z wysokimi zębami w kształcie lilii, czerwone i zielone kamienie wokół, ciemnoczerwony aksamit w środku.
@@ -185,7 +185,7 @@ Kształt: złota obręcz z wysokimi zębami w kształcie lilii, czerwone i zielo
 ### Skarabeusz faraona
 
 Tytuł: Skarabeusz faraona
-Model: scarab.js
+Model: scarab.js (gotowy)
 Lore: Położono go na sercu faraona, żeby nie zdradziło go podczas sądu bogów.
 Detal (po znalezieniu): Na spodzie wyryto prośbę: „Serce, nie świadcz przeciwko mnie”.
 Kształt: złoty żuk o owalnym korpusie, z rozłożonymi skrzydłami z niebieskiego lazurytu i sześcioma krótkimi nóżkami.
@@ -193,7 +193,7 @@ Kształt: złoty żuk o owalnym korpusie, z rozłożonymi skrzydłami z niebiesk
 ### Jabłko koronacyjne
 
 Tytuł: Jabłko koronacyjne
-Model: orb.js
+Model: orb.js (gotowy)
 Lore: Król ściskał je podczas koronacji tak mocno, że odcisk jego dłoni został w złocie.
 Detal (po znalezieniu): Krzyż na szczycie jest lekko przekrzywiony — jabłko upadło raz, podczas zamieszek.
 Kształt: złota kula opasana poziomą i pionową opaską wysadzaną kamieniami, na szczycie krzyż.

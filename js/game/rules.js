@@ -45,6 +45,9 @@ export const TIERS = [
 // still to be modelled). The order they are offered in is the game's: tier by tier, and
 // shuffled within a tier (Game.nextMission).
 export const MISSIONS = [
+  { artifact: 'comb', tier: 'wood' },
+  { artifact: 'clog', tier: 'wood' },
+  { artifact: 'abacus', tier: 'wood' },
   { artifact: 'cup', tier: 'copper' },
   { artifact: 'vase', tier: 'iron' },
   { artifact: 'chalice', tier: 'iron' },

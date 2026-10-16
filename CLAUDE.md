@@ -90,6 +90,7 @@ Tomb artifacts, coins and the vault chest are hand-modelled low-poly meshes in t
 - **Modelling method:** build every vertex and face explicitly with `bmesh` in `scripts/blender/<model>.py`. Use lathe profiles, mirrored halves, insets or extrudes and closed boxes, the way a person models low poly by hand.
   - Do not decimate high-poly or SDF meshes. The user wants deliberate facets, not triangle soup.
   - Start with simple objects. A skull was too hard as a first model.
+  - `scripts/blender/shapes.py` saves the repetition: `slab` (a board cut to an outline, with a chamfer), `box`, `lathe`, `face_toward` (a one-sided decal, built after recalculating normals) and `finish`.
   - Keep every part a closed mesh with outward faces (`recalc_face_normals`). The renderers cull back faces.
 - **Colours:** one material per palette colour, set as the material's viewport display colour (`diffuse_color`, read as sRGB). Assign them with `face.material_index`.
 - **Export:** each model script ends with `export_model(...)` from `scripts/blender/export_model.py`. That writes `js/render/models/<model>.js`, a generated module with `{ palette, verts, tris: [a, b, c, paletteIndex] }`, converted from Blender's z-up axes to the game's y-up. `extra` adds fields such as a `pivot`, and points in it are converted too.

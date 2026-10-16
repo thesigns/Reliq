@@ -18,11 +18,15 @@ test('tiers match docs/lista-misji.md', () => {
 });
 
 test('missions match docs/lista-misji.md', () => {
-  assert.deepEqual(MISSIONS, [{ artifact: 'cup', tier: 'copper' }, { artifact: 'vase', tier: 'iron' }, { artifact: 'chalice', tier: 'iron' }]);
+  assert.deepEqual(MISSIONS, [
+    { artifact: 'comb', tier: 'wood' }, { artifact: 'clog', tier: 'wood' }, { artifact: 'abacus', tier: 'wood' },
+    { artifact: 'cup', tier: 'copper' }, { artifact: 'vase', tier: 'iron' }, { artifact: 'chalice', tier: 'iron' },
+  ]);
   for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), m.artifact);
   assert.equal(new Set(MISSIONS.map((m) => m.artifact)).size, MISSIONS.length, 'one mission per artifact');
   assert.deepEqual(missionDef('cup'), { artifact: 'cup', tier: 'copper', rank: 1, symbolDistance: 300, tombDistance: 600, price: 30 });
   assert.equal(missionDef('chalice').rank, 3);
+  assert.equal(missionDef('comb').tier, 'wood');
   assert.equal(missionDef('skull'), null);
 });
 

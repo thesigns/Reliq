@@ -116,30 +116,33 @@ function onMission({ rng = seq(...JUNK_ROLL), shards = [] } = {}) {
 
 test('missions are offered tier by tier, numbered in the order played, and run out', () => {
   const { game, state } = newGame();
-  assert.deepEqual(game.missionOffer(), { ...missionDef('cup'), n: 1 }, 'copper before iron');
-  state.artifacts.push({ id: 'cup', n: 1, t: T0, from: 'tomb' });
-  const second = game.missionOffer();
-  assert.deepEqual([second.tier, second.n], ['iron', 2]);
-  state.lost.push({ n: 2, artifact: second.artifact, t: T0 });
-  const third = game.missionOffer();
-  assert.deepEqual([third.tier, third.n], ['iron', 3]);
-  assert.notEqual(third.artifact, second.artifact);
-  state.artifacts.push({ id: third.artifact, n: 3, t: T0, from: 'tomb' });
+  let rank = -1;
+  for (let n = 1; n <= MISSIONS.length; n++) {
+    const offer = game.missionOffer();
+    assert.equal(offer.n, n);
+    assert.ok(offer.rank >= rank, `${offer.artifact}: never an easier tier after a harder one`);
+    rank = offer.rank;
+    // Win or lose alternately: either way the mission is done.
+    if (n % 2) state.artifacts.push({ id: offer.artifact, n, t: T0, from: 'tomb' });
+    else state.lost.push({ n, artifact: offer.artifact, t: T0 });
+  }
   assert.deepEqual(game.missionOffer(), { done: true });
-  assert.equal(MISSIONS.length, 3);
 });
 
 test('within a tier each game has its own order, and it stays put', () => {
-  const firstIron = (seed) => {
+  const first = (seed) => {
     const { game, state } = newGame();
     state.seed = seed;
-    state.artifacts.push({ id: 'cup', n: 1, t: T0, from: 'tomb' });
     return game.missionOffer().artifact;
   };
+  const tier = missionDef(first(0)).tier;
+  const ids = MISSIONS.filter((m) => m.tier === tier).map((m) => m.artifact);
+  assert.ok(ids.length > 1, 'the easiest tier has a choice');
   const seen = new Set();
-  for (let seed = 0; seed < 40; seed++) seen.add(firstIron(seed));
-  assert.deepEqual([...seen].sort(), ['chalice', 'vase'], 'either iron mission can come first');
-  assert.equal(firstIron(12345), firstIron(12345));
+  for (let seed = 0; seed < 60; seed++) seen.add(first(seed));
+  assert.ok(seen.size > 1, 'different games start differently');
+  for (const id of seen) assert.ok(ids.includes(id), `${id} is in the easiest tier`);
+  assert.equal(first(12345), first(12345));
 });
 
 test('placing the vault draws the seed of the shuffle', () => {
@@ -150,22 +153,29 @@ test('placing the vault draws the seed of the shuffle', () => {
 
 test('a mission added later to an easier tier is offered next, to everyone', () => {
   const { game, state } = newGame();
-  state.artifacts.push({ id: 'cup', n: 1, t: T0, from: 'tomb' }, { id: 'vase', n: 2, t: T0, from: 'tomb' });
+  // Play on until the offer is past the easiest tier.
+  let n = 0;
+  while (game.missionOffer().rank === 0) {
+    n++;
+    state.artifacts.push({ id: game.missionOffer().artifact, n, t: T0, from: 'tomb' });
+  }
+  const before = game.missionOffer().artifact;
   MISSIONS.push({ artifact: 'spoon', tier: 'wood' });
   try {
-    assert.deepEqual(game.missionOffer(), { ...missionDef('spoon'), n: 3 });
+    assert.deepEqual(game.missionOffer(), { ...missionDef('spoon'), n: n + 1 });
   } finally {
     MISSIONS.pop();
   }
-  assert.equal(game.missionOffer().artifact, 'chalice');
+  assert.equal(game.missionOffer().artifact, before);
 });
 
 test('starting a mission clears the areas and rolls a key', () => {
   const { game, state } = newGame({ rng: seq(0, 0, 0) });
   state.searches.push({ ...fixAt(300, 0), t: T0 - HOUR }, { ...fixAt(600, 0), t: T0 - 1 });
-  assert.deepEqual(game.startMission(T0), { ok: true, n: 1, artifact: 'cup' });
+  const first = game.missionOffer().artifact;
+  assert.deepEqual(game.startMission(T0), { ok: true, n: 1, artifact: first });
   assert.deepEqual(state.searches, []);
-  assert.deepEqual(state.mission, { n: 1, artifact: 'cup', t: T0, key: ['fish', 'spider', 'fly'], shards: [], stageAt: T0 });
+  assert.deepEqual(state.mission, { n: 1, artifact: first, t: T0, key: ['fish', 'spider', 'fly'], shards: [], stageAt: T0 });
   assert.equal(game.missionOffer(), null, 'no offer while a mission is active');
   assert.equal(game.startMission(T0).ok, false);
   assert.equal(newGame({ withVault: false }).game.startMission(T0).ok, false);

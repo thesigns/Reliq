@@ -24,4 +24,4 @@ export const COINS = [
 export const coinById = (id) => COINS.find((c) => c.id === id);
 
 // Tomb artifacts; each has a low-poly model in js/render/models/.
-export const ARTIFACTS = ['chalice', 'cup', 'vase'];
+export const ARTIFACTS = ['abacus', 'chalice', 'clog', 'comb', 'cup', 'vase'];

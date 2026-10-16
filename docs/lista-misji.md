@@ -50,7 +50,7 @@ Każdy wpis: tytuł, plik modelu, lore (widać na karcie misji przed wyprawą), 
 ### Grzebień księżniczki z Teb
 
 Tytuł: Grzebień księżniczki z Teb
-Model: comb.js
+Model: comb.js (gotowy)
 Lore: Służki czesały nim księżniczkę o świcie, a gazela na grzbiecie pilnowała, żeby żaden sen nie uciekł jej z głowy.
 Detal (po znalezieniu): Gazela straciła jeden róg, ale wciąż patrzy przed siebie.
 Kształt: płaski grzebień z ciemnego drewna, gęsty rząd zębów u dołu, na szczycie wycięta sylwetka leżącej gazeli.
@@ -58,7 +58,7 @@ Kształt: płaski grzebień z ciemnego drewna, gęsty rząd zębów u dołu, na 
 ### Chodak tulipanowego kupca
 
 Tytuł: Chodak tulipanowego kupca
-Model: clog.js
+Model: clog.js (gotowy)
 Lore: Za jedną cebulkę tulipana kupiec oddał dom, a gdy ceny runęły, uciekł z Amsterdamu w jednym chodaku.
 Detal (po znalezieniu): Na nosku ktoś wymalował czerwony tulipan.
 Kształt: drewniany chodak z wysokim, zadartym noskiem i grubą podeszwą, jasne drewno, czerwono-zielony tulipan na czubku.
@@ -66,7 +66,7 @@ Kształt: drewniany chodak z wysokim, zadartym noskiem i grubą podeszwą, jasne
 ### Liczydło kupca z Kantonu
 
 Tytuł: Liczydło kupca z Kantonu
-Model: abacus.js
+Model: abacus.js (gotowy)
 Lore: Kupiec liczył na nim tak szybko, że rywale przysięgali, iż koraliki przesuwają się same.
 Detal (po znalezieniu): Jeden koralik jest z jadeitu — zapłata za najlepszy interes jego życia.
 Kształt: prostokątna rama z ciemnego drewna, poprzeczna belka, pionowe pręty z rzędami czerwonych koralików (jeden zielony).

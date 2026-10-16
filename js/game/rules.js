@@ -51,6 +51,9 @@ export const MISSIONS = [
   { artifact: 'cup', tier: 'copper' },
   { artifact: 'lamp', tier: 'copper' },
   { artifact: 'bell', tier: 'copper' },
+  { artifact: 'helmet', tier: 'bronze' },
+  { artifact: 'lur', tier: 'bronze' },
+  { artifact: 'skydisc', tier: 'bronze' },
   { artifact: 'vase', tier: 'iron' },
   { artifact: 'chalice', tier: 'iron' },
 ];

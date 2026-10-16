@@ -101,7 +101,7 @@ Kształt: miedziany dzwon rozszerzony u dołu, serce widoczne w środku, szeroki
 ### Hełm hoplity spod Maratonu
 
 Tytuł: Hełm hoplity spod Maratonu
-Model: helmet.js
+Model: helmet.js (gotowy)
 Lore: Hoplita biegł w nim z wieścią o zwycięstwie aż do Aten, a zgubił go dopiero na ostatniej prostej.
 Detal (po znalezieniu): Grzebień z końskiego włosia wyblakł z purpury do rdzy.
 Kształt: hełm koryncki z brązu: wąskie szczeliny na oczy, nosal, policzki schodzące do brody, czerwony grzebień z włosia biegnący przez szczyt.
@@ -109,7 +109,7 @@ Kształt: hełm koryncki z brązu: wąskie szczeliny na oczy, nosal, policzki sc
 ### Lur z duńskiego torfowiska
 
 Tytuł: Lur z duńskiego torfowiska
-Model: lur.js
+Model: lur.js (gotowy)
 Lore: Takie rogi zakopywano w bagnie parami, żeby grały do siebie, a ten wciąż czeka na drugi.
 Detal (po znalezieniu): Ustnik jest wygładzony od tysięcy oddechów.
 Kształt: długa tuba z brązu wygięta w kształt litery S, zakończona płaskim talerzem z rzędem wypukłych guzów.
@@ -117,7 +117,7 @@ Kształt: długa tuba z brązu wygięta w kształt litery S, zakończona płaski
 ### Tarcza nieba znad Łaby
 
 Tytuł: Tarcza nieba znad Łaby
-Model: skydisc.js
+Model: skydisc.js (gotowy)
 Lore: Szaman czytał z niej, kiedy siać, a kiedy zbierać, i nigdy nie pomylił się o dzień.
 Detal (po znalezieniu): Złoty sierp księżyca błyszczy mocniej niż słońce.
 Kształt: płaski dysk z zielonej, spatynowanej miedzi ze złotymi wkładkami: koło słońca, sierp księżyca, gwiazdy i łuk horyzontu na brzegu.

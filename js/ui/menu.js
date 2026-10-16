@@ -3,8 +3,9 @@
 // GPS warms up behind it, so the game is usually ready by the time the player taps.
 
 import { t, getLang } from '../i18n/i18n.js';
-import { vaultSketch, searchSketch, findsSketch } from './onboarding-art.js';
+import { vaultSketch, searchSketch, findsSketch, missionsSketch } from './onboarding-art.js';
 import { sfx } from './audio.js';
+import { ruleText } from './onboarding.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const TITLES = { settings: 'menu.settings', about: 'menu.about' };
@@ -101,12 +102,13 @@ export class GameMenu {
   }
 
   render_about() {
-    const rule = (sketch, title, body) => `<section class="j-rule">${sketch}<h3>${esc(t(title))}</h3><p>${esc(t(body))}</p></section>`;
+    const rule = (sketch, title, body) => `<section class="j-rule">${sketch}<h3>${esc(t(title))}</h3><p>${esc(ruleText(body))}</p></section>`;
     return `
       <h3 class="j-section">${esc(t('about.rules'))}</h3>
       ${rule(vaultSketch, 'onb.vault.title', 'onb.vault.body')}
       ${rule(searchSketch, 'onb.search.title', 'onb.search.body')}
       ${rule(findsSketch, 'onb.finds.title', 'onb.finds.body')}
+      ${rule(missionsSketch, 'onb.missions.title', 'onb.missions.body')}
       <h3 class="j-section">${esc(t('about.credits'))}</h3>
       <p class="j-credits">${esc(t('about.creditsText'))}</p>
       <p class="j-version">${esc(t('about.version', { v: this.deps.version }))}</p>`;

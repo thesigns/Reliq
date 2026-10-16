@@ -242,7 +242,7 @@ Testy: `node --test` (albo `npm test`).
 
 **Status E5:** gotowy.
 - **Onboarding** (`js/ui/onboarding.js`):
-  - list od Towarzystwa Odkrywców i 3 strony zasad ze szkicami;
+  - list od Towarzystwa Odkrywców i 4 strony zasad ze szkicami (skarbiec, poszukiwania, znaleziska, misje), te same co w „O grze”;
   - strona o lokalizacji: prośba o zgodę pada dopiero po stuknięciu, razem z kompasem na iOS.
 - **Zakładanie skarbca:** medalion zmienia się w pieczęć z dziurką od klucza, a pieczęć „odciska się” na mapie. Do tego czasu gra używa tymczasowego układu współrzędnych. `setFrame()` przenosi pozycje bez przeładowania strony.
 - **Skarbiec / dziennik** (`js/ui/journal.js`):

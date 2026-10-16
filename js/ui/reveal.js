@@ -187,10 +187,12 @@ export class Reveal {
     r.classList.add('show');
   }
 
+  // Resolves with what closed it: 'button' or 'cross'.
   close() {
     return new Promise((resolve) => {
       const btns = [this.el('#reveal-close'), this.el('#reveal-x')];
-      const done = async () => {
+      const done = async (e) => {
+        const by = e.currentTarget.id === 'reveal-x' ? 'cross' : 'button';
         sfx.click();
         haptics.tap();
         for (const b of btns) b.onclick = null;
@@ -213,15 +215,16 @@ export class Reveal {
         this.coin.render({ scale: 0 });
         this.artifact?.render({ scale: 0 });
         this.root.hidden = true;
-        resolve();
+        resolve(by);
       };
       for (const b of btns) b.onclick = done;
     });
   }
 
   // button: the label of an action that ends the reveal ("To the satchel"); without one the
-  // screen is only looked at and closes with the cross in the corner.
-  setInfo({ context = '', rarity = '', name = '', desc = '', button = '' }) {
+  // screen is only looked at and closes with the cross in the corner. cross: keep the cross
+  // beside the button, for an action the player may put off.
+  setInfo({ context = '', rarity = '', name = '', desc = '', button = '', cross = !button }) {
     this.el('#reveal-context').textContent = context;
     this.el('#reveal-context').hidden = !context;
     this.el('#reveal-rarity').textContent = rarity;
@@ -230,7 +233,7 @@ export class Reveal {
     this.el('#reveal-hint').textContent = t('reveal.tapToFlip');
     this.el('#reveal-close').textContent = button;
     this.el('#reveal-close').hidden = !button;
-    this.el('#reveal-x').hidden = !!button;
+    this.el('#reveal-x').hidden = !cross;
   }
 
   // options: { context } — an extra line, e.g. "Treasure of tomb II".
@@ -337,10 +340,11 @@ export class Reveal {
     return this.close();
   }
 
-  // The active mission's tomb has turned up where the player searched.
+  // The active mission's tomb has turned up where the player searched. Resolves with 'button'
+  // when the player goes straight to the gate, 'cross' when they put it off.
   async showTombFound(n) {
     this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('tomb.found.title', { n: formatRoman(n) }), desc: t('tomb.found.desc') });
-    this.setInfo({});
+    this.setInfo({ button: t('tomb.found.open'), cross: true });
     await this.open('tomb', 'rare');
     sfx.swell(0.8);
     await wait(500);

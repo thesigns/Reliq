@@ -504,12 +504,13 @@ function tombButtonArrive() {
   btn.classList.add('arrive');
 }
 
+// Resolves with 'gate' when the player chose to go straight to a found tomb's gate.
 async function showLoot(loot) {
   if (loot.type === 'coin') return reveal.showCoin(loot.id);
   if (loot.type === 'junk') return reveal.showJunk(loot.id);
   if (loot.type === 'shard') return reveal.showShard(loot);
   if (loot.type === 'tomb') {
-    await reveal.showTombFound(loot.tomb.n);
+    if (await reveal.showTombFound(loot.tomb.n) === 'button') return 'gate';
     toast.show(t('toast.tombFound', { r: formatDistance(RULES.gateRadius) }), 6000);
   }
 }
@@ -539,10 +540,11 @@ async function onSearch() {
   sfx.ink();
   if (est) { const s = cam.toScreen(est.x, est.y); fx.ink(s.sx, s.sy); }
   await wait(1300);
-  await showLoot(res.loot);
+  const next = await showLoot(res.loot);
   await stowFind(res.loot);
   busy = false;
   hud.setBusy(false);
+  if (next === 'gate') onOpenGate();
 }
 
 // After its reveal a coin flies into the satchel and a shard to the mission button, so the
@@ -616,7 +618,7 @@ async function onPlaceVault() {
   busy = false;
   hud.setBusy(false);
   saveNow();
-  toast.show(t('toast.vaultPlaced'), 5200);
+  toast.show(t('toast.vaultPlaced', { r: RULES.vaultRadius }), 5200);
 }
 
 function openNotebook() {

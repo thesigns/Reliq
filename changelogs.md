@@ -2,6 +2,16 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## Następna wersja
+
+### Zmienione
+
+- **Teksty wprowadzenia** opisują grę taką, jaka jest teraz: łup nosisz w plecaku i składasz w skarbcu po powrocie w jego krąg, skarbca nie da się przenieść, śmieci się wyrzuca, a nadwyżkę monet kupi paser. Telefon może między poszukiwaniami spać w kieszeni. List zaczyna się od „Witaj w Towarzystwie!”, bez formy męskiej.
+- **Strona „Misje”** we wprowadzeniu i w „O grze”, ze szkicem trasy przez trzy symbole do wrót grobowca: misje czekają w notatniku, spacery dają symbole klucza, ostatni odsłania grobowiec, a wrota otwiera się na miejscu, odgadując kolejność symboli, w ciągu 7 dni.
+- **„Otwórz grobowiec”** na karcie odkrytego grobowca prowadzi od razu do wrót. Krzyżyk w rogu zostaje, gdy gracz woli wrócić później.
+- Szkic „Znalezisk” pokazuje łopatę w kopczyku ziemi zamiast mapy z krzyżykiem.
+- Liczby w zasadach (odległość od skarbca, czas znikania śladów, limit prędkości, czas misji) gra bierze ze swoich reguł, więc nie rozjadą się z rozgrywką.
+
 ## 0.13.0 — 2026-10-16
 
 ### Zmienione

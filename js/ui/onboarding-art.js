@@ -1,5 +1,7 @@
 // Ink sketches for the onboarding pages and the rules in the journal.
 
+import { glyph } from './gate-art.js';
+
 const INK = '#3b2414';
 const RED = '#8b1e1e';
 
@@ -26,19 +28,35 @@ export const searchSketch = wrap(`
   <path d="M146 54 v-9 M146 45 a3 3 0 1 1 .1 0 M141 62 l5 -8 l5 8 M140 52 h12" stroke-width="1.6"/>
   <text x="128" y="112" font-family="'EB Garamond', serif" font-style="italic" font-size="13" fill="${INK}" stroke="none">6 h</text>`);
 
-// A junk can tab, a coin and a rolled map with an X.
+// A junk can tab, a coin and a spade in a heap of earth.
 export const findsSketch = wrap(`
   <ellipse cx="46" cy="70" rx="20" ry="9" stroke-width="1.6"/>
   <path d="M40 70 a6 4 0 1 1 12 0 a6 4 0 1 1 -12 0" stroke-width="1.2"/>
   <circle cx="110" cy="60" r="24" stroke-width="2.2" fill="#e8c46a" fill-opacity=".35"/>
   <circle cx="110" cy="60" r="19" stroke-width="1" stroke-dasharray="1.5 2.5"/>
   <path d="M104 50 q6 -6 12 0 q4 6 -2 12 q-8 6 -12 -2" stroke-width="1.6"/>
-  <rect x="154" y="44" width="40" height="34" stroke-width="1.6" fill="#efe0bd"/>
-  <rect x="150" y="40" width="48" height="7" rx="3.5" stroke-width="1.4" fill="#dcc18a"/>
-  <rect x="150" y="76" width="48" height="7" rx="3.5" stroke-width="1.4" fill="#dcc18a"/>
-  <path d="M160 70 C168 62 172 66 178 58" stroke="${RED}" stroke-width="1.4" stroke-dasharray="2.5 2.5"/>
-  <path d="M180 52 l7 7 M187 52 l-7 7" stroke="${RED}" stroke-width="2"/>
+  <path d="M146 92 Q170 66 198 92 Z" stroke-width="1.6" fill="#a0522d" fill-opacity=".18"/>
+  <path d="M156 88 l6 -6 M164 90 l10 -10 M176 90 l10 -10 M186 90 l6 -6" stroke-width=".8" opacity=".6"/>
+  <path d="M186 22 L174 62" stroke-width="2.6"/>
+  <path d="M179 20 L193 24" stroke-width="2.6"/>
+  <path d="M166 60 L182 64 L178 80 L170 84 L162 76 Z" stroke-width="1.6" fill="#b9ad94"/>
+  <path d="M172 66 L170 76" stroke-width=".9" opacity=".6"/>
   <path d="M20 100 Q110 108 200 98" stroke-width="1" opacity=".5"/>`);
+
+// A red route past three symbol chips to a tomb gate with its rings.
+const chip = (x, y, id) => `<circle cx="${x}" cy="${y}" r="11" fill="#efe0bd" stroke-width="1.4"/>
+  <g transform="translate(${x} ${y}) scale(.55)" color="${RED}" stroke="currentColor" stroke-width="2.6">${glyph(id)}</g>`;
+export const missionsSketch = wrap(`
+  <path d="M10 106 Q110 114 210 104" stroke-width="1" opacity=".5"/>
+  <path d="M16 96 C30 92 26 72 44 70 S70 92 86 88 S100 60 118 62 S134 90 150 92" stroke="${RED}" stroke-width="2" stroke-dasharray="5 4"/>
+  ${chip(44, 70, 'fish')}${chip(86, 88, 'bird')}${chip(118, 62, 'cat')}
+  <path d="M154 104 V56 Q180 30 206 56 V104" stroke-width="2.2"/>
+  <path d="M162 104 V60 Q180 42 198 60 V104" stroke-width="1.3"/>
+  <path d="M154 70 h8 M154 86 h8 M198 70 h8 M198 86 h8" stroke-width="1" opacity=".6"/>
+  <circle cx="180" cy="80" r="15" fill="#efe0bd" stroke-width="1.6"/>
+  <circle cx="180" cy="80" r="10" stroke-width="1.1"/>
+  <circle cx="180" cy="80" r="5" stroke-width="1.1"/>
+  <path d="M180 62 l-3.5 -6 h7 Z" fill="${RED}" stroke="${RED}" stroke-width="1"/>`);
 
 // A compass needle over a dotted accuracy circle.
 export const locationSketch = wrap(`

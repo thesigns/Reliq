@@ -1,11 +1,18 @@
-// First-run pages: the letter, three rule pages, and the location explanation.
+// First-run pages: the letter, four rule pages, and the location explanation.
 // Resolves once the player agrees to share their location.
 
 import { t, setLang, getLang } from '../i18n/i18n.js';
-import { vaultSketch, searchSketch, findsSketch, locationSketch } from './onboarding-art.js';
+import { vaultSketch, searchSketch, findsSketch, missionsSketch, locationSketch } from './onboarding-art.js';
 import { sfx } from './audio.js';
+import { RULES } from '../game/rules.js';
 
-const STEPS = ['letter', 'vault', 'search', 'finds', 'location'];
+// A rule page's text, with the numbers from rules.js. Shared with the rules in About.
+export const ruleText = (key) => t(key, {
+  vault: RULES.vaultRadius, ttl: RULES.searchTtlMs / 3600e3, speed: RULES.maxSpeedKmh,
+  days: RULES.missionTtlMs / 86400e3,
+});
+
+const STEPS = ['letter', 'vault', 'search', 'finds', 'missions', 'location'];
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export class Onboarding {
@@ -16,6 +23,7 @@ export class Onboarding {
     this.el('[data-sketch="vault"]').innerHTML = vaultSketch;
     this.el('[data-sketch="search"]').innerHTML = searchSketch;
     this.el('[data-sketch="finds"]').innerHTML = findsSketch;
+    this.el('[data-sketch="missions"]').innerHTML = missionsSketch;
     this.el('[data-sketch="location"]').innerHTML = locationSketch;
     this.el('.onb-dots').innerHTML = STEPS.map(() => '<span></span>').join('');
     for (const b of root.querySelectorAll('[data-lang]')) {
@@ -24,6 +32,7 @@ export class Onboarding {
   }
 
   render() {
+    for (const p of this.root.querySelectorAll('[data-rule]')) p.textContent = ruleText(p.dataset.rule);
     STEPS.forEach((s, i) => this.el(`[data-step="${s}"]`).classList.toggle('active', i === this.step));
     [...this.el('.onb-dots').children].forEach((d, i) => d.classList.toggle('on', i === this.step));
     const last = this.step === STEPS.length - 1;

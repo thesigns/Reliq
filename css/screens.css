@@ -78,7 +78,7 @@
   font-style: italic;
   font-weight: 600;
   font-size: 16.5px;
-  line-height: 1.3;
+  line-height: 1.22;
   color: var(--ink);
   background: var(--grain-soft), linear-gradient(175deg, #f8edcf, #e6d0a0);
   border: 1px solid rgba(59, 36, 20, .45);
@@ -194,7 +194,7 @@
   white-space: pre-line;
   font-family: var(--font-text);
   font-size: 18px;
-  line-height: 1.42;
+  line-height: 1.3;
   color: #3e2615;
 }
 .onb-letter::first-letter {
@@ -285,7 +285,7 @@
   filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .85)) drop-shadow(0 0 18px rgba(240, 190, 100, .3));
 }
 .menu-tagline { margin: 2px 0 12px; font-family: var(--font-text); font-style: italic; font-size: 17px; color: rgba(234, 214, 166, .8); }
-.menu-safety { max-width: 300px; margin: 0 0 30px; font-family: var(--font-text); font-size: 13.5px; line-height: 1.4; text-wrap: pretty; color: rgba(234, 214, 166, .55); }
+.menu-safety { max-width: 300px; margin: 0 0 30px; font-family: var(--font-text); font-size: 13.5px; line-height: 1.32; text-wrap: pretty; color: rgba(234, 214, 166, .55); }
 .menu-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 .menu-actions .btn-brass { min-width: 230px; margin-bottom: 8px; }
 .menu-link {
@@ -384,7 +384,7 @@
 .fence-art svg { width: 100%; height: 100%; display: block; }
 .fence-coin img { width: 48px; height: 48px; image-rendering: pixelated; opacity: 0; transition: opacity .3s ease; }
 .fence-coin img.ready { opacity: 1; }
-.fence-text { font-size: 15px; line-height: 1.25; }
+.fence-text { font-size: 15px; line-height: 1.18; }
 .fence-note { font-size: 13.5px; font-style: italic; color: #6b5034; }
 .fence-sell { white-space: nowrap; }
 
@@ -530,10 +530,15 @@
 .nb-status { display: flex; align-items: center; gap: 6px; font-size: 16.5px; color: #3b2414; }
 .nb-status svg { flex: none; width: 15px; height: 15px; }
 .nb-lost { color: #6e2418; }
+/* The label is centred in its own box: the paragraph around it is one rule tall, and a
+   button inherits that line height otherwise. */
 .nb-more {
+  display: inline-flex;
+  align-items: center;
   height: 22px;
-  padding: 0 12px;
+  padding: 2px 12px 0;   /* caps only: room for descenders would leave them riding high */
   vertical-align: middle;
+  line-height: 1;
   border: 1px solid rgba(59, 36, 20, .55);
   border-radius: 11px;
   background: rgba(255, 249, 232, .7);
@@ -547,7 +552,6 @@
   text-transform: uppercase;
   color: var(--ink);
 }
-.nb-more::after { content: ' ›'; letter-spacing: 0; }
 .nb-more:active { background: #f1dfb4; transform: translateY(1px); }
 .nb-sketch {
   position: relative;
@@ -610,12 +614,12 @@
 .j-toggle input:checked + i { background: #6b4716; }
 .j-toggle input:checked + i::after { transform: translateX(20px); }
 .j-toggle input:focus-visible + i { outline: 2px solid var(--oxblood); outline-offset: 2px; }
-.j-hint { margin: 8px 0 0; font-style: italic; font-size: 14.5px; color: #6b5034; }
+.j-hint { margin: 8px 0 0; font-style: italic; font-size: 14.5px; line-height: 1.28; color: #6b5034; }
 .j-install { margin-top: 16px; padding-top: 6px; border-top: 1px dashed rgba(59, 36, 20, .25); }
 .j-danger { margin-top: 26px; text-align: center; }
 .btn-link.danger { color: var(--oxblood); }
 .btn-link[hidden] { display: none; }
-.j-confirm p { margin: 0 0 10px; font-size: 16px; }
+.j-confirm p { margin: 0 0 10px; font-size: 16px; line-height: 1.25; }
 .j-confirm[hidden] { display: none; }
 .btn-danger {
   padding: 10px 18px;
@@ -634,7 +638,8 @@
 .j-rule { margin: 0 0 14px; }
 .j-rule svg { width: 100%; height: auto; display: block; }
 .j-rule h3 { margin: 2px 0 4px; font-family: var(--font-display); font-size: 16px; }
-.j-rule p, .j-credits { margin: 0; font-size: 16px; line-height: 1.4; }
+.j-rule p, .j-credits { margin: 0; font-size: 16px; line-height: 1.3; }
+.j-rule p, .j-credits, .j-hint, .j-confirm p, .onb-letter, .onb-text, .toast { text-wrap: pretty; }
 .j-version { margin: 14px 0 0; text-align: center; font-family: var(--font-display); font-size: 11px; letter-spacing: .2em; color: rgba(59, 36, 20, .55); }
 
 .debug[hidden] { display: none; }

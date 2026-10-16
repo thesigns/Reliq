@@ -27,6 +27,8 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 - **Opisy śmieci** zachęcają do dalszych poszukiwań i bawią, zamiast zniechęcać. Na przykład bateria: „Rozładowana do zera. Ty na pewno masz więcej energii!”
 - **Polskie teksty** nie zakładają płci gracza: zniknęły formy typu „znalazłeś”, „zaszedłeś”, „zarobiłeś”.
 
+- **Typografia:** odstępy między wierszami zależą od długości wiersza. Krótkie opisy (znaleziska, karty, komunikaty) mają ciaśniejszą interlinię, dłuższe akapity (lore, „O grze”, onboarding) nieco luźniejszą, ale już nie rozstrzeloną. Akapity równoważą długość wierszy, żeby na końcu nie zostawało pojedyncze słowo.
+
 ### Usunięte
 
 - **Czerwona przerywana linia trasy** za graczem. Przeszukane obszary i tak pokazują przebytą drogę, a linia myliła się z innymi przerywanymi liniami na mapie. Zapis gry nie przechowuje już trasy (wcześniej nawet ~250 KB po długim spacerze).

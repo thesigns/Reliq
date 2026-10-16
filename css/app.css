@@ -171,7 +171,7 @@ html.inspect #app {
 .map-tip.show { animation: tip-in .22s cubic-bezier(.2, 1.4, .4, 1); }
 @keyframes tip-in { from { opacity: 0; margin-top: 6px; } to { opacity: 1; margin-top: 0; } }
 .tip-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: .04em; }
-.tip-body { margin-top: 2px; font-family: var(--font-text); font-style: italic; font-size: 15px; line-height: 1.25; }
+.tip-body { margin-top: 2px; font-family: var(--font-text); font-style: italic; font-size: 15px; line-height: 1.2; }
 
 .edge-pointer {
   position: absolute;
@@ -627,7 +627,7 @@ html.inspect #app {
   font-family: var(--font-text);
   font-style: italic;
   font-size: 18.5px;
-  line-height: 1.38;
+  line-height: 1.24;
   color: #ead9b6;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
 }
@@ -739,7 +739,7 @@ html.inspect #app {
 .card-status svg { flex: none; width: 15px; height: 15px; }
 .card-status[hidden], .notebook-active[hidden], .notebook-notes[hidden], .notebook-abandon[hidden] { display: none; }
 .notebook-notes { margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(59, 36, 20, .35); font-family: var(--font-text); }
-.notebook-notes p { margin: 0 0 8px; font-size: 16px; line-height: 1.4; }
+.notebook-notes p { margin: 0 0 8px; font-size: 16px; line-height: 1.28; }
 .notebook-notes .nb-lore { font-style: italic; color: #4a2e18; }
 .notebook-notes .nb-fact { color: #3b2414; }
 .notebook-buttons { display: flex; flex-direction: column; align-items: stretch; gap: 2px; width: 100%; }
@@ -760,9 +760,12 @@ html.inspect #app {
   font-family: var(--font-text);
   font-style: italic;
   font-size: 18px;
-  line-height: 1.3;
+  line-height: 1.22;
   color: #4a2e18;
 }
+
+/* Wrapped paragraphs balance their lines instead of leaving one word on the last. */
+.reveal-desc, .card-desc, .tip-body, .card-msg, .notebook-notes p, .gate-hint, .deposit-hint { text-wrap: pretty; }
 
 .checks {
   margin: 12px 0 0;
@@ -771,7 +774,7 @@ html.inspect #app {
   border-top: 1px dashed rgba(59, 36, 20, .35);
   font-family: var(--font-text);
   font-size: 16.5px;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 .checks[hidden] { display: none; }
 .checks li { display: flex; align-items: flex-start; gap: 8px; padding: 3px 0; }
@@ -1012,6 +1015,7 @@ html.inspect #app {
   font-family: var(--font-text);
   font-style: italic;
   font-size: 14px;
+  line-height: 1.25;
   color: rgba(234, 214, 166, .45);
   transition: opacity .3s ease;
 }
@@ -1038,7 +1042,7 @@ html.inspect #app {
 .ds-art { width: 100%; }
 .ds-art img { width: 84px; height: 84px; }
 .ds-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
-.ds-note { font-style: italic; font-size: 13px; color: #6b5034; }
+.ds-note { font-style: italic; font-size: 13px; line-height: 1.2; color: #6b5034; }
 .ds-count { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: #7a4a22; }
 .ds-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px; }
 .deposit.closing .deposit-backdrop, .deposit.closing .deposit-stage, .deposit.closing .deposit-head,
@@ -1114,6 +1118,7 @@ html.inspect #app {
   font-style: italic;
   font-weight: 600;
   font-size: 17px;
+  line-height: 1.25;
   color: var(--oxblood);
   text-align: center;
 }
@@ -1123,7 +1128,7 @@ html.inspect #app {
 .sv-item img { width: 52px; height: 52px; image-rendering: pixelated; }
 .sv-art { width: 100%; }
 .sv-art img { width: 84px; height: 84px; }
-.sv-name { font-size: 12.5px; line-height: 1.15; }
+.sv-name { font-size: 12.5px; line-height: 1.12; }
 .sv-art .sv-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
 .sv-count { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: #7a4a22; }
 .card-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -1338,12 +1343,12 @@ html.inspect #app {
 .gate-shards .shards-label { color: #d9a85a; }
 .gate .shard-chip.empty { color: rgba(240, 210, 160, .6); background: rgba(201, 149, 103, .22); }
 .gate-hint {
-  min-height: 2.6em;
+  min-height: 2.5em;
   margin: 0;
   font-family: var(--font-text);
   font-style: italic;
   font-size: 17px;
-  line-height: 1.3;
+  line-height: 1.25;
   color: #ead3a4;
 }
 .gate > .gate-x { position: absolute; z-index: 1; top: calc(var(--safe-top) + 14px); right: 14px; }

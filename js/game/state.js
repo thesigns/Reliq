@@ -27,7 +27,7 @@ export function createState(now) {
 }
 
 // quality: 'full' | 'saver' (lower resolution and frame rate to save battery)
-export const DEFAULT_SETTINGS = { lang: null, sound: true, music: false, haptics: true, keepAwake: true, quality: 'full' };
+export const DEFAULT_SETTINGS = { lang: null, sound: true, haptics: true, keepAwake: true, quality: 'full' };
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const isPoint = (p) => p && isNum(p.lat) && isNum(p.lon) && isNum(p.t);
@@ -74,7 +74,7 @@ export function migrate(raw, now) {
   if (Array.isArray(raw.trail)) s.trail = raw.trail.filter(isPoint).map(({ lat, lon, t, gap }) => (gap === true ? { lat, lon, t, gap } : { lat, lon, t }));
   if (raw.settings && typeof raw.settings === 'object') {
     if (raw.settings.lang === 'pl' || raw.settings.lang === 'en') s.settings.lang = raw.settings.lang;
-    for (const k of ['sound', 'music', 'haptics', 'keepAwake']) {
+    for (const k of ['sound', 'haptics', 'keepAwake']) {
       if (typeof raw.settings[k] === 'boolean') s.settings[k] = raw.settings[k];
     }
     if (raw.settings.quality === 'full' || raw.settings.quality === 'saver') s.settings.quality = raw.settings.quality;

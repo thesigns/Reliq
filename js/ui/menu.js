@@ -70,7 +70,6 @@ export class GameMenu {
       <div class="j-field"><span>${esc(t('settings.language'))}</span>
         <div class="j-seg"><button data-lang="pl" class="${lang === 'pl' ? 'on' : ''}">Polski</button><button data-lang="en" class="${lang === 'en' ? 'on' : ''}">English</button></div></div>
       ${toggle('sound', 'settings.sound')}
-      ${toggle('music', 'settings.music')}
       ${toggle('haptics', 'settings.haptics')}
       ${this.deps.canKeepAwake ? toggle('keepAwake', 'settings.keepAwake') : ''}
       <div class="j-field"><span>${esc(t('settings.quality'))}</span>

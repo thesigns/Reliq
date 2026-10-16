@@ -259,7 +259,7 @@ Testy: `node --test` (albo `npm test`).
 - **Sygnał gotowości:** dzwonek, wibracja i błysk medalionu, gdy znów można szukać (po wyjściu z przeszukanego terenu, ze strefy skarbca albo po zwolnieniu).
 - Kropelki atramentu przy rozlewaniu nowego obszaru.
 - Ścianki kwadratowego otworu monety Kaiyuan.
-- Opcjonalna muzyka generatywna: dron w D i rzadkie szarpane nuty pentatoniki. Domyślnie wyłączona, a w tle się wycisza.
+- Opcjonalna muzyka generatywna: dron w D i rzadkie szarpane nuty pentatoniki. Usunięta 2026-10-16 razem z opcją w ustawieniach: na głośniku telefonu była prawie niesłyszalna, a w tle i tak milkła. Kto chce muzyki, puści ją z innej aplikacji.
 
 **Status E7:** gotowy.
 - **Ikony** (`scripts/make-icons.mjs`) generowane bez zależności: zwykłe, maskowalne, apple-touch i favicon.

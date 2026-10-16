@@ -322,7 +322,6 @@ function resize() {
 function applySettings() {
   const s = state.settings;
   sfx.setEnabled(s.sound);
-  sfx.setMusic(s.music);
   haptics.setEnabled(s.haptics);
   keepScreenOn(MODE === 'real' && s.keepAwake);
   resize();

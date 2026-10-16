@@ -4,7 +4,6 @@ let ctx = null;
 let master = null;
 let reverb = null;
 let enabled = true;
-let musicWanted = false;
 
 function ac() {
   if (!ctx) {
@@ -60,90 +59,9 @@ function env(gainNode, t, attack, peak, decay) {
   gainNode.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
 }
 
-// Generative ambient music: a low drone in D with a slowly breathing filter, and sparse
-// plucked notes from a D minor pentatonic scale. Quiet by design; off by default.
-const music = {
-  nodes: null,
-  timer: 0,
-
-  start() {
-    if (this.nodes || !enabled || !musicWanted) return;
-    const c = ac(), t = c.currentTime;
-    const bus = c.createGain();
-    bus.gain.setValueAtTime(0.0001, t);
-    bus.gain.exponentialRampToValueAtTime(1, t + 4);
-    out(bus, 0.8, 0.9);
-    const lp = c.createBiquadFilter();
-    lp.type = 'lowpass';
-    lp.frequency.value = 320;
-    lp.Q.value = 0.7;
-    const lfo = c.createOscillator();
-    const lfoGain = c.createGain();
-    lfo.frequency.value = 0.05;
-    lfoGain.gain.value = 140;
-    lfo.connect(lfoGain).connect(lp.frequency);
-    const drone = c.createGain();
-    drone.gain.value = 0.022;
-    const oscs = [73.42, 110, 146.83].map((f, i) => {
-      const o = c.createOscillator();
-      o.type = i === 2 ? 'sine' : 'sawtooth';
-      o.frequency.value = f;
-      o.detune.value = (i - 1) * 6;
-      o.connect(lp);
-      o.start(t);
-      return o;
-    });
-    lp.connect(drone).connect(bus);
-    lfo.start(t);
-    this.nodes = { bus, oscs, lfo };
-    this.schedule();
-  },
-
-  schedule() {
-    const SCALE = [293.66, 349.23, 392, 440, 523.25, 587.33, 698.46];
-    this.timer = setTimeout(() => {
-      if (!this.nodes) return;
-      const c = ac(), t = c.currentTime;
-      const notes = Math.random() < 0.3 ? 2 : 1;
-      for (let i = 0; i < notes; i++) {
-        const f = SCALE[Math.floor(Math.random() * SCALE.length)];
-        const o = c.createOscillator();
-        o.type = 'triangle';
-        o.frequency.setValueAtTime(f * 1.006, t + i * 0.22);
-        o.frequency.exponentialRampToValueAtTime(f, t + i * 0.22 + 0.08);
-        const g = c.createGain();
-        env(g, t + i * 0.22, 0.006, 0.05, 2.6);
-        o.connect(g).connect(this.nodes.bus);
-        o.start(t + i * 0.22); o.stop(t + i * 0.22 + 3);
-      }
-      this.schedule();
-    }, 2500 + Math.random() * 4500);
-  },
-
-  stop() {
-    clearTimeout(this.timer);
-    if (!this.nodes) return;
-    const { bus, oscs, lfo } = this.nodes;
-    this.nodes = null;
-    const t = ctx.currentTime;
-    bus.gain.cancelScheduledValues(t);
-    bus.gain.setValueAtTime(Math.max(0.0001, bus.gain.value), t);
-    bus.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
-    for (const o of [...oscs, lfo]) o.stop(t + 1.6);
-  },
-};
-
-// Music follows the setting and pauses while the app is in the background.
-function syncMusic() {
-  if (musicWanted && enabled && !document.hidden && ctx) music.start();
-  else if (music.nodes) music.stop();
-}
-if (typeof document !== 'undefined') document.addEventListener('visibilitychange', syncMusic);
-
 export const sfx = {
-  setEnabled(v) { enabled = v; syncMusic(); },
-  setMusic(v) { musicWanted = v; syncMusic(); },
-  unlock() { if (enabled) { ac(); syncMusic(); } },
+  setEnabled(v) { enabled = v; },
+  unlock() { if (enabled) ac(); },
 
   // One spade strike: low thud + gravel crunch.
   dig() {

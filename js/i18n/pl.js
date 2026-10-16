@@ -63,7 +63,6 @@ export default {
 
   'settings.language': 'Język',
   'settings.sound': 'Dźwięk',
-  'settings.music': 'Muzyka',
   'settings.haptics': 'Wibracje',
   'settings.keepAwake': 'Nie wygaszaj ekranu',
   'settings.quality': 'Grafika',

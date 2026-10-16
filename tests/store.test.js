@@ -81,7 +81,7 @@ test('migrate drops malformed entries', () => {
   assert.deepEqual(s.tombs, [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }]);
   assert.deepEqual(s.artifacts, [{ id: 'cup', n: 1, t: 3, from: 'tomb' }]);
   assert.deepEqual(s.lost, [{ n: 2, t: 3 }]);
-  assert.deepEqual(s.settings, { lang: null, sound: false, music: false, haptics: true, keepAwake: true, quality: 'full' });
+  assert.deepEqual(s.settings, { lang: null, sound: false, haptics: true, keepAwake: true, quality: 'full' });
 });
 
 test('a mission needs a valid key; foreign and repeated shards are dropped', () => {
@@ -105,7 +105,7 @@ test('a broken satchel keeps only valid finds', () => {
 
 test('settings saved before new options existed get defaults', () => {
   const s = migrate({ v: SAVE_VERSION, settings: { lang: 'pl', quality: 'ultra', keepAwake: false } }, 0);
-  assert.deepEqual(s.settings, { lang: 'pl', sound: true, music: false, haptics: true, keepAwake: false, quality: 'full' });
+  assert.deepEqual(s.settings, { lang: 'pl', sound: true, haptics: true, keepAwake: false, quality: 'full' });
 });
 
 test('storage that throws never breaks the game', () => {

@@ -10,11 +10,11 @@ Reliq zamienia zwykły spacer w wyprawę poszukiwacza skarbów: twoja okolica st
 
 Wychodzisz z domu i nie jesteś już na swojej ulicy, tylko na skraju nieznanego lądu. Telefon pokazuje mapę wyrysowaną sepią na pergaminie: góry, lasy i równiny, a na nich czerwoną kreskę twojej trasy. Ulice zniknęły. Zostały kierunki, odległości i pytanie, co leży za następnym wzgórzem.
 
-Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawleczkę od puszki, skasowany bilet, baterię rozładowaną jak twoje nadzieje. Ale co trzecie przeszukanie daje monetę: rzymskiego denara, chińską Kaiyuan Tongbao, wenecki dukat. Każda ma krótką historię prawdziwego pieniądza, a gdzieś na dnie losowania czeka aureus, którym Brutus uczcił Idy marcowe. Przeszukany teren zostaje zaznaczony na mapie, więc żeby kopać dalej, trzeba iść dalej.
+Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawleczkę od puszki, skasowany bilet, baterię, która ma mniej energii niż ty. Ale co trzecie przeszukanie daje monetę: rzymskiego denara, chińską Kaiyuan Tongbao, wenecki dukat. Każda ma krótką historię prawdziwego pieniądza, a gdzieś na dnie losowania czeka aureus, którym Brutus uczcił Idy marcowe. Przeszukany teren zostaje zaznaczony na mapie, więc żeby kopać dalej, trzeba iść dalej.
 
 Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
 
-Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w sakwie, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co znalazłeś, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
+Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w sakwie, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
 
 Reliq nie każe biec ani bić rekordów. Nagradza ciekawość i nogi: kopać można tylko na piechotę, więc samochód nic tu nie da. Docelowo około 60 misji to rok wypraw zaczynających się od własnych drzwi.
 
@@ -52,32 +52,32 @@ Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie s
 
 **Lista śmieci (65% prawdopodobieństwa):**
 
-- Grosz. Jedyna moneta, której nikt nie chce. Nawet ty.
-  - EN: Penny. The only coin nobody wants. Not even you.
-- Zawleczka od puszki. Najczęściej znajdowany „metal” w historii poszukiwań.
-  - EN: Can pull tab. The most frequently found “metal” in the history of treasure hunting.
-- Skasowany bilet. Ktoś dojechał. Ty nie.
-  - EN: Used ticket. Someone got there. You didn't.
-- Zapalniczka bez gazu. Ostatni ogień zgasł dawno temu.
-  - EN: Empty lighter. Its last flame died long ago.
-- Bateria AA. Rozładowana, jak twoje nadzieje.
-  - EN: AA battery. Drained, like your hopes.
-- Spinacz biurowy. Trzymał kiedyś coś ważnego. Teraz nic.
-  - EN: Paper clip. It once held something important. Now it holds nothing.
-- Kolczyk bez pary. Złoty? Nie. Pozłacany? Też nie.
-  - EN: Lone earring. Gold? No. Gold-plated? Also no.
-- Gumka recepturka. Wciąż elastyczna, bo to wieczny materiał.
-  - EN: Rubber band. Still stretchy, because some materials are forever.
-- Nakrętka od butelki. Plastik przetrwa nas wszystkich.
-  - EN: Bottle cap. Plastic will outlive us all.
-- Wyblakły paragon. Ktoś kupił chleb. Data nieczytelna.
-  - EN: Faded receipt. Someone bought bread. The date is illegible.
+- Grosz. Grosz do grosza: tak zaczyna się każda fortuna. Kop dalej!
+  - EN: Penny. Every fortune starts with a single penny. Keep digging!
+- Zawleczka od puszki. Każdy wielki poszukiwacz ma w kieszeni kilka takich. Witaj w klubie!
+  - EN: Can pull tab. Every great treasure hunter has a pocketful of these. Welcome to the club!
+- Skasowany bilet. Czyjaś podróż już się skończyła. Twoja dopiero się zaczyna!
+  - EN: Used ticket. Someone's journey is over. Yours is just getting started!
+- Zapalniczka bez gazu. Jej płomień zgasł, ale twój zapał płonie dalej!
+  - EN: Empty lighter. Its flame is out, but your fire is still burning!
+- Bateria AA. Rozładowana do zera. Ty na pewno masz więcej energii!
+  - EN: AA battery. Flat as a pancake. You've surely got more energy than this!
+- Spinacz biurowy. Mały, a nigdy nie odpuszcza. Weź z niego przykład!
+  - EN: Paper clip. Small, but it never lets go. Take a leaf out of its book!
+- Kolczyk bez pary. Jego para leży gdzieś w okolicy. Kto wie, co jeszcze tu znajdziesz?
+  - EN: Lone earring. Its twin is somewhere nearby. Who knows what else you'll turn up?
+- Gumka recepturka. Wciąż sprężysta. Wystrzel się nią w stronę następnego skarbu!
+  - EN: Rubber band. Still springy. Use it to launch yourself at the next treasure!
+- Nakrętka od butelki. Ktoś tu odkręcił napój, a ty odkręcasz przygodę. Następna łopata może być złota!
+  - EN: Bottle cap. Someone opened a drink here; you're opening an adventure. The next dig could strike gold!
+- Wyblakły paragon. Ktoś tu kupił chleb, a ty zbierasz kilometry. Lepszy interes!
+  - EN: Faded receipt. Someone bought bread here; you're collecting miles. Better deal!
 
 **Lista monet (35% prawdopodobieństwa):**
 
 Common (75% szans)
 
-1. Nummus rzymski. Rzym bił je jak dziś grosze. Ktoś zgubił, ty znalazłeś, tylko 1600 lat później.
+1. Nummus rzymski. Rzym bił je jak dziś grosze. Ktoś go zgubił, a w twoje ręce trafił 1600 lat później.
    - EN: Roman nummus. Rome minted them like pocket change. Someone lost it, you found it, just 1,600 years later.
 2. Kaiyuan Tongbao. Nawlekano je na sznurki po tysiąc sztuk. Ta jedna się wymknęła.
    - EN: Kaiyuan Tongbao. They were strung on cords a thousand at a time. This one slipped away.

@@ -125,21 +125,53 @@ export function recenterSVG() {
 </svg>`;
 }
 
-export function scrollSVG() {
+// The mission button: the treasure hunter's field notebook. Oxblood leather with stitching,
+// brass corners and the tomb gate's rings tooled on the cover, the page block showing at the
+// edge, an elastic band and a ribbon bookmark. Lit from the top left like the chest.
+export function notebookSVG() {
+  const cover = 'M16 10 H45 a2.5 2.5 0 0 1 2.5 2.5 V49.5 a2.5 2.5 0 0 1 -2.5 2.5 H16 Z';
+  // Eight dots on each ring, as on the gate and on the tomb's map icon.
+  const dots = (r, size) => Array.from({ length: 8 }, (_, i) => {
+    const a = (i / 8) * Math.PI * 2;
+    return `<circle cx="${(32 + Math.sin(a) * r).toFixed(2)}" cy="${(29 - Math.cos(a) * r).toFixed(2)}" r="${size}"/>`;
+  }).join('');
+  const pageEdges = [48.6, 49.4, 50.2].map((x) => `M${x} 13 V51`).join(' ');
   return `<svg viewBox="0 0 64 64" aria-hidden="true">
   <defs>
-    <linearGradient id="spp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8ecca"/><stop offset="1" stop-color="#dcc18a"/></linearGradient>
-    <linearGradient id="spr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efdcae"/><stop offset=".5" stop-color="#b8935a"/><stop offset="1" stop-color="#6f5028"/></linearGradient>
-    <radialGradient id="spw" cx="40%" cy="35%"><stop offset="0" stop-color="#d4503f"/><stop offset="1" stop-color="#5a0d09"/></radialGradient>
+    <linearGradient id="nkL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8473a"/><stop offset=".55" stop-color="#7c2219"/><stop offset="1" stop-color="#4a100b"/></linearGradient>
+    <linearGradient id="nkS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a150e"/><stop offset=".6" stop-color="#8a2c21"/><stop offset="1" stop-color="#5a150e"/></linearGradient>
+    <linearGradient id="nkP" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8d5a6"/><stop offset="1" stop-color="#fbf0d2"/></linearGradient>
+    <linearGradient id="nkB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0bc"/><stop offset=".4" stop-color="#d9a84f"/><stop offset="1" stop-color="#6b4716"/></linearGradient>
+    <linearGradient id="nkR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f0c562"/><stop offset="1" stop-color="#a8761f"/></linearGradient>
+    <radialGradient id="nkG" cx="30%" cy="22%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="nkBlur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6"/></filter>
   </defs>
-  <rect x="13" y="14" width="38" height="36" fill="url(#spp)" stroke="#3b2414" stroke-width="1.3"/>
-  <path d="M19 23 h20 M19 29 h26" stroke="#8b6b45" stroke-width="1.1"/>
-  <path d="M20 44 C26 40 26 34 32 34 S40 36 44 28" stroke="#8b1e1e" stroke-width="1.7" stroke-dasharray="2.4 2.4" fill="none"/>
-  <path d="M41 22 l6 6 M47 22 l-6 6" stroke="#8b1e1e" stroke-width="2.2" stroke-linecap="round"/>
-  <rect x="8" y="9" width="48" height="8" rx="4" fill="url(#spr)" stroke="#2a160a" stroke-width="1.2"/>
-  <rect x="8" y="47" width="48" height="8" rx="4" fill="url(#spr)" stroke="#2a160a" stroke-width="1.2"/>
-  <circle cx="51" cy="51" r="7" fill="url(#spw)" stroke="#3a0805" stroke-width="1"/>
-  <path d="M48.5 51 h5 M51 48.5 v5" stroke="#f19a8d" stroke-width="1" opacity=".6"/>
+  <g transform="rotate(-7 32 32)">
+    <path d="M17.5 12 H48 a2.5 2.5 0 0 1 2.5 2.5 V52 a2.5 2.5 0 0 1 -2.5 2.5 H17.5 Z" fill="#000" opacity=".55" filter="url(#nkBlur)"/>
+    <path d="M28.5 50 h4.4 v9.5 l-2.2 -2 l-2.2 2 Z" fill="url(#nkR)" stroke="#5a3a0c" stroke-width=".6" stroke-linejoin="round"/>
+    <rect x="44" y="12.6" width="7.4" height="39" rx="1.4" fill="url(#nkP)" stroke="#3b2414" stroke-width=".8"/>
+    <path d="${pageEdges}" stroke="#a88a5a" stroke-width=".35" opacity=".8"/>
+    <path d="${cover}" fill="url(#nkL)"/>
+    <path d="${cover}" fill="url(#nkG)"/>
+    <rect x="14" y="10" width="5.2" height="42" rx="1.6" fill="url(#nkS)" stroke="#2a0806" stroke-width=".8"/>
+    <path d="M15.3 11.5 V50.5" stroke="#e08a70" stroke-width=".5" opacity=".45"/>
+    <path d="M21.6 12.6 H44.2 a1 1 0 0 1 1 1 V48.4 a1 1 0 0 1 -1 1 H21.6" fill="none" stroke="#e7b783" stroke-width=".6" stroke-dasharray="1.5 1.3" opacity=".75"/>
+    <g fill="none" stroke-linecap="round">
+      <circle cx="32.4" cy="29.6" r="7.6" stroke="#2a0806" stroke-width="2" opacity=".5"/>
+      <circle cx="32" cy="29" r="7.6" stroke="url(#nkB)" stroke-width="1.6"/>
+      <circle cx="32" cy="29" r="4.9" stroke="url(#nkB)" stroke-width="1"/>
+      <circle cx="32" cy="29" r="2.4" stroke="url(#nkB)" stroke-width="1"/>
+    </g>
+    <g fill="#f3d488">${dots(6.25, .55)}${dots(3.65, .42)}</g>
+    <path d="M32 27.6 a.75 .75 0 0 1 .45 1.36 l.35 1.3 h-1.6 l.35 -1.3 A.75 .75 0 0 1 32 27.6 Z" fill="#f6dc95"/>
+    <path d="M24.5 41 H39.5" stroke="url(#nkB)" stroke-width=".9" stroke-linecap="round" opacity=".85"/>
+    <path d="M47.5 10 V17 L40.5 10 Z" fill="url(#nkB)" stroke="#3a2210" stroke-width=".6" stroke-linejoin="round"/>
+    <path d="M47.5 52 V45 L40.5 52 Z" fill="url(#nkB)" stroke="#3a2210" stroke-width=".6" stroke-linejoin="round"/>
+    <rect x="40.6" y="9.4" width="2.6" height="43.2" rx=".8" fill="#2b1810" stroke="#120804" stroke-width=".5"/>
+    <path d="M41.3 10.4 V51.6" stroke="#7a5a44" stroke-width=".45" opacity=".8"/>
+    <path d="${cover} M14 10 H16" fill="none" stroke="#1d0e06" stroke-width="1.2" stroke-linejoin="round"/>
+    <rect x="14" y="10" width="5.2" height="42" rx="1.6" fill="none" stroke="#1d0e06" stroke-width="1.1"/>
+  </g>
 </svg>`;
 }
 

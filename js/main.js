@@ -33,7 +33,7 @@ import { shardSketch } from './ui/gate-art.js';
 import { Onboarding } from './ui/onboarding.js';
 import { Toast } from './ui/toast.js';
 import { Particles } from './ui/particles.js';
-import { scrollSVG, closeGlyph, gearSVG } from './ui/art.js';
+import { notebookSVG, closeGlyph, gearSVG } from './ui/art.js';
 import { sfx } from './ui/audio.js';
 import { haptics } from './ui/haptics.js';
 import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate, formatRoman } from './i18n/i18n.js';
@@ -915,7 +915,7 @@ function wireUi() {
   for (const b of document.querySelectorAll('.btn-x')) b.innerHTML = closeGlyph();
   $('btn-menu').addEventListener('click', () => { sfx.paper(); menu.open(); });
   $('btn-search').addEventListener('click', onMedallion);
-  $('btn-tomb').innerHTML = scrollSVG();
+  $('btn-tomb').innerHTML = notebookSVG();
   $('btn-tomb').addEventListener('click', onMissionMap);
   $('mission-tag').addEventListener('click', onMissionMap);
   $('scroll-gate').addEventListener('click', onOpenGate);

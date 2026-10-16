@@ -16,6 +16,7 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 - **Przycisk misji** razem z etykietą odległości przeniósł się do lewego górnego rogu mapy. Na dole zasłaniał napis nad przyciskiem szukania.
 - **Wskaźnik skarbca** omija przyciski na mapie i staje w najbliższym wolnym miejscu krawędzi, w kierunku skarbca. Komunikaty pokazują się niżej, pod przyciskiem misji.
 - **Ikona grobowca** na mapie to teraz jego wrota: kamienny krąg z trzema pierścieniami po 8 kropek i zamkiem pośrodku. Środek kręgów to miejsce odkrycia. Wcześniej była to zrujnowana świątynia z czerwonym X.
+- **Ikona przycisku misji** to teraz notes poszukiwacza zamiast zwoju: oprawa z ciemnoczerwonej skóry z przeszyciem, mosiężne narożniki, gumka, zakładka-wstążka, widoczny blok kartek i wytłoczone na okładce wrota grobowca (trzy pierścienie z kropkami i zamkiem).
 - **Karta misji** wygląda jak strona z notesu terenowego: liniowany papier z czerwonym marginesem. Zamiast mapki ze ścieżką ma szkic artefaktu, taki jak w skarbcu, a numer misji jest w nagłówku („Misja II”).
 - **Ikona skarbca** w doku to nowa, staranniej narysowana skrzynia: deski z połyskiem, nitowane żelazne okucia, mosiężne narożniki, zapięcie z zamkiem i złoty blask w szczelinie pod wiekiem.
 - **Numery grobowców** są pisane cyframi rzymskimi: Grobowiec I, II, III…

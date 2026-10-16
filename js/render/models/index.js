@@ -7,6 +7,8 @@ import { CLOG } from './clog.js';
 import { COMB } from './comb.js';
 import { CROWN } from './crown.js';
 import { CUP } from './cup.js';
+import { DIAMOND } from './diamond.js';
+import { EGG } from './egg.js';
 import { HELMET } from './helmet.js';
 import { HORN } from './horn.js';
 import { HOURGLASS } from './hourglass.js';
@@ -16,6 +18,7 @@ import { LAMP } from './lamp.js';
 import { LUR } from './lur.js';
 import { NIGHTINGALE } from './nightingale.js';
 import { ORB } from './orb.js';
+import { SABRE } from './sabre.js';
 import { SCARAB } from './scarab.js';
 import { SEXTANT } from './sextant.js';
 import { SKYDISC } from './skydisc.js';
@@ -30,6 +33,8 @@ export const MODELS = {
   comb: COMB,
   crown: CROWN,
   cup: CUP,
+  diamond: DIAMOND,
+  egg: EGG,
   helmet: HELMET,
   horn: HORN,
   hourglass: HOURGLASS,
@@ -39,6 +44,7 @@ export const MODELS = {
   lur: LUR,
   nightingale: NIGHTINGALE,
   orb: ORB,
+  sabre: SABRE,
   scarab: SCARAB,
   sextant: SEXTANT,
   skydisc: SKYDISC,

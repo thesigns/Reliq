@@ -2,6 +2,19 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.12.0 — w przygotowaniu
+
+### Nowe
+
+- **Komplet 24 artefaktów:** wszystkie misje z listy mają już modele, od miedzi do diamentu.
+  - Miedziany: lampka oliwna z Aleksandrii i dzwonek najupartszej krowy z Tyrolu.
+  - Brązowy: hełm hoplity spod Maratonu, lur z duńskiego torfowiska, tarcza nieba znad Łaby.
+  - Żelazny: klucz kasztelana.
+  - Srebrny: róg jarla Hrafna, zegarek kapitana, kałamarz poety.
+  - Złoty: korona zapomnianej królowej, skarabeusz faraona, jabłko koronacyjne.
+  - Platynowy: sekstant kartografa, klepsydra alchemika z Pragi, mechaniczny słowik cesarza.
+  - Diamentowy: jajo carycy, błękitny diament maharadży, karabela hetmana.
+
 ## 0.11.0 — 2026-10-16
 
 Poprawki po pierwszym spacerze testowym.

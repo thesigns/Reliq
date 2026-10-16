@@ -229,7 +229,7 @@ Kształt: złota klatka z kopułą z prętów, w środku na drążku ptaszek z b
 ### Jajo carycy
 
 Tytuł: Jajo carycy
-Model: egg.js
+Model: egg.js (gotowy)
 Lore: Jubiler robił dla carycy jedno takie jajo na każdą Wielkanoc, a to jedno zaginęło w dniu, w którym upadło imperium.
 Detal (po znalezieniu): Pod złotą siateczką prześwituje emalia w kolorze lodu.
 Kształt: jajo z błękitnej emalii w złotej kratce, z diamentami w węzłach kratki, na złotej nóżce.
@@ -237,7 +237,7 @@ Kształt: jajo z błękitnej emalii w złotej kratce, z diamentami w węzłach k
 ### Błękitny diament maharadży
 
 Tytuł: Błękitny diament maharadży
-Model: diamond.js
+Model: diamond.js (gotowy)
 Lore: Każdy, kto go posiadał, tracił coś cennego — ostatni właściciel stracił tylko diament, więc uznał, że miał szczęście.
 Detal (po znalezieniu): W słońcu rzuca na dłoń błękitne iskry.
 Kształt: duży diament w szlifie brylantowym — płaska tafla na górze, fasety korony i ostry spód — w kilku odcieniach błękitu, na małej złotej oprawie.
@@ -245,7 +245,7 @@ Kształt: duży diament w szlifie brylantowym — płaska tafla na górze, faset
 ### Karabela hetmana
 
 Tytuł: Karabela hetmana
-Model: sabre.js
+Model: sabre.js (gotowy)
 Lore: Hetman nosił ją tylko od święta, bo na wojnę szkoda mu było takiej szabli — dlatego przetrwała wszystkie bitwy.
 Detal (po znalezieniu): Głowica w kształcie orlej głowy ma oczy z rubinów.
 Kształt: zakrzywiona srebrna klinga, krzyżowy jelec, rękojeść zakończona orlą głową, złote okucia i czerwone kamienie.

@@ -61,28 +61,52 @@ export function medallionSVG() {
 }
 
 // The vault: the treasure chest of the deposit scene (scripts/blender/chest.py), drawn flat
-// for the dock. Barrel lid and plank body in two woods, iron straps, brass corners and lock.
+// for the dock. Barrel lid and plank body in two woods, riveted iron straps, brass corners and
+// a hasp with the lock, gold glinting in the seam. Lit from the top left like the medallion.
 export function vaultSVG() {
+  // The chest's outline (domed lid over a box) clips the straps and the lid's shine.
+  const shape = 'M8.5 45 V21.5 C8.5 14 17.2 10.6 28 10.6 C38.8 10.6 47.5 14 47.5 21.5 V45 Z';
+  const lid = 'M8.5 24 V21.5 C8.5 14 17.2 10.6 28 10.6 C38.8 10.6 47.5 14 47.5 21.5 V24 Z';
+  const rivet = (x, y, metal) => `<circle cx="${x}" cy="${y}" r=".95" fill="${metal ? '#5a3a12' : '#202026'}"/><circle cx="${x - 0.28}" cy="${y - 0.3}" r=".38" fill="${metal ? '#fff2c4' : '#c9c9d4'}"/>`;
+  // Board seams: a dark groove with a lit edge below it.
+  const seam = (d) => `<path d="${d}" fill="none" stroke="#2a1309" stroke-width=".8" opacity=".75"/><path d="${d}" fill="none" stroke="#d99a5c" stroke-width=".5" opacity=".35" transform="translate(0 .75)"/>`;
+  const strap = (x) => `<rect x="${x}" y="8" width="4.4" height="38" fill="url(#vcI)"/><path d="M${x + 0.5} 9 V45" stroke="#c4c4d0" stroke-width=".5" opacity=".55"/><path d="M${x + 4.4} 8 V46" stroke="#121216" stroke-width=".6" opacity=".7"/>`;
   return `<svg viewBox="0 0 56 56" aria-hidden="true">
   <defs>
-    <linearGradient id="vcW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8693a"/><stop offset="1" stop-color="#6e3e1c"/></linearGradient>
-    <linearGradient id="vcD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4422"/><stop offset="1" stop-color="#4b2612"/></linearGradient>
-    <linearGradient id="vcB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7dd96"/><stop offset=".5" stop-color="#c08f3d"/><stop offset="1" stop-color="#6b4716"/></linearGradient>
-    <linearGradient id="vcI" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6d6d76"/><stop offset=".45" stop-color="#3d3d45"/><stop offset="1" stop-color="#26262c"/></linearGradient>
+    <linearGradient id="vcL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c58548"/><stop offset=".55" stop-color="#9a5a2b"/><stop offset="1" stop-color="#76401b"/></linearGradient>
+    <linearGradient id="vcD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5622f"/><stop offset=".6" stop-color="#7c431d"/><stop offset="1" stop-color="#562c11"/></linearGradient>
+    <linearGradient id="vcR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e3a18"/><stop offset="1" stop-color="#3f1f0b"/></linearGradient>
+    <linearGradient id="vcB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0bc"/><stop offset=".35" stop-color="#e2b45c"/><stop offset=".7" stop-color="#b07d2c"/><stop offset="1" stop-color="#6b4716"/></linearGradient>
+    <linearGradient id="vcC" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f9e0a0"/><stop offset=".45" stop-color="#cf9c45"/><stop offset="1" stop-color="#7a5219"/></linearGradient>
+    <linearGradient id="vcI" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8c8c97"/><stop offset=".4" stop-color="#55555e"/><stop offset="1" stop-color="#2c2c33"/></linearGradient>
+    <radialGradient id="vcG" cx="35%" cy="30%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <clipPath id="vcClip"><path d="${shape}"/></clipPath>
+    <clipPath id="vcLidClip"><path d="${lid}"/></clipPath>
+    <filter id="vcBlur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="1.3"/></filter>
   </defs>
-  <ellipse cx="28" cy="48.5" rx="21" ry="2.6" fill="#000" opacity=".35"/>
-  <path d="M8.5 27 V21.5 C8.5 14 17 10.5 28 10.5 C39 10.5 47.5 14 47.5 21.5 V27 Z" fill="url(#vcW)" stroke="#1d0e06" stroke-width="1.3"/>
-  <path d="M9 21.5 C10 16.5 18 13.6 28 13.6 C38 13.6 46 16.5 47 21.5" fill="none" stroke="#4b2612" stroke-width=".9" opacity=".8"/>
-  <path d="M8.8 24.4 H47.2" stroke="#4b2612" stroke-width=".9" opacity=".8"/>
-  <rect x="8.5" y="27" width="39" height="20" fill="url(#vcD)" stroke="#1d0e06" stroke-width="1.3"/>
-  <rect x="9.2" y="33.4" width="37.6" height="6.6" fill="url(#vcW)" opacity=".9"/>
-  <path d="M9 33.4 H47 M9 40 H47" stroke="#2a160a" stroke-width=".8" opacity=".8"/>
-  <path d="M15.5 10.9 C15.2 15 15.2 21 15.5 27 V47 H19.8 V27 C19.6 21 19.6 14.6 19.9 10.6 Z M36.1 10.6 C36.4 14.6 36.4 21 36.2 27 V47 H40.5 V27 C40.8 21 40.8 15 40.5 10.9 Z" fill="url(#vcI)" stroke="#15151a" stroke-width=".7"/>
-  <path d="M8 26.4 h5.4 v21.2 h-5.4 Z M42.6 26.4 h5.4 v21.2 h-5.4 Z" fill="url(#vcB)" stroke="#3a2210" stroke-width=".7"/>
-  <path d="M7.6 26.4 H48.4" stroke="#1d0e06" stroke-width="1.6"/>
-  <rect x="23.6" y="23" width="8.8" height="11.5" rx="1.2" fill="url(#vcB)" stroke="#3a2210" stroke-width=".8"/>
-  <circle cx="28" cy="27.8" r="1.5" fill="#1d0e06"/><path d="M27.2 28.4 h1.6 l.5 3.4 h-2.6 Z" fill="#1d0e06"/>
-  <path d="M12 13.6 C17 11.8 22 11.3 26 11.4" stroke="#f0c48a" stroke-width="1" stroke-linecap="round" opacity=".55" fill="none"/>
+  <ellipse cx="28" cy="48.8" rx="22" ry="2.4" fill="#000" opacity=".5" filter="url(#vcBlur)"/>
+  <path d="M7 45 h42 v2.4 a1.1 1.1 0 0 1 -1.1 1.1 h-39.8 a1.1 1.1 0 0 1 -1.1 -1.1 Z" fill="url(#vcR)" stroke="#1d0e06" stroke-width="1.1"/>
+  <path d="${lid}" fill="url(#vcL)"/>
+  <rect x="8.5" y="27" width="39" height="18" fill="url(#vcD)"/>
+  <g clip-path="url(#vcClip)">
+    ${seam('M8 19.2 C10.6 15.6 18.4 13.6 28 13.6 C37.6 13.6 45.4 15.6 48 19.2')}
+    ${seam('M8 33 H48')}${seam('M8 39 H48')}
+    <path d="M12 30.2 q6 -.9 12 .1 M30 36.4 q7 -.8 13 .2 M13 42.3 q5 -.6 10 .1" fill="none" stroke="#3a1c0b" stroke-width=".45" opacity=".35"/>
+    <path d="${lid}" fill="url(#vcG)" clip-path="url(#vcLidClip)"/>
+    ${strap(15.2)}${strap(36.4)}
+  </g>
+  <rect x="7.9" y="23.8" width="40.2" height="3.6" rx=".6" fill="url(#vcR)" stroke="#1d0e06" stroke-width=".8"/>
+  <path d="M9 24.4 H47" stroke="#c98b52" stroke-width=".5" opacity=".5"/>
+  <path d="M13 27.9 H15.2 M19.6 27.9 H24.4 M31.6 27.9 H36.4 M40.8 27.9 H43" stroke="#ffd36b" stroke-width=".7" stroke-linecap="round" opacity=".75"/>
+  ${[7.6, 43.6].map((x) => `<path d="M${x} 27.4 h4.8 v17.6 h-4.8 Z" fill="url(#vcC)" stroke="#3a2210" stroke-width=".7"/><path d="M${x} 23.4 h4.8 v4.4 h-4.8 Z" fill="url(#vcC)" stroke="#3a2210" stroke-width=".7"/>`).join('')}
+  ${rivet(10, 30.4, true)}${rivet(10, 42.2, true)}${rivet(46, 30.4, true)}${rivet(46, 42.2, true)}
+  ${rivet(17.4, 16.2)}${rivet(38.6, 16.2)}${rivet(17.4, 42.2)}${rivet(38.6, 42.2)}
+  <path d="M23.8 21.8 h8.4 v7.6 c0 3.5 -1.9 5.6 -4.2 6.9 c-2.3 -1.3 -4.2 -3.4 -4.2 -6.9 Z" fill="url(#vcB)" stroke="#3a2210" stroke-width=".8" stroke-linejoin="round"/>
+  <path d="M24.8 22.8 h6.4 v6.6 c0 2.8 -1.4 4.5 -3.2 5.6" fill="none" stroke="#fff3c8" stroke-width=".5" opacity=".55"/>
+  ${rivet(25.6, 23.8, true)}${rivet(30.4, 23.8, true)}
+  <circle cx="28" cy="28.2" r="1.55" fill="#24120a"/><path d="M27.15 28.8 h1.7 l.55 3.6 h-2.8 Z" fill="#24120a"/>
+  <path d="${shape}" fill="none" stroke="#1d0e06" stroke-width="1.3" stroke-linejoin="round"/>
+  <path d="M41.5 9.2 l.7 1.8 1.8 .7 -1.8 .7 -.7 1.8 -.7 -1.8 -1.8 -.7 1.8 -.7 Z" fill="#fff4cf" opacity=".85"/>
 </svg>`;
 }
 

@@ -15,6 +15,11 @@ Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/versio
   - Platynowy: sekstant kartografa, klepsydra alchemika z Pragi, mechaniczny słowik cesarza.
   - Diamentowy: jajo carycy, błękitny diament maharadży, karabela hetmana.
 
+### Zmienione
+
+- **Znaleziony symbol** zamyka się przyciskiem „Zanotuj” zamiast „Do plecaka”. Symbol trafia do notatnika misji, nie do plecaka.
+- Opis symbolu nie zwraca się już do gracza w rodzaju męskim („trzeba odgadnąć samodzielnie”).
+
 ## 0.11.0 — 2026-10-16
 
 Poprawki po pierwszym spacerze testowym.

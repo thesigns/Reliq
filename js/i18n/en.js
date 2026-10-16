@@ -10,6 +10,7 @@ export default {
   'status.vault': 'Too close to the vault',
   'status.searched': 'This ground is already searched',
   'reveal.discard': 'Throw away',
+  'reveal.note': 'Note it down',
   'reveal.tapToFlip': 'Tap the coin to turn it over',
   'reveal.junk': 'Junk',
   'rarity.common': 'Common',

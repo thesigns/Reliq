@@ -302,7 +302,7 @@ export class Reveal {
   // A potsherd with one symbol of the tomb key.
   async showShard({ symbol, n, have, of, next }) {
     this.fillCard({ label: t('shard.label'), sketch: shardSketch(symbol), name: t(`symbols.${symbol}`), desc: t('shard.desc', { have, of, n, d: formatDistance(next) }) });
-    this.setInfo({ button: t('reveal.toSatchel') });
+    this.setInfo({ button: t('reveal.note') });
     await this.open('shard', 'rare');
     this.card.classList.add('drop');
     sfx.paper();

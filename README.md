@@ -93,6 +93,8 @@ blender -b --factory-startup -P scripts/blender/<model>.py
 
 Each script writes a generated module to `js/render/models/`. Edit the script and re-run it, never the generated file.
 
+`gallery/` shows every tomb artifact turning in 3D, tier by tier, in Polish or English. It imports the game's own models, rules and strings, so it always matches the game; on GitHub Pages it lives at `<site>/gallery/`.
+
 ## Deploying
 
 Any static host with HTTPS works. For GitHub Pages: *Settings → Pages → Deploy from a branch*, pick the branch and `/ (root)`. Away from localhost the game switches to real GPS automatically.

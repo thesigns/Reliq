@@ -315,4 +315,13 @@ export default {
   'items.eidmar.desc': 'Brutus struck it to celebrate the Ides of March. Only a handful survive. One of them is now yours.',
   'items.ruble.name': 'Constantine ruble',
   'items.ruble.desc': 'The emperor who never reigned: his brother took the throne before the coin was issued. Only a few survive.',
+  // The artifact gallery (gallery/), outside the game.
+  'gallery.title': 'The Artifact Vault',
+  'gallery.version': 'Reliq · version {v}',
+  'gallery.intro': 'Every artifact from the tombs, tier by tier, in the same chunky 3D as the game. Drag a model to turn it.',
+  'gallery.tierMeta': 'symbol: {symbol} · tomb: {tomb} · fence: {price}',
+  'gallery.stats': 'triangles: {tris} · colours: {colors}',
+  'gallery.turn': '{name} — drag to turn',
+  'gallery.play': '← Play',
+  'gallery.footer': 'Every model was built by hand in Blender, vertex by vertex.',
 };

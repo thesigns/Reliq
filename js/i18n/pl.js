@@ -315,4 +315,13 @@ export default {
   'items.eidmar.desc': 'Brutus wybił go, by uczcić Idy marcowe. Przetrwała garstka. Jedna jest teraz twoja.',
   'items.ruble.name': 'Rubel Konstantego',
   'items.ruble.desc': 'Cesarz, który nigdy nie panował: brat objął tron, zanim moneta trafiła do obiegu. Przetrwało ich ledwie kilka.',
+  // The artifact gallery (gallery/), outside the game.
+  'gallery.title': 'Skarbiec artefaktów',
+  'gallery.version': 'Reliq · wersja {v}',
+  'gallery.intro': 'Wszystkie artefakty z grobowców, poziom po poziomie, w tym samym kanciastym 3D co w grze. Przeciągnij model, żeby go obrócić.',
+  'gallery.tierMeta': 'symbol: {symbol} · grobowiec: {tomb} · paser: {price}',
+  'gallery.stats': 'trójkąty: {tris} · kolory: {colors}',
+  'gallery.turn': '{name} — przeciągnij, aby obrócić',
+  'gallery.play': '← Do gry',
+  'gallery.footer': 'Każdy model zbudowano ręcznie w Blenderze, wierzchołek po wierzchołku.',
 };

@@ -2,6 +2,12 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.12.1 — 2026-10-16
+
+### Nowe
+
+- **Galeria artefaktów** pod adresem `gallery/`: wszystkie artefakty z grobowców obracają się w 3D, pogrupowane według poziomów, z legendą i detalem, po polsku i po angielsku. Strona korzysta z modeli i tekstów gry, więc nowe artefakty pojawiają się w niej same.
+
 ## 0.12.0 — 2026-10-16
 
 ### Nowe

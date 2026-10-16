@@ -57,7 +57,6 @@ export class TombScroll {
     this.el('.card-title').textContent = t(`artifacts.${check.def.artifact}.name`);
     this.el('.card-sketch').innerHTML = mapSketch(check.n);
     this.el('#scroll-gate').textContent = t('gate.open');
-    this.el('#scroll-close').textContent = t('map.close');
     this.update(check);
     this.root.hidden = false;
     this.isOpen = true;

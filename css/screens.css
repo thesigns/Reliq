@@ -316,18 +316,6 @@
   color: transparent;
   filter: drop-shadow(0 1.5px 0 rgba(0, 0, 0, .85));
 }
-.journal-close {
-  position: relative;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(232, 199, 130, .5);
-  border-radius: 50%;
-  background: rgba(20, 10, 4, .4);
-  color: var(--cream);
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
 .journal-tabs { position: relative; display: flex; gap: 4px; padding: 0 6px; }
 .journal-tabs button {
   flex: 1 1 auto;

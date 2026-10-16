@@ -141,7 +141,7 @@ tests/            *.test.js (node --test)
 
 **Kolejność losowania przy przeszukaniu (E9).**
 1. Gracz ma mapę, grobowiec nieodkryty i spełnia warunki: 20% na grobowiec.
-2. W przeciwnym razie albo po nieudanym rzucie, jeśli gracz ma mapę, grobowiec jest nieotwarty i gracz ma mniej niż 3 skorupy: 10% na skorupę z nowym symbolem.
+2. W przeciwnym razie albo po nieudanym rzucie, jeśli gracz ma mapę, grobowiec jest nieotwarty i gracz ma mniej niż 3 symbole: 10% na nowy symbol.
 3. W przeciwnym razie zwykłe losowanie: 65% śmieć, 35% moneta.
 - Klucz (3 różne symbole z 8) jest losowany przy kupnie mapy i zapisywany w stanie.
 
@@ -184,7 +184,7 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu i migracje `js/game/state.
 | E6 Juice | Dźwięk, haptyka, cząsteczki, przejścia, dopracowanie |
 | E7 PWA | Manifest, service worker (offline), ikony, instalacja |
 | E8 Testy na urządzeniach | iOS Safari, Android Chrome, wydajność, bateria. Czeka na decyzję o hostingu. |
-| E9 Mapy za monety i wrota | Kupno map za monety, odkrywanie grobowca przyciskiem szukania, skorupy z symbolami, zamek z 3 pierścieni przy grobowcu, artefakty low-poly 3D, migracja zapisu |
+| E9 Mapy za monety i wrota | Kupno map za monety, odkrywanie grobowca przyciskiem szukania, symbole klucza, zamek z 3 pierścieni przy grobowcu, artefakty low-poly 3D, migracja zapisu |
 | E10 Misje | Misje zamiast kupowania map: karta misji ze szkicem, etapy z dystansem od punktu startu (jeden po drugim, bez przerw), limit 7 dni, półka z artefaktami, paser (sprzedaż monet, kupno utraconych artefaktów). Twardy reset zapisu. |
 
 ### Uruchamianie (dev)
@@ -300,15 +300,15 @@ Testy: `node --test` (albo `npm test`).
   - mapy kupuje się za monety (płaci się też ostatnim egzemplarzem), a dawne 5% na mapę przechodzi na monety (65/35);
   - na razie są 4 mapy, a w każdym grobowcu jest artefakt (na razie wszędzie kielich) zamiast monety;
   - grobowiec odkrywa się przyciskiem „Szukaj skarbu” z szansą 20% po spełnieniu warunków, a przycisk „Szukaj grobowca” znika;
-  - skorupa (10%) zastępuje znalezisko, pokazuje zawsze nowy symbol i przestaje wypadać po trzech;
-  - skorupa pokazuje się jako papierowa karta ze szkicem, tak jak śmieci;
+  - symbol (10%) zastępuje znalezisko, jest zawsze nowy i przestaje wypadać po trzech;
+  - symbol pokazuje się jako papierowa karta ze szkicem, tak jak śmieci;
   - klucz to 3 różne symbole z 8, a wrota otwiera się w promieniu 100 m od grobowca bez limitu prób.
 - **Kod:**
   - reguły: `TOMB_MAPS`, `SYMBOLS` i szanse w `rules.js`; `mapOffer`, `buyMap`, `rollLoot`, `openGate` w `game.js`;
-  - wrota: `js/ui/gate.js` (obracanie przeciąganiem, stuknięcie przestawia o symbol, próba po każdym zatrzaśnięciu) i grafika `js/ui/gate-art.js` (8 symboli, skorupa, szkic wrót);
-  - karty skorupy i odkrytego grobowca na ekranie znaleziska, a artefakt 3D z fanfarą po otwarciu wrót (`js/render/artifact3d.js`, model z `scripts/blender/chalice.py`);
-  - dziennik: oferta i „Kup mapę”, skorupy, lista grobowców z „Obejrzyj”; zwój: warunki albo odległość do grobowca i „Otwórz wrota”; zamknięty grobowiec pulsuje na mapie, a stuknięcie w niego na miejscu otwiera wrota;
-  - panel ⚙: wymuszenie skorupy lub grobowca, „+12 Nummus i Kaiyuan”, „Teleport pod wrota”, „Podgląd artefaktu”.
+  - wrota: `js/ui/gate.js` (obracanie przeciąganiem, stuknięcie przestawia o symbol, próba po każdym zatrzaśnięciu) i grafika `js/ui/gate-art.js` (8 symboli, karta symbolu, szkic wrót);
+  - karty symbolu i odkrytego grobowca na ekranie znaleziska, a artefakt 3D z fanfarą po otwarciu wrót (`js/render/artifact3d.js`, model z `scripts/blender/chalice.py`);
+  - dziennik: oferta i „Kup mapę”, symbole, lista grobowców z „Obejrzyj”; zwój: warunki albo odległość do grobowca i „Otwórz wrota”; zamknięty grobowiec pulsuje na mapie, a stuknięcie w niego na miejscu otwiera wrota;
+  - panel ⚙: wymuszenie symbolu lub grobowca, „+12 Nummus i Kaiyuan”, „Teleport pod wrota”, „Podgląd artefaktu”.
 - **Migracja zapisu:**
   - niewykorzystana mapa znaleziona po staremu staje się kupioną mapą z nowo wylosowanym kluczem;
   - istniejące grobowce są otwarte i zachowują swoje monety;
@@ -316,9 +316,9 @@ Testy: `node --test` (albo `npm test`).
 
 **Plan E10** (zasady w GDD, „Misje”, „Półka z artefaktami”, „Paser”):
 - **Decyzje** (2026-10-16):
-  - kupowanie map, losowe skorupy (10%) i losowe grobowce (20%) znikają; symbol i grobowiec są pewne po przejściu dystansu etapu;
+  - kupowanie map, losowe symbole (10%) i losowe grobowce (20%) znikają; symbol i grobowiec są pewne po przejściu dystansu etapu;
   - dystans liczy się w linii prostej od pierwszego przeszukania etapu, a po jego wygaśnięciu od najstarszego aktywnego przeszukania z tego etapu (nie od przebytej trasy, bo PWA nie śledzi GPS przy zablokowanym ekranie);
-  - następny etap zaczyna się od razu, od przeszukania, które dało skorupę (pierwotnie była przerwa 6 h; zniesiona 2026-10-16, bez dodatkowych zabezpieczeń przed oszukiwaniem);
+  - następny etap zaczyna się od razu, od przeszukania, które dało symbol (pierwotnie była przerwa 6 h; zniesiona 2026-10-16, bez dodatkowych zabezpieczeń przed oszukiwaniem);
   - limit 7 dni liczy się do otwarcia wrót; porzucenie działa jak przekroczenie limitu; następna misja od razu;
   - waluta pasera bez nazwy: „Pieniądze” / „Cena” z liczbą;
   - po ostatniej misji „Wkrótce nowe wyprawy”; docelowo ~60 misji (rok gry);
@@ -329,7 +329,7 @@ Testy: `node --test` (albo `npm test`).
   3. ✅ mapa i zwój: okrąg dystansu i celownik w punkcie startu etapu, etykieta misji przy przycisku (etap, dystans z paskiem, przerwa, odległość do wrót), komunikaty o końcu przerwy i o przejściu dystansu;
   4. ✅ półka z artefaktami (rzędy po 3, podgląd 3D) na zakładce „Kolekcja” (dawne „Monety”); „Grobowce” to teraz „Misje”;
   5. ✅ paser na osobnej zakładce: pieniądze, przepadłe artefakty (szkic, cena albo „dostępny za…”), sprzedaż monet po sztuce z potwierdzeniem ostatniej;
-  6. ✅ panel ⚙: „Pomiń przerwę”, „Limit −1 dzień”, „+50 pieniędzy”, „Paser: od razu” (wymuszenie skorupy i grobowca było już w kroku 1); usunięcie resztek po mapach; `VERSION` 0.9.0.
+  6. ✅ panel ⚙: „Pomiń przerwę”, „Limit −1 dzień”, „+50 pieniędzy”, „Paser: od razu” (wymuszenie symbolu i grobowca było już w kroku 1); usunięcie resztek po mapach; `VERSION` 0.9.0.
 
 **Status E10:** gotowy (2026-10-16). Do sprawdzenia w terenie: czy dystanse z `docs/lista-misji.md` dobrze się chodzą. Przerwa 6 h między etapami i przycisk „Pomiń przerwę” zostały potem usunięte.
 

@@ -83,6 +83,7 @@
         <div class="reveal-hint" id="reveal-hint" style="--i:5"></div>
         <button class="btn-brass" id="reveal-close" style="--i:6"></button>
       </div>
+      <button class="btn-x reveal-x" id="reveal-x" data-i18n-label="btn.close"></button>
       <div class="flash"></div>
     </div>
 
@@ -98,7 +99,7 @@
       <div class="journal-book">
         <div class="journal-head">
           <h2 class="journal-title"></h2>
-          <button class="journal-close" data-i18n-label="btn.close">×</button>
+          <button class="btn-x" data-i18n-label="btn.close"></button>
         </div>
         <nav class="journal-tabs">
           <button data-tab="coins"></button>
@@ -112,11 +113,11 @@
     <div id="satchel-view" class="scroll-overlay satchel-view" hidden>
       <div class="scroll-backdrop"></div>
       <div class="paper-card satchel-card">
+        <button class="btn-x ink card-x" id="satchel-close" data-i18n-label="btn.close"></button>
         <div class="card-label"></div>
         <div class="card-title"></div>
         <div class="sv-items"></div>
         <p class="scroll-msg"></p>
-        <div class="card-actions"><button class="btn-link" id="satchel-close"></button></div>
       </div>
     </div>
 
@@ -134,9 +135,10 @@
       <div class="deposit-tally"><span class="dt-label"></span><span class="dt-value">0</span></div>
       <p class="deposit-hint"></p>
       <div class="deposit-summary">
+        <button class="btn-x ink card-x" data-go="map" data-i18n-label="btn.close"></button>
         <h3 class="ds-title"></h3>
         <div class="ds-items"></div>
-        <div class="ds-actions"><button class="btn-brass" data-go="vault"></button><button class="btn-link" data-go="map"></button></div>
+        <div class="ds-actions"><button class="btn-brass" data-go="vault"></button></div>
       </div>
     </div>
 
@@ -157,7 +159,7 @@
         <div class="menu-sub" hidden>
           <div class="journal-head">
             <h2 class="journal-title menu-sub-title"></h2>
-            <button class="journal-close menu-back" data-i18n-label="menu.back">‹</button>
+            <button class="btn-x menu-back" data-i18n-label="btn.close"></button>
           </div>
           <div class="journal-paper"><div class="journal-page menu-page"></div></div>
         </div>
@@ -207,6 +209,7 @@
     <div id="scroll" class="scroll-overlay" hidden>
       <div class="scroll-backdrop"></div>
       <div class="paper-card map-card">
+        <button class="btn-x ink card-x" id="scroll-close" data-i18n-label="btn.close"></button>
         <div class="card-label"></div>
         <div class="card-sketch"></div>
         <div class="card-title"></div>
@@ -216,13 +219,13 @@
         <p class="scroll-deadline"></p>
         <div class="card-actions">
           <button class="btn-brass" id="scroll-gate" hidden></button>
-          <button class="btn-link" id="scroll-close"></button>
         </div>
       </div>
     </div>
 
     <div id="gate" class="gate" hidden>
       <div class="gate-backdrop"></div>
+      <button class="btn-x gate-x" id="gate-close" data-i18n-label="btn.close"></button>
       <div class="gate-head">
         <div class="gate-label"></div>
         <h2 class="gate-title"></h2>
@@ -231,7 +234,6 @@
       <div class="gate-foot">
         <div class="gate-shards"></div>
         <p class="gate-hint" aria-live="polite"></p>
-        <button class="btn-link" id="gate-close"></button>
       </div>
     </div>
 
@@ -263,8 +265,8 @@
           <select id="dbg-result">
             <option value="auto">Losowo (szanse z GDD)</option>
             <option value="junk">Śmieć</option>
-            <option value="shard">Skorupa (w misji; pomija dystans)</option>
-            <option value="tomb">Grobowiec (po 3 skorupach; pomija dystans)</option>
+            <option value="shard">Symbol (w misji; pomija dystans)</option>
+            <option value="tomb">Grobowiec (po 3 symbolach; pomija dystans)</option>
             <option value="nummus">Common — Nummus</option>
             <option value="kaiyuan">Common — Kaiyuan Tongbao</option>
             <option value="denarius">Uncommon — Denar</option>

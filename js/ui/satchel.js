@@ -86,7 +86,6 @@ export class SatchelView {
     this.el('.card-title').textContent = t('satchel.count', { n: count });
     this.el('.sv-items').innerHTML = html;
     this.el('.scroll-msg').textContent = distanceText;
-    this.el('#satchel-close').textContent = t('reveal.close');
     this.root.hidden = false;
     this.isOpen = true;
     this.deps.sfx.paper();

@@ -33,7 +33,7 @@ import { shardSketch } from './ui/gate-art.js';
 import { Onboarding } from './ui/onboarding.js';
 import { Toast } from './ui/toast.js';
 import { Particles } from './ui/particles.js';
-import { scrollSVG } from './ui/art.js';
+import { scrollSVG, closeGlyph } from './ui/art.js';
 import { sfx } from './ui/audio.js';
 import { haptics } from './ui/haptics.js';
 import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate } from './i18n/i18n.js';
@@ -764,7 +764,7 @@ function updateDebugReadout(now) {
 
   const coins = Object.entries(state.coins).map(([id, n]) => `${id} ×${n}`).join(', ') || '—';
   const ms = state.mission;
-  const map = ms ? ` · misja ${ms.n} (klucz ${ms.key.join('-')}, skorupy ${ms.shards.length})` : '';
+  const map = ms ? ` · misja ${ms.n} (klucz ${ms.key.join('-')}, symbole ${ms.shards.length})` : '';
   const info = `Skarbiec: ${coins} · pieniądze ${state.money}${map} · grobowce: ${state.tombs.length} · artefakty: ${state.artifacts.length}`;
   if ($('dbg-coins').textContent !== info) $('dbg-coins').textContent = info;
 }
@@ -905,6 +905,7 @@ function wireUi() {
   }, { once: true, capture: true });
   document.addEventListener('pointerdown', () => sfx.unlock(), { capture: true });
 
+  for (const b of document.querySelectorAll('.btn-x')) b.innerHTML = closeGlyph();
   $('btn-menu').addEventListener('click', () => { sfx.paper(); menu.open(); });
   $('btn-search').addEventListener('click', onMedallion);
   $('btn-tomb').innerHTML = scrollSVG();

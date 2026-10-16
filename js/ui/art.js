@@ -172,6 +172,11 @@ export function menuSVG() {
 </svg>`;
 }
 
+// The close cross of every dismissable screen; drawn in currentColor so the button sets the ink.
+export function closeGlyph() {
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>';
+}
+
 export function gpsGlyph() {
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><circle class="g-dot" cx="12" cy="12" r="2.5" fill="#e7cf98"/><path class="g-in" d="M7 7a7 7 0 0 0 0 10M17 7a7 7 0 0 1 0 10" stroke="#e7cf98" stroke-width="1.5" fill="none" stroke-linecap="round"/><path class="g-out" d="M4 4a11 11 0 0 0 0 16M20 4a11 11 0 0 1 0 16" stroke="#e7cf98" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
 }

@@ -172,11 +172,11 @@ export class Reveal {
 
   close() {
     return new Promise((resolve) => {
-      const btn = this.el('#reveal-close');
-      btn.onclick = async () => {
+      const btns = [this.el('#reveal-close'), this.el('#reveal-x')];
+      const done = async () => {
         sfx.click();
         haptics.tap();
-        btn.onclick = null;
+        for (const b of btns) b.onclick = null;
         const kind = this.root.dataset.kind;
         if (kind === 'junk' || kind === 'shard' || kind === 'tomb') {
           this.card.classList.add(kind === 'junk' ? 'toss' : 'roll');
@@ -192,10 +192,13 @@ export class Reveal {
         this.root.hidden = true;
         resolve();
       };
+      for (const b of btns) b.onclick = done;
     });
   }
 
-  setInfo({ context = '', rarity = '', name = '', desc = '', isNew = false, button }) {
+  // button: the label of an action that ends the reveal ("To the satchel"); without one the
+  // screen is only looked at and closes with the cross in the corner.
+  setInfo({ context = '', rarity = '', name = '', desc = '', isNew = false, button = '' }) {
     this.el('#reveal-context').textContent = context;
     this.el('#reveal-context').hidden = !context;
     this.el('#reveal-rarity').textContent = rarity;
@@ -205,6 +208,8 @@ export class Reveal {
     this.el('#reveal-new').hidden = !isNew;
     this.el('#reveal-hint').textContent = t('reveal.tapToFlip');
     this.el('#reveal-close').textContent = button;
+    this.el('#reveal-close').hidden = !button;
+    this.el('#reveal-x').hidden = !!button;
   }
 
   // options: { isNew, context } — context is an extra line, e.g. "Treasure of tomb 2".
@@ -253,7 +258,6 @@ export class Reveal {
       rarity: t(`rarity.${def.rarity}`),
       name: t(`items.${id}.name`),
       desc: t(`items.${id}.desc`),
-      button: t('reveal.close'),
     });
     await this.open('coin', def.rarity);
     this.coin.setModel(COIN_MODELS[id]);
@@ -267,7 +271,7 @@ export class Reveal {
 
   // A tomb artifact. model: a generated module from js/render/models/.
   // fanfare: the moment a gate opens; otherwise a quiet look at one from the vault.
-  async viewArtifact(model, { name, desc, context = '', button = t('reveal.close'), fanfare = false }) {
+  async viewArtifact(model, { name, desc, context = '', button = '', fanfare = false }) {
     const rarity = fanfare ? 'legendary' : 'rare';
     if (!this.artifact) this.artifact = new ArtifactRenderer(this.artCanvas);
     this.artifact.setModel(model);
@@ -313,7 +317,7 @@ export class Reveal {
   // The tomb of the held map has turned up where the player searched.
   async showTombFound(n) {
     this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('map.title', { n }), desc: t('tomb.found.desc') });
-    this.setInfo({ button: t('reveal.close') });
+    this.setInfo({});
     await this.open('tomb', 'rare');
     sfx.swell(0.8);
     await wait(500);

@@ -34,7 +34,6 @@ export class GateScreen {
     this.opts = opts;
     this.el('.gate-label').textContent = t('gate.label');
     this.el('.gate-title').textContent = t('gate.title', { n: opts.n });
-    this.el('#gate-close').textContent = t('gate.leave');
     this.setHint(t('gate.hint'));
     this.setShards(opts.shards, opts.keyLength);
     this.angles = opts.start.map((i) => -i * STEP);

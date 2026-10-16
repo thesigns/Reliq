@@ -346,7 +346,6 @@ export class DepositScreen {
     this.el('.ds-title').textContent = t('deposit.summary');
     this.el('.ds-items').innerHTML = html;
     this.el('[data-go="vault"]').textContent = t('deposit.open');
-    this.el('[data-go="map"]').textContent = t('deposit.close');
     this.root.classList.add('summary');
     sfx.paper();
   }

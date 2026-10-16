@@ -1,5 +1,25 @@
 # Reliq — Game Design Document
 
+## Wizja
+
+### W jednym zdaniu
+
+Reliq zamienia zwykły spacer w wyprawę poszukiwacza skarbów: twoja okolica staje się starą mapą, każdy postój może odsłonić monetę sprzed wieków, a dłuższa wędrówka prowadzi do zapomnianego grobowca.
+
+### Opis
+
+Wychodzisz z domu i nie jesteś już na swojej ulicy, tylko na skraju nieznanego lądu. Telefon pokazuje mapę wyrysowaną sepią na pergaminie: góry, lasy i równiny, a na nich czerwoną kreskę twojej trasy. Ulice zniknęły. Zostały kierunki, odległości i pytanie, co leży za następnym wzgórzem.
+
+Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawleczkę od puszki, skasowany bilet, baterię rozładowaną jak twoje nadzieje. Ale co trzecie przeszukanie daje monetę: rzymskiego denara, chińską Kaiyuan Tongbao, wenecki dukat. Każda ma krótką historię prawdziwego pieniądza, a gdzieś na dnie losowania czeka aureus, którym Brutus uczcił Idy marcowe. Przeszukany teren zostaje zaznaczony na mapie, więc żeby kopać dalej, trzeba iść dalej.
+
+Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
+
+Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w sakwie, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co znalazłeś, sztuka po sztuce. Artefakty stają na półce jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
+
+Reliq nie każe biec ani bić rekordów. Nagradza ciekawość i nogi: kopać można tylko na piechotę, więc samochód nic tu nie da. Docelowo około 60 misji to rok wypraw zaczynających się od własnych drzwi.
+
+## Podstawy
+
 Reliq to gra - aplikacja grywalizująca poruszanie się po okolicy. Gracz wciela się w poszukiwacza skarbów.
 
 Gra jest zwykłą stroną internetową napisaną w vanilla html/css/js i z opcją instalacji jako PWA.
@@ -26,7 +46,7 @@ Przeszukiwanie jest niemożliwe, jeśli gracz porusza się ze średnią prędko�
 
 Przeszukiwanie jest niemożliwe, jeśli błąd pozycji GPS jest większy niż 50 m.
 
-Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie skarbu — monety. W trakcie misji przeszukanie może zamiast tego dać skorupę z symbolem klucza albo odkryć grobowiec (zob. „Misje”).
+Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie skarbu — monety. W trakcie misji przeszukanie może zamiast tego dać symbol klucza albo odkryć grobowiec (zob. „Misje”).
 
 Śmieci znikają zaraz po znalezieniu. Monety trafiają do sakwy i gracz zanosi je do skarbca (zob. „Sakwa i skarbiec”).
 
@@ -114,9 +134,9 @@ Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejd
 - punktem startu jest pierwsze przeszukanie w danym etapie;
 - jeśli ten obszar wygaśnie (po 6 godzinach), punktem startu staje się najstarsze aktywne przeszukanie z tego etapu, a jeśli takiego nie ma — następne przeszukanie.
 
-**Symbol.** Przeszukanie wykonane co najmniej w dystansie symbolu od punktu startu zawsze daje skorupę z symbolem zamiast zwykłego znaleziska (śmiecia lub monety). Każda skorupa pokazuje symbol klucza, którego gracz jeszcze nie ma. Nie zdradza, na którym pierścieniu leży jej symbol.
+**Symbol.** Przeszukanie wykonane co najmniej w dystansie symbolu od punktu startu zawsze daje symbol klucza zamiast zwykłego znaleziska (śmiecia lub monety). Jest to zawsze symbol, którego gracz jeszcze nie ma. Gra nie zdradza, na którym pierścieniu leży.
 
-**Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało skorupę, jest punktem startu następnego etapu. Karta skorupy podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 450 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
+**Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 450 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
 
 **Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i zostaje na mapie na stałe jako ikona. Musi leżeć co najmniej 200 m od innych grobowców — jeśli leżałby bliżej, przeszukanie przebiega normalnie.
 
@@ -157,7 +177,7 @@ Po otwarciu wrót gracz otrzymuje zamknięty w grobowcu artefakt.
 
 ## Sakwa i skarbiec
 
-Gracz nosi znaleziska w sakwie: monety i artefakt z otwartego grobowca. Skorupy do sakwy nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku sakwy na mapie (skorupa — do przycisku misji). Przycisk sakwy pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w sakwę otwiera kartę z jej zawartością (artefakt, monety z liczbą sztuk) i odległością do skarbca.
+Gracz nosi znaleziska w sakwie: monety i artefakt z otwartego grobowca. Symbole do sakwy nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku sakwy na mapie (symbol — do przycisku misji). Przycisk sakwy pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w sakwę otwiera kartę z jej zawartością (artefakt, monety z liczbą sztuk) i odległością do skarbca.
 
 Gdy gracz wejdzie w promień skarbca (100 m) z czymś w sakwie, cała zawartość zostaje złożona w skarbcu. Limit GPS jest łagodniejszy niż przy szukaniu: dokładność do 100 m, bo skarbiec to zwykle dom, a w budynku sygnał słabnie. Prędkość nie ma znaczenia.
 
@@ -199,7 +219,7 @@ Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte o
 | Grobowiec               | Tomb                |
 | Wrota                   | Gate                |
 | Otwórz wrota            | Open the gate       |
-| Skorupa                 | Shard               |
+| Symbol                  | Shard               |
 | Artefakt                | Artifact            |
 | Sakwa                   | Satchel             |
 | Powrót do skarbca       | Back at the vault   |

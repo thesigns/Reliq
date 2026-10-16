@@ -31,7 +31,7 @@ export class Journal {
     this.tab = 'coins';
     this.isOpen = false;
     for (const b of root.querySelectorAll('[data-tab]')) b.onclick = () => { sfx.paper(); this.show(b.dataset.tab); };
-    this.el('.journal-close').onclick = () => this.close();
+    this.el('.journal-head .btn-x').onclick = () => this.close();
     this.el('.journal-backdrop').onclick = () => this.close();
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.isOpen) this.close(); });
     root.addEventListener('click', (e) => this.onClick(e));

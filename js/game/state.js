@@ -21,7 +21,6 @@ export function createState(now) {
     tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission
     artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence' }] — the shelf
     lost: [],             // [{ n, t }] — failed or abandoned missions; the fence sells them from t + 7 days
-    trail: [],            // [{ lat, lon, t, gap? }] — decorative route, last 6 h; gap starts a new stretch
     settings: { ...DEFAULT_SETTINGS },
   };
 }
@@ -71,7 +70,6 @@ export function migrate(raw, now) {
     for (const l of raw.lost) if (l && missionDef(l.n) && isNum(l.t)) s.lost.push({ n: l.n, t: l.t });
   }
 
-  if (Array.isArray(raw.trail)) s.trail = raw.trail.filter(isPoint).map(({ lat, lon, t, gap }) => (gap === true ? { lat, lon, t, gap } : { lat, lon, t }));
   if (raw.settings && typeof raw.settings === 'object') {
     if (raw.settings.lang === 'pl' || raw.settings.lang === 'en') s.settings.lang = raw.settings.lang;
     for (const k of ['sound', 'haptics', 'keepAwake']) {

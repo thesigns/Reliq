@@ -11,10 +11,6 @@ import { isInsideSearched } from './field.js';
 import { coinById } from './items.js';
 import { rollSearchLoot, rollKey, rollShard } from './loot.js';
 
-const TRAIL_STEP_M = 10;
-const TRAIL_MAX = 4000;
-const TRAIL_GAP_M = 150;          // a longer jump starts a new stretch of route
-const TRAIL_GAP_MS = 10 * 60e3;   // so does a long pause between points
 
 export class Game {
   constructor(state, { rng = cryptoRandom, onChange = () => {} } = {}) {
@@ -41,14 +37,13 @@ export class Game {
     return this.state.searches.filter((s) => now - s.t < RULES.searchTtlMs);
   }
 
-  // Drops expired areas and old trail points, and ends a mission past its time limit.
+  // Drops expired areas and ends a mission past its time limit.
   // Returns true if anything changed.
   prune(now) {
     const s = this.state;
-    const nS = s.searches.length, nT = s.trail.length;
+    const nS = s.searches.length;
     s.searches = this.activeSearches(now);
-    s.trail = s.trail.filter((p) => now - p.t < RULES.searchTtlMs);
-    let dirty = s.searches.length !== nS || s.trail.length !== nT;
+    let dirty = s.searches.length !== nS;
     if (s.mission && now >= this.deadline()) { this.loseMission(this.deadline()); dirty = true; }
     if (dirty) this.changed();
     return dirty;
@@ -315,23 +310,4 @@ export class Game {
     return { ok: true, artifact: offer.artifact };
   }
 
-  // ---- decorative route ----
-
-  recordTrail(fix, now) {
-    if (!fix || fix.acc > RULES.maxAccuracyM || !this.state.vault) return false;
-    const trail = this.state.trail;
-    const last = trail[trail.length - 1];
-    let gap = false;
-    if (last) {
-      const a = this.toLocal(last), b = this.toLocal(fix);
-      const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (d < TRAIL_STEP_M) return false;
-      // Reopening the app somewhere else must not draw a straight line across the map.
-      gap = d > TRAIL_GAP_M || now - last.t > TRAIL_GAP_MS;
-    }
-    trail.push(gap ? { lat: fix.lat, lon: fix.lon, t: now, gap: true } : { lat: fix.lat, lon: fix.lon, t: now });
-    if (trail.length > TRAIL_MAX) trail.splice(0, trail.length - TRAIL_MAX);
-    this.changed();
-    return true;
-  }
 }

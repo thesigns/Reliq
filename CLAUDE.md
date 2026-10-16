@@ -65,7 +65,7 @@ node --test                   # unit tests (npm test)
   - **HUD.** Top bar: ☰, logo, GPS accuracy. Dock: vault (chest icon), the search medallion (a lone spade, no label), recenter. On the map: the satchel button on the left, the mission button and its tag on the right.
 - **Rendering.** `MapRenderer` draws in passes.
   - **Base layer:** parchment, biomes, graticule and terrain icons from an SVG atlas. It is cached with a 96 css px margin and copied with `texelFetch` at a whole-pixel offset. During a zoom gesture (`render(..., { zooming })`) the cache is stretched instead. It is redrawn only when the offset leaves the margin or the zoom settles at a new value. Icon detail levels switch instantly: a cross-fade would force a redraw every frame.
-  - **Per frame:** the overlay (searched areas culled to the view, Vault ring, mission zone around the walk's start, GPS circle), the red trail, markers, then post-processing: grade, a smooth vignette and film grain.
+  - **Per frame:** the overlay (searched areas culled to the view, Vault ring, mission zone around the walk's start, GPS circle), markers, then post-processing: grade, a smooth vignette and film grain.
   - **Frame rate:** `main.js` throttles map frames.
     - 60 fps for fast motion, 30 fps for idle or walking; battery saver halves both.
     - 10 fps behind full-screen overlays (reveal, journal, menu, deposit, satchel card, onboarding, tomb gate).

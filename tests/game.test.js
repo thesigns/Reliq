@@ -298,28 +298,6 @@ test('a lost artifact turns up at the fence 7 days later', () => {
   assert.deepEqual(state.artifacts, [{ id: 'vase', n: 2, t: T0 + 7 * DAY, from: 'fence' }]);
 });
 
-test('trail records a point every 10 m and only with a good fix', () => {
-  const { game, state } = newGame();
-  assert.equal(game.recordTrail(fixAt(300, 0), T0), true);
-  assert.equal(game.recordTrail(fixAt(305, 0), T0 + 1), false);
-  assert.equal(game.recordTrail(fixAt(311, 0), T0 + 2), true);
-  assert.equal(game.recordTrail(fixAt(400, 0, 80), T0 + 3), false);
-  assert.equal(state.trail.length, 2);
-  game.prune(T0 + 6 * HOUR + 1);
-  assert.equal(state.trail.length, 1);
-  game.prune(T0 + 6 * HOUR + 2);
-  assert.equal(state.trail.length, 0);
-});
-
-test('trail breaks after a jump or a long pause', () => {
-  const { game, state } = newGame();
-  game.recordTrail(fixAt(300, 0), T0);
-  game.recordTrail(fixAt(320, 0), T0 + 10e3);
-  game.recordTrail(fixAt(900, 0), T0 + 20e3);
-  game.recordTrail(fixAt(920, 0), T0 + 11 * 60e3);
-  assert.deepEqual(state.trail.map((p) => !!p.gap), [false, false, true, true]);
-});
-
 test('every state change is reported for saving', () => {
   const { game, changes } = newGame({ rng: seq(...JUNK_ROLL) });
   const before = changes();

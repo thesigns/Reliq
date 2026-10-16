@@ -1,4 +1,4 @@
-// Draws the parchment map: paper + biomes, ink icons, searched areas, trail, markers, post.
+// Draws the parchment map: paper + biomes, ink icons, searched areas, markers, post.
 //
 // The paper, biome washes, graticule and terrain icons only depend on the camera, and they
 // are by far the most expensive part. They are rendered into a cached "base" layer with a
@@ -10,7 +10,7 @@ import { program, RenderTarget, FULLSCREEN_VS } from './gl.js';
 import { buildAtlas } from './atlas.js';
 import { buildIconSet } from './icons.js';
 import { terrainIcons, lodFading } from './terrain.js';
-import { PARCHMENT_FS, SPRITE_VS, SPRITE_FS, OVERLAY_FS, TRAIL_VS, TRAIL_FS, POST_FS, COPY_FS, COPY_SCALED_FS } from './shaders/map.js';
+import { PARCHMENT_FS, SPRITE_VS, SPRITE_FS, OVERLAY_FS, POST_FS, COPY_FS, COPY_SCALED_FS } from './shaders/map.js';
 
 const SPRITE_FLOATS = 16;
 const MAX_BALLS = 64;
@@ -44,7 +44,6 @@ export class MapRenderer {
     this.progOverlay = program(gl, FULLSCREEN_VS, OVERLAY_FS, 'overlay');
     this.progPost = program(gl, FULLSCREEN_VS, POST_FS, 'post');
     this.progSprite = program(gl, SPRITE_VS, SPRITE_FS, 'sprite');
-    this.progTrail = program(gl, TRAIL_VS, TRAIL_FS, 'trail');
     this.progCopy = program(gl, FULLSCREEN_VS, COPY_FS, 'copy');
     this.progCopyScaled = program(gl, FULLSCREEN_VS, COPY_SCALED_FS, 'copy-scaled');
     this.scene = new RenderTarget(gl);
@@ -72,16 +71,6 @@ export class MapRenderer {
     gl.bindVertexArray(null);
     this.spriteData = new Float32Array(SPRITE_FLOATS * 4096);
 
-    this.trailVao = gl.createVertexArray();
-    gl.bindVertexArray(this.trailVao);
-    this.trailBuf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.trailBuf);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 20, 0);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 20, 8);
-    gl.bindVertexArray(null);
-    this.trailData = new Float32Array(5 * 4096);
     this.baseView = null;
     this.ready = true;
   }
@@ -164,7 +153,7 @@ export class MapRenderer {
     return reach + shift < this.margin - 2;
   }
 
-  // scene: { worldOff, grid, vault, balls, trail, tombs, player, zone, exclusions }
+  // scene: { worldOff, grid, vault, balls, tombs, player, zone, exclusions }
   // opts.zooming: a pinch / smooth zoom is in progress (stretch the base, redraw later).
   render(s, cam, time, opts = {}) {
     if (!this.ready || this.gl.isContextLost()) return;
@@ -228,10 +217,7 @@ export class MapRenderer {
     gl.bindVertexArray(this.emptyVao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    // 4. Red route line.
-    this.drawTrail(s.trail, s.player, cam);
-
-    // 5. Markers: tombs, vault seal, player needle.
+    // 4. Markers: tombs, vault seal, player needle.
     let n = 0;
     for (const t of s.tombs) {
       const k = t.scale ?? 1;
@@ -245,7 +231,7 @@ export class MapRenderer {
     if (s.player) n = this.pushSprite(n, s.player.x, s.player.y, 50, 50, s.player.heading, 1, 0, 0, 'needle', 1, 1, 1, 1);
     this.drawSprites(n, view, time);
 
-    // 6. Post: grade, vignette, burnt edges, grain.
+    // 5. Post: grade, vignette, burnt edges, grain.
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.disable(gl.BLEND);
     gl.useProgram(this.progPost.p);
@@ -281,57 +267,4 @@ export class MapRenderer {
     gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, n);
   }
 
-  // The route is split into stretches at gaps; the last stretch runs on to the player.
-  drawTrail(trail, player, cam) {
-    const stretches = [[]];
-    for (const p of trail) {
-      if (p.gap && stretches[stretches.length - 1].length) stretches.push([]);
-      stretches[stretches.length - 1].push({ x: p.x, y: p.y, a: p.alpha ?? 1 });
-    }
-    const last = stretches[stretches.length - 1];
-    const tail = last[last.length - 1];
-    if (player && (!tail || Math.hypot(player.x - tail.x, player.y - tail.y) < 150)) last.push({ x: player.x, y: player.y, a: 1 });
-    for (const s of stretches) if (s.length >= 2) this.drawStretch(s, cam);
-  }
-
-  // Builds a mitred triangle strip in screen space every frame (the trail is short).
-  drawStretch(pts, cam) {
-    const gl = this.gl, dpr = this.dpr;
-    const half = 2.1;
-    const sp = pts.map((p) => ({ x: (p.x - cam.x) * cam.ppm, y: (p.y - cam.y) * cam.ppm, a: p.a }));
-    let along = 0, n = 0;
-    const d = this.trailData;
-    for (let i = 0; i < sp.length && n < 4096 - 2; i++) {
-      const p = sp[i];
-      const prev = sp[Math.max(0, i - 1)], next = sp[Math.min(sp.length - 1, i + 1)];
-      if (i > 0) along += Math.hypot(p.x - prev.x, p.y - prev.y);
-      let tx = next.x - prev.x, ty = next.y - prev.y;
-      const tl = Math.hypot(tx, ty) || 1;
-      tx /= tl; ty /= tl;
-      let nx = -ty, ny = tx;
-      // Mitre length relative to the incoming segment, clamped to avoid spikes.
-      let m = 1;
-      if (i > 0 && i < sp.length - 1) {
-        const sx = p.x - prev.x, sy = p.y - prev.y;
-        const sl = Math.hypot(sx, sy) || 1;
-        m = 1 / Math.max(0.5, Math.abs(nx * (-sy / sl) + ny * (sx / sl)));
-      }
-      const off = (half + 1) * m;
-      for (const side of [-1, 1]) {
-        const o = n * 5;
-        d[o] = (p.x + nx * off * side) * dpr;
-        d[o + 1] = (p.y + ny * off * side) * dpr;
-        d[o + 2] = along;
-        d[o + 3] = side * (half + 1) / half;
-        d[o + 4] = p.a;
-        n++;
-      }
-    }
-    gl.useProgram(this.progTrail.p);
-    gl.uniform2f(this.progTrail.u.u_res, this.canvas.width, this.canvas.height);
-    gl.bindVertexArray(this.trailVao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.trailBuf);
-    gl.bufferData(gl.ARRAY_BUFFER, d.subarray(0, n * 5), gl.DYNAMIC_DRAW);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
-  }
 }

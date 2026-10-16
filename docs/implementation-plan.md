@@ -167,7 +167,6 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu i migracje `js/game/state.
   tombs: [{ n, lat, lon, t, opened, artifact }],   // zamknięty tylko grobowiec aktywnej misji
   artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // półka
   lost: [{ n, t }],                     // utracone misje; paser sprzedaje artefakt od t + 7 dni
-  trail: [{ lat, lon, t }],             // ozdobna trasa z ostatnich 6 h
   settings: { lang, sound, haptics }
 }
 ```

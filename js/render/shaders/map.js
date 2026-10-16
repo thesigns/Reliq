@@ -1,4 +1,4 @@
-// GLSL for the map passes: parchment, sprites, overlay (searched areas, vault, GPS), trail, post.
+// GLSL for the map passes: parchment, sprites, overlay (searched areas, vault, GPS), post.
 
 import { NOISE_GLSL, BIOME_GLSL } from '../../core/noise.js';
 import { FIELD_GLSL } from '../../game/field.js';
@@ -262,28 +262,6 @@ void main() {
   }
 
   o = acc;
-}`;
-
-export const TRAIL_VS = /* glsl */`#version 300 es
-layout(location = 0) in vec2 a_px;     // device px from screen centre
-layout(location = 1) in vec3 a_attr;   // distance along (css px), side (-1..1), alpha
-uniform vec2 u_res;
-out vec3 v;
-void main() {
-  v = a_attr;
-  gl_Position = vec4(a_px / (0.5 * u_res), 0.0, 1.0);
-}`;
-
-export const TRAIL_FS = /* glsl */`#version 300 es
-precision mediump float;
-in vec3 v;
-out vec4 o;
-void main() {
-  float t = fract(v.x / 14.0);
-  float on = smoothstep(0.0, 0.05, t) * (1.0 - smoothstep(0.55, 0.62, t));
-  float edge = 1.0 - smoothstep(0.5, 1.0, abs(v.y));
-  float a = on * edge * v.z * 0.92;
-  o = vec4(vec3(0.56, 0.09, 0.07) * a, a);
 }`;
 
 export const POST_FS = HEADER + NOISE_GLSL + /* glsl */`

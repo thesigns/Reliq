@@ -51,6 +51,7 @@ const DEV_CLOCK_KEY = 'reliq.dev.clockOffset';
 const DEV_GPS_KEY = 'reliq.dev.gps';
 const DEV_SEED_KEY = 'reliq.dev.seed';
 const DEV_FLAG_KEY = 'reliq.dev.debug';
+const DEV_SIM_KEY = 'reliq.dev.simPos'; // where the simulator stood, so a reload resumes there
 const devGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 const devSet = (k, v) => { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* ignore */ } };
 
@@ -105,6 +106,7 @@ function resetGame() {
   clearTimeout(saveTimer);
   store.clear();
   devSet(DEV_CLOCK_KEY, null);
+  devSet(DEV_SIM_KEY, null);
   location.reload();
 }
 
@@ -145,8 +147,9 @@ function onSample(s) {
 let sim = null;
 let source;
 if (MODE === 'sim') {
-  const lastTrail = state.vault && state.trail[state.trail.length - 1];
-  sim = new GpsSimulator(frame, lastTrail ? frame.toLocal(lastTrail.lat, lastTrail.lon) : (state.vault ? DEMO_PLAYER : { x: 0, y: 0 }), onSample);
+  let last = null;
+  try { last = state.vault && JSON.parse(devGet(DEV_SIM_KEY)); } catch { /* start at the demo spot */ }
+  sim = new GpsSimulator(frame, last ? frame.toLocal(last.lat, last.lon) : (state.vault ? DEMO_PLAYER : { x: 0, y: 0 }), onSample);
   sim.onTeleport = primeSimHistory;
   source = sim;
   primeSimHistory();
@@ -794,10 +797,10 @@ function frameLoop() {
     if (!busy) satchelUi.set(game.satchelCount());
     $('vault-pointer').classList.toggle('laden', game.satchelCount() > 0);
     maybeDeposit();
+    if (sim && state.vault) devSet(DEV_SIM_KEY, JSON.stringify(frame.toGeo(sim.x, sim.y)));
     if (journal.isOpen && journal.tab === 'tombs') journal.refreshChecks();
     lastSlowTick = perf;
   }
-  if (mode === 'play') game.recordTrail(fix, now);
   const th = targetHeading();
   if (th !== null) {
     const d = Math.atan2(Math.sin(th - heading), Math.cos(th - heading));
@@ -863,10 +866,6 @@ function renderMap(perf, now, searches) {
       const p = game.toLocal(s);
       return { x: p.x, y: p.y, scale: 0.02 + 0.98 * easeOutCubic(appear(s, 1600)), age: clamp01((now - s.t) / RULES.searchTtlMs) };
     }),
-    trail: state.vault ? state.trail.map((p) => {
-      const q = game.toLocal(p);
-      return { x: q.x, y: q.y, gap: p.gap, alpha: 1 - 0.75 * clamp01((now - p.t) / RULES.searchTtlMs) };
-    }) : [],
     tombs: state.tombs.map((tb) => {
       const q = game.toLocal(tb);
       // A new tomb is stamped onto the map: hidden while digging, then lands oversized and settles.

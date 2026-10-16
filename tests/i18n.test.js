@@ -9,6 +9,7 @@ import { COINS, JUNK, ARTIFACTS } from '../js/game/items.js';
 import { SYMBOLS, TIERS, MISSIONS } from '../js/game/rules.js';
 import { MODELS } from '../js/render/models/index.js';
 import { COIN_MODELS } from '../js/render/models/coins.js';
+import { JUNK_MODELS } from '../js/render/models/junk.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
@@ -60,6 +61,11 @@ test('every symbol and artifact has a name, every artifact lore and a model', ()
 test('every coin has a low-poly model', () => {
   for (const c of COINS) assert.ok(COIN_MODELS[c.id], c.id);
   assert.equal(Object.keys(COIN_MODELS).length, COINS.length);
+});
+
+test('every piece of junk has a low-poly model', () => {
+  for (const id of JUNK) assert.ok(JUNK_MODELS[id], id);
+  assert.equal(Object.keys(JUNK_MODELS).length, JUNK.length);
 });
 
 test('every item has a name and a description', () => {

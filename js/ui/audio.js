@@ -126,12 +126,12 @@ export const sfx = {
   chime(rarity) {
     if (!enabled) return;
     const c = ac(), t = c.currentTime;
-    const base = { common: 620, uncommon: 880, rare: 1046, legendary: 1174, junk: 340 }[rarity] ?? 800;
-    const len = { common: 1.2, uncommon: 1.8, rare: 2.6, legendary: 3.6, junk: 0.4 }[rarity] ?? 1.5;
-    const partials = rarity === 'junk' ? [1, 2.1] : [1, 2.76, 5.4, 8.93];
+    const base = { common: 620, uncommon: 880, rare: 1046, legendary: 1174 }[rarity] ?? 800;
+    const len = { common: 1.2, uncommon: 1.8, rare: 2.6, legendary: 3.6 }[rarity] ?? 1.5;
+    const partials = [1, 2.76, 5.4, 8.93];
     partials.forEach((p, i) => {
       const o = c.createOscillator();
-      o.type = rarity === 'junk' ? 'triangle' : 'sine';
+      o.type = 'sine';
       o.frequency.value = base * p * (1 + (Math.random() - 0.5) * 0.004);
       const g = c.createGain();
       env(g, t, 0.003, 0.22 / (i + 1), len / (1 + i * 0.6));
@@ -311,6 +311,69 @@ export const sfx = {
       out(g, 1, 0.25);
       o.start(t + d); o.stop(t + d + 0.08);
     });
+  },
+
+  // Something small and worthless landing on the ground.
+  thud() {
+    if (!enabled) return;
+    const c = ac(), t = c.currentTime;
+    const o = c.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(55, t + 0.14);
+    const g = c.createGain();
+    env(g, t, 0.004, 0.4, 0.18);
+    o.connect(g);
+    out(g, 1, 0.15);
+    o.start(t); o.stop(t + 0.25);
+    const n = noise(0.1);
+    const lp = c.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 600;
+    const gn = c.createGain();
+    env(gn, t, 0.003, 0.18, 0.08);
+    n.connect(lp).connect(gn);
+    out(gn, 1, 0.1);
+    n.start(t); n.stop(t + 0.1);
+  },
+
+  // The comic sigh over junk: "wah, wah, waaah", three falling notes through a muted horn,
+  // the last one held, wobbling and sagging. Kept soft: junk is the commonest find.
+  womp() {
+    if (!enabled) return;
+    const c = ac(), t0 = c.currentTime;
+    for (const [f, at, len] of [[330, 0, 0.2], [311, 0.25, 0.2], [294, 0.5, 0.9]]) {
+      const t = t0 + at, held = len > 0.5;
+      const o = c.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(f, t);
+      if (held) {
+        o.frequency.setValueAtTime(f, t + len * 0.5);
+        o.frequency.exponentialRampToValueAtTime(f * 0.89, t + len);
+        const lfo = c.createOscillator();
+        lfo.frequency.value = 5.5;
+        const depth = c.createGain();
+        depth.gain.setValueAtTime(0, t);
+        depth.gain.linearRampToValueAtTime(f * 0.014, t + 0.3);
+        lfo.connect(depth).connect(o.frequency);
+        lfo.start(t); lfo.stop(t + len + 0.05);
+      }
+      // The mute opening and closing: each note says "wah".
+      const lp = c.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.Q.value = 5;
+      lp.frequency.setValueAtTime(320, t);
+      lp.frequency.exponentialRampToValueAtTime(1500, t + 0.07);
+      lp.frequency.exponentialRampToValueAtTime(500, t + len);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.075, t + 0.03);
+      g.gain.setValueAtTime(0.075, t + len * 0.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(lp).connect(g);
+      out(g, 1, 0.3);
+      o.start(t); o.stop(t + len + 0.05);
+    }
   },
 
   // Dull "nope" when the action is unavailable.

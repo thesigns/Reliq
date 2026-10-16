@@ -162,6 +162,39 @@ def sweep(bm, path, section, mat_of, caps=(True, True), up=(0, 0, 1)):
     return rings
 
 
+def loft(bm, rings, mat_of, caps=(True, True)):
+    """A body skinned over rings of points (x, y, z), all with the same count and running
+    the same way round: lathe() with any cross-section. mat_of(k, i): band k (between rings
+    k-1 and k) on side i; the caps take k = 0 and k = len(rings)."""
+    vs = [[bm.verts.new(p) for p in ring] for ring in rings]
+    n = len(rings[0])
+    for k in range(1, len(vs)):
+        a, b = vs[k - 1], vs[k]
+        for i in range(n):
+            j = (i + 1) % n
+            bm.faces.new((a[i], a[j], b[j], b[i])).material_index = mat_of(k, i)
+    if caps[0]:
+        bm.faces.new(list(reversed(vs[0]))).material_index = mat_of(0, 0)
+    if caps[1]:
+        bm.faces.new(vs[-1]).material_index = mat_of(len(vs), 0)
+    return vs
+
+
+def plate_ring(bm, outer, inner, thick, mat, edge_mat=None, y=0.0):
+    """A flat plate with a hole, `thick` deep and centred on y: outer and inner are outlines
+    (x, z) with the same number of points, running the same way round."""
+    half = thick / 2
+    rings = [[bm.verts.new((x, yy, z)) for x, z in pts] for pts, yy in ((outer, y - half), (outer, y + half), (inner, y + half), (inner, y - half))]
+    n = len(outer)
+    for k in range(4):
+        a, b = rings[k], rings[(k + 1) % 4]
+        for i in range(n):
+            j = (i + 1) % n
+            wall = k in (0, 2)
+            bm.faces.new((a[i], a[j], b[j], b[i])).material_index = (edge_mat if edge_mat is not None and wall else mat)
+    return rings
+
+
 def torus(bm, centre, radius, section, n, mat_of, plane='xz'):
     """A closed ring of n bands round centre, lying in the x-z plane (facing -y) or the x-y
     plane (facing up). section: (u, v) points, counter-clockwise, u outwards from the centre

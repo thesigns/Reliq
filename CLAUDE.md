@@ -38,7 +38,7 @@ node --test                   # unit tests (npm test)
 - **WebGL2 is required.** Shaders are GLSL ES 3.00 strings inside JS modules.
 - **Game rules stay DOM-free and tested.** `js/game/*`, `js/core/{geo,noise,rng,store}.js` and `js/gps/{location,filter,compass}.js` must import nothing that touches the DOM at module load, so `node --test` can run them. Time, GPS fixes and randomness are passed in as arguments: `now`, `fix = { lat, lon, acc }`, `motion = { ready, speedKmh }`, `rng`.
 - **Every gameplay number lives in `js/game/rules.js`.** When the GDD changes, change it there and update the tests. UI text that mentions a rule number takes it as a placeholder, not as a literal.
-- **Every user-facing string goes through i18n.** Use `t('key')` with keys in **both** `js/i18n/en.js` and `js/i18n/pl.js`. Art that contains text, such as notes on junk sketches, must be language-neutral.
+- **Every user-facing string goes through i18n.** Use `t('key')` with keys in **both** `js/i18n/en.js` and `js/i18n/pl.js`. Art that contains text, such as print on a junk ticket, must be language-neutral.
 
 ## Architecture notes
 
@@ -79,18 +79,18 @@ node --test                   # unit tests (npm test)
   - teleport to the gate or to the vault;
   - preview each artifact, or load a new game or the demo world.
 - **Art direction.** The look is an "expedition journal": parchment, sepia ink, oxblood red, brass and leather. Fonts are Cinzel, Cinzel Decorative and EB Garamond. Keep new UI consistent with the tokens in `css/app.css` (map, HUD, reveal, deposit) and with `css/screens.css` (onboarding, journal, menu, toast).
-  - Reuse the existing SVG art in `js/ui/art.js` (medallion, vault chest, satchel, menu and HUD glyphs), `js/ui/onboarding-art.js`, `js/ui/junk-art.js`, `js/ui/gate-art.js` (the eight gate symbols) and `js/render/icons.js`.
+  - Reuse the existing SVG art in `js/ui/art.js` (medallion, vault chest, satchel, menu and HUD glyphs), `js/ui/onboarding-art.js`, `js/ui/gate-art.js` (the eight gate symbols) and `js/render/icons.js`.
   - Never use names, characters or music from real film franchises.
 
 ## Low-poly 3D models
 
-Tomb artifacts, coins and the vault chest are hand-modelled low-poly meshes in the style of the first *Alone in the Dark*: flat-shaded faces in solid palette colours, no textures, a few hundred triangles.
+Tomb artifacts, coins, junk and the vault chest are hand-modelled low-poly meshes in the style of the first *Alone in the Dark*: flat-shaded faces in solid palette colours, no textures, a few hundred triangles.
 
 - **Blender:** `E:\Programy\Blender Foundation\Blender 5.2\blender.exe` (5.2 LTS). Run it headless: `blender -b --factory-startup -P scripts/blender/<model>.py`. Scripts use Blender's bundled Python. Do not call a system `python` from the shell for this.
 - **Modelling method:** build every vertex and face explicitly with `bmesh` in `scripts/blender/<model>.py`. Use lathe profiles, mirrored halves, insets or extrudes and closed boxes, the way a person models low poly by hand.
   - Do not decimate high-poly or SDF meshes. The user wants deliberate facets, not triangle soup.
   - Start with simple objects. A skull was too hard as a first model.
-  - `scripts/blender/shapes.py` saves the repetition: `slab` (a board cut to an outline, with a chamfer), `box`, `lathe`, `face_toward` (a one-sided decal, built after recalculating normals) and `finish`.
+  - `scripts/blender/shapes.py` saves the repetition: `slab` (a board cut to an outline, with a chamfer), `box`, `lathe`, `loft` (rings of any cross-section), `sweep` (a tube along a path), `torus`, `plate_ring` (a plate with a hole), `rotate`/`move`/`new_verts` for placing parts, `face_toward` (a one-sided decal, built after recalculating normals) and `finish`.
   - Keep every part a closed mesh with outward faces (`recalc_face_normals`). The renderers cull back faces.
 - **Colours:** one material per palette colour, set as the material's viewport display colour (`diffuse_color`, read as sRGB). Assign them with `face.material_index`.
 - **Export:** each model script ends with `export_model(...)` from `scripts/blender/export_model.py`. That writes `js/render/models/<model>.js`, a generated module with `{ palette, verts, tris: [a, b, c, paletteIndex] }`, converted from Blender's z-up axes to the game's y-up. `extra` adds fields such as a `pivot`, and points in it are converted too.
@@ -102,6 +102,7 @@ Tomb artifacts, coins and the vault chest are hand-modelled low-poly meshes in t
   - **Sketch:** the mission card and the fence draw the artifact as an ink sketch straight from its mesh (`artifactSketch` in `js/ui/artifact-sketch.js`): outline, creases and colour borders, a sepia wash and hatching. New models get one for free, so check how it reads after modelling.
   - **Preview:** `reveal.viewArtifact(model, { name, desc })` shows it on the reveal screen with an entry spin and drag to turn. In dev mode the debug panel's "Podgląd artefaktu" button cycles through all artifacts.
 - **Coins:** all twelve come from one script, `scripts/blender/coins.py`. Each is a lathe profile with an edge, a rim (or a domed face), a sunken field and one simple motif per side (`bust`, `ring`, `hole`, `punch`). There are two colours per metal, raised and field, and hand-struck coins get a seeded lumpy outline. It writes `js/render/models/coin-<id>.js`, collected in `COIN_MODELS` (`js/render/models/coins.js`). `tests/i18n.test.js` checks every coin has one.
+- **Junk:** all ten come from `scripts/blender/junk.py`, one function per item (`JUNK_ONLY=<id>` builds just one, for a contact sheet). It writes `js/render/models/junk-<id>.js`, collected in `JUNK_MODELS` (`js/render/models/junk.js`); `tests/i18n.test.js` checks every junk item has one. Flat things stand on edge facing the viewer. The reveal drops the model in with a bounce (`showJunk`, a `drop` pose), plays `sfx.thud()` and the falling `sfx.womp()`, and "Throw away" spins it off (`toss`).
 - **Vault chest:** `scripts/blender/chest.py` writes three parts that keep their own coordinates (`buildArtifactMesh(model, { fit: null })`): `chest-body`, `chest-lid` and `chest-gold`. The lid and the heap carry a `pivot` (the hinge, the heap's base); `about()` in `vault-scene.js` turns or scales a part about it.
 - **Gallery:** `gallery/` (`index.html`, `gallery.js`) is a page outside the game that shows every artifact turning, tier by tier. It imports the game's modules (`MODELS`, `TIERS`, `MISSIONS`, i18n, the `artifact3d.js` shader) instead of copying them, so a new model shows up there by itself. Its strings are `gallery.*` keys. It is not in `sw.js`, but it reads game files through the cache-first service worker, so a gallery change that touches game files still needs a new `VERSION`.
 - **Iterating on shape:** for quick checks before export, render a Workbench contact sheet (front, ¾ and top orthographic views) to a scratch PNG. Write each view to a unique temp filename: Windows locks a PNG the user has open in a viewer, and the save fails.

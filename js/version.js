@@ -1,2 +1,2 @@
 // Bumped on every release; also names the service worker cache.
-export const VERSION = '0.12.1';
+export const VERSION = '0.13.0';

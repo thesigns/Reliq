@@ -2,6 +2,17 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.13.0 — 2026-10-16
+
+### Zmienione
+
+- **Śmieci w 3D:** dziesięć śmieci to teraz modele, jak monety i artefakty: grosz z jedynką, zawleczka, skasowany bilet, zapalniczka, rozładowana bateria z wyciekiem, spinacz, kolczyk z różowym oczkiem, gumka recepturka, nakrętka od butelki i zwinięty paragon. Spadają na ziemię z odbiciem, można je obracać palcem, a „Wyrzuć” odrzuca je w dal.
+- **Dźwięk porażki:** znalezienie śmiecia kwituje ciche, komiczne „tu-tu-tuuuu” — trzy opadające nuty, ostatnia przeciągnięta i drżąca.
+
+### Usunięte
+
+- Rysunki śmieci na papierowej karcie.
+
 ## 0.12.1 — 2026-10-16
 
 ### Nowe

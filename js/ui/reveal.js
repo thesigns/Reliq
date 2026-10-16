@@ -1,12 +1,12 @@
-// Full-screen reveal of a find: a low-poly coin with rarity staging, a low-poly tomb artifact,
-// or a paper card (junk from the notebook, a key shard, a discovered tomb).
+// Full-screen reveal of a find: a low-poly coin with rarity staging, a low-poly tomb artifact
+// or piece of junk, or a paper card (a key shard, a discovered tomb).
 
 import { t, formatDistance, formatRoman } from '../i18n/i18n.js';
 import { coinById } from '../game/items.js';
 import { ArtifactRenderer } from '../render/artifact3d.js';
 import { COIN_MODELS } from '../render/models/coins.js';
+import { JUNK_MODELS } from '../render/models/junk.js';
 import { Particles } from './particles.js';
-import { junkSketch } from './junk-art.js';
 import { shardSketch, gateSketch } from './gate-art.js';
 import { sfx } from './audio.js';
 import { haptics } from './haptics.js';
@@ -14,9 +14,15 @@ import { haptics } from './haptics.js';
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 const easeOutBack = (x) => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+// Falls and bounces twice, each bounce lower: junk landing on the ground.
+const easeOutBounce = (x) => {
+  if (x < 0.5) return 4 * x * x;
+  const hop = (mid, half, height) => 1 - height * (1 - ((x - mid) / half) ** 2);
+  return x < 0.82 ? hop(0.66, 0.16, 0.1) : hop(0.91, 0.09, 0.025);
+};
 
 const GLOW = {
-  common: [0.05, 0.035, 0.02], uncommon: [0.07, 0.09, 0.13], rare: [0.22, 0.15, 0.05], legendary: [0.4, 0.24, 0.06],
+  junk: [0.03, 0.025, 0.02], common: [0.05, 0.035, 0.02], uncommon: [0.07, 0.09, 0.13], rare: [0.22, 0.15, 0.05], legendary: [0.4, 0.24, 0.06],
 };
 const SPARKS = {
   common: ['230,180,120'], uncommon: ['215,230,255', '255,255,255'],
@@ -136,7 +142,18 @@ export class Reveal {
   poseArtifact(p, now, dt) {
     const e = (now - p.t0) / 1000;
     let scale = 1, y = 0;
-    if (p.mode === 'enter') {
+    if (p.mode === 'toss') {
+      const k = Math.min(1, e / 0.42);
+      p.yaw += 16 * dt;
+      scale = Math.max(0, 1 - k * k);
+      y = 0.8 * k;
+    } else if (p.mode === 'enter' && p.drop) {
+      // Junk falls in from above, full size, half a turn, and lands with a bounce.
+      const k = Math.min(1, e / 0.75);
+      p.yaw = (1 - easeOutCubic(k)) * Math.PI - 0.5;
+      y = 0.9 * (1 - easeOutBounce(k));
+      if (k >= 1) { p.mode = 'idle'; p.vel = 0; }
+    } else if (p.mode === 'enter') {
       const k = Math.min(1, e / 1.6);
       p.yaw = (1 - easeOutCubic(k)) * Math.PI * 4 - 0.5;
       scale = 0.25 + 0.75 * easeOutBack(Math.min(1, e / 0.9));
@@ -162,7 +179,7 @@ export class Reveal {
     r.dataset.kind = kind;
     r.dataset.rarity = rarity;
     r.classList.remove('show', 'info-in', 'lit', 'closing');
-    this.card.classList.remove('toss', 'drop', 'roll');
+    this.card.classList.remove('drop', 'roll');
     this.layout();
     this.particles.clear();
     this.start();
@@ -178,8 +195,14 @@ export class Reveal {
         haptics.tap();
         for (const b of btns) b.onclick = null;
         const kind = this.root.dataset.kind;
-        if (kind === 'junk' || kind === 'shard' || kind === 'tomb') {
-          this.card.classList.add(kind === 'junk' ? 'toss' : 'roll');
+        if (kind === 'junk' && this.pose) {
+          // Thrown away: it spins off into the distance.
+          this.pose.mode = 'toss';
+          this.pose.t0 = performance.now();
+          await wait(420);
+        }
+        if (kind === 'shard' || kind === 'tomb') {
+          this.card.classList.add('roll');
           sfx.paper();
           await wait(450);
         }
@@ -338,16 +361,22 @@ export class Reveal {
     this.el('#paper-desc').textContent = desc;
   }
 
+  // Junk: the thing drops onto the ground, a sad little fanfare plays it down, and it can be
+  // turned like an artifact before it goes back where it came from.
   async showJunk(id) {
-    this.fillCard({ label: t('reveal.junk'), sketch: junkSketch(id), name: t(`items.${id}.name`), desc: t(`items.${id}.desc`) });
-    this.setInfo({ button: t('reveal.discard') });
+    if (!this.artifact) this.artifact = new ArtifactRenderer(this.artCanvas);
+    this.artifact.setModel(JUNK_MODELS[id]);
+    this.setInfo({ rarity: t('reveal.junk'), name: t(`items.${id}.name`), desc: t(`items.${id}.desc`), button: t('reveal.discard') });
     await this.open('junk', 'junk');
-    this.card.classList.add('drop');
-    sfx.paper();
+    this.el('#reveal-hint').textContent = t('reveal.dragToTurn');
+    this.pose = { kind: 'artifact', mode: 'enter', drop: true, t0: performance.now(), rarity: 'junk', yaw: 0, pitch: 0.38, vel: 0 };
+    this.root.classList.add('lit');
     await wait(380);
-    sfx.chime('junk');
+    sfx.thud();
     haptics.reveal('junk');
-    await wait(400);
+    await wait(250);
+    sfx.womp();
+    await wait(500);
     this.root.classList.add('info-in');
     return this.close();
   }

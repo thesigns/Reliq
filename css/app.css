@@ -539,8 +539,8 @@ html.inspect #app {
 .reveal:not([data-kind='coin']) .reveal-coin { display: none; }
 .reveal-artifact { cursor: grab; touch-action: none; image-rendering: pixelated; }
 .reveal-artifact:active { cursor: grabbing; }
-.reveal:not([data-kind='artifact']) .reveal-artifact { display: none; }
-.reveal:is([data-kind='coin'], [data-kind='artifact']) .paper-card { display: none; }
+.reveal:not([data-kind='artifact'], [data-kind='junk']) .reveal-artifact { display: none; }
+.reveal:is([data-kind='coin'], [data-kind='artifact'], [data-kind='junk']) .paper-card { display: none; }
 .reveal[data-kind='tomb'] { --glow: rgba(255, 196, 110, .32); --tone: #f0cf86; }
 
 .reveal-info {
@@ -561,7 +561,7 @@ html.inspect #app {
 .reveal.info-in .reveal-info > * { opacity: 1; transform: none; transition-delay: calc(var(--i, 0) * .13s); }
 .reveal:not(.info-in) .reveal-info { pointer-events: none; }
 .reveal-info > [hidden] { display: none; }
-.reveal:not([data-kind='coin'], [data-kind='artifact']) :is(.reveal-context, .reveal-rarity, .reveal-name, .reveal-desc, .reveal-hint) { display: none; }
+.reveal:not([data-kind='coin'], [data-kind='artifact'], [data-kind='junk']) :is(.reveal-context, .reveal-rarity, .reveal-name, .reveal-desc, .reveal-hint) { display: none; }
 
 .reveal-context {
   margin-bottom: 8px;
@@ -689,11 +689,6 @@ html.inspect #app {
   0% { transform: translateY(-140%) rotate(-12deg); opacity: 0; }
   30% { opacity: 1; }
   100% { transform: translateY(0) rotate(-3deg); opacity: 1; }
-}
-.paper-card.toss { animation: toss .6s cubic-bezier(.5, -0.3, .8, .4) forwards; }
-@keyframes toss {
-  from { transform: translateY(0) rotate(-3deg); opacity: 1; }
-  to { transform: translate(120%, 60%) rotate(38deg) scale(.7); opacity: 0; }
 }
 .paper-card.roll { animation: roll .5s cubic-bezier(.6, 0, .8, .4) forwards; }
 @keyframes roll {

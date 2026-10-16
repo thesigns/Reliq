@@ -25,7 +25,10 @@ export class MapTooltip {
     this.anchor = anchor;
     this.el.hidden = false;
     this.el.classList.remove('show');
-    void this.el.offsetWidth;
+    // Measured once: reading the size every frame would force a layout after the map's
+    // own style writes.
+    this.w = this.el.offsetWidth;
+    this.h = this.el.offsetHeight;
     this.el.classList.add('show');
     this.update();
   }
@@ -40,7 +43,7 @@ export class MapTooltip {
   update(viewW = this.el.parentElement.clientWidth) {
     if (!this.anchor) return;
     const p = this.anchor();
-    const w = this.el.offsetWidth, h = this.el.offsetHeight;
+    const { w, h } = this;
     const x = Math.min(viewW - w / 2 - 10, Math.max(w / 2 + 10, p.sx));
     this.el.style.transform = `translate(${(x - w / 2).toFixed(1)}px, ${(p.sy - h - 14).toFixed(1)}px)`;
     this.el.style.setProperty('--arrow', `${(p.sx - x + w / 2).toFixed(1)}px`);

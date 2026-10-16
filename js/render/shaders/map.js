@@ -1,4 +1,5 @@
-// GLSL for the map passes: parchment, sprites, overlay (searched areas, vault, GPS), post.
+// GLSL for the map passes: parchment, sprites, overlay (cached base plus searched areas,
+// vault, GPS), post.
 
 import { NOISE_GLSL, BIOME_GLSL } from '../../core/noise.js';
 import { FIELD_GLSL } from '../../game/field.js';
@@ -18,7 +19,10 @@ uniform float u_time;
 vec2 fragLocal() { return u_cam + (gl_FragCoord.xy - 0.5 * u_res) / u_ppm; }
 `;
 
-export const PARCHMENT_FS = HEADER + VIEW + NOISE_GLSL + BIOME_GLSL + /* glsl */`
+// detail: the paper grain (fibres, pores, mottling, pigment granulation, foxing). The cheap
+// layer shown during zoom gestures leaves it out: at half resolution it would only alias.
+export const parchmentFS = (detail) => HEADER + `#define DETAIL ${detail ? 1 : 0}
+` + VIEW + NOISE_GLSL + BIOME_GLSL + /* glsl */`
 uniform vec2 u_world;   // world-noise offset of the local origin
 uniform vec4 u_grid;    // graticule offset (xy) and spacing (zw) in metres
 out vec4 o;
@@ -36,12 +40,14 @@ void main() {
   float tone = fbm(local / 700.0 + 3.7, 11u);
   vec3 col = mix(vec3(0.957, 0.902, 0.776), vec3(0.866, 0.757, 0.565), smoothstep(0.28, 0.78, tone));
 
+#if DETAIL
   // Paper grain at a constant on-screen scale: fibres, pores, mottling.
   vec2 rl = mat2(0.88, 0.47, -0.47, 0.88) * local;
   float fib = znoise(rl * vec2(1.0, 0.2), cssPpm, 2.6, 31u) * 0.6 + znoise(rl * vec2(0.22, 1.0), cssPpm, 2.6, 37u) * 0.4;
   float pore = znoise(local, cssPpm, 1.3, 41u);
   float mott = znoise(local, cssPpm, 34.0, 43u);
   col *= 1.0 + (fib - 0.5) * 0.085 + (pore - 0.5) * 0.05 + (mott - 0.5) * 0.07;
+#endif
 
   // Water stains with darker tide lines.
   float st = fbm(local / 260.0 + 13.1, 23u);
@@ -50,7 +56,11 @@ void main() {
 
   // Watercolour biome washes with pigment pooling at the edges.
   vec2 bm = biomeAt(world);
+#if DETAIL
   float gran = 0.75 + 0.5 * znoise(local, cssPpm, 2.2, 51u);
+#else
+  float gran = 1.0;
+#endif
   float mount = smoothstep(TH_HILL - 0.004, TH_HILL + 0.004, bm.x);
   float mountCore = smoothstep(TH_MOUNT - 0.004, TH_MOUNT + 0.004, bm.x);
   float forest = smoothstep(TH_FOREST - 0.004, TH_FOREST + 0.004, bm.y) * (1.0 - mountCore);
@@ -71,6 +81,7 @@ void main() {
   float worn = exp(-fd.x * fd.x / 60.0) + exp(-fd.y * fd.y / 60.0);
   col *= 1.0 + 0.05 * (ridge.x - ridge.y) + 0.03 * worn;
 
+#if DETAIL
   // Foxing: small rust-brown age spots.
   vec2 fc = local / 22.0;
   ivec2 fci = ivec2(floor(fc));
@@ -81,6 +92,7 @@ void main() {
     float d = length(fract(fc) - pos) + (vnoise(local * 0.9, 71u) - 0.5) * 0.05;
     col = mix(col, col * vec3(0.76, 0.6, 0.43), smoothstep(r, r * 0.35, d) * 0.4 * smoothstep(0.35, 1.0, cssPpm));
   }
+#endif
 
   o = vec4(col, 1.0);
 }`;
@@ -118,27 +130,6 @@ void main() {
   o = texture(u_tex, v_uv) * vec4(v_color.rgb * v_color.a, v_color.a);
 }`;
 
-export const COPY_FS = HEADER + /* glsl */`
-uniform sampler2D u_base;
-uniform ivec2 u_shift;      // margin + camera offset, whole device pixels
-out vec4 o;
-void main() {
-  o = texelFetch(u_base, ivec2(gl_FragCoord.xy) + u_shift, 0);
-}`;
-
-// While a zoom gesture is in progress the cached base is stretched instead of redrawn.
-export const COPY_SCALED_FS = HEADER + /* glsl */`
-uniform sampler2D u_base;
-uniform vec2 u_baseRes;     // base texture size (device px)
-uniform vec2 u_res;         // screen size (device px)
-uniform vec2 u_centre;      // base texel under the screen centre
-uniform float u_k;          // current zoom / zoom the base was drawn at
-out vec4 o;
-void main() {
-  vec2 b = (gl_FragCoord.xy - 0.5 * u_res) / u_k + u_centre;
-  o = texture(u_base, b / u_baseRes);
-}`;
-
 export const OVERLAY_FS = HEADER + VIEW + NOISE_GLSL + FIELD_GLSL + /* glsl */`
 uniform vec4 u_balls[64];   // x, y, spawn scale, age (0..1 of lifetime)
 uniform int u_count;
@@ -147,7 +138,20 @@ uniform vec4 u_player;      // x, y, accuracy, present
 uniform vec4 u_zone;        // mission: centre of the walk, distance to leave it (m), shown
 uniform vec2 u_excl[32];    // mission: existing tombs (200 m keep-out circles)
 uniform int u_exclCount;
+// The cached base layer (a toroidal texture, see base-cache.js), copied at a whole-pixel
+// shift when it matches the zoom, otherwise stretched: g = u_g0 + fragCoord * u_gs.
+uniform sampler2D u_base;
+uniform int u_exact;
+uniform ivec2 u_shift;
+uniform vec2 u_g0;
+uniform float u_gs;
 out vec4 o;
+
+vec3 baseColor() {
+  ivec2 size = textureSize(u_base, 0);
+  if (u_exact == 1) return texelFetch(u_base, (ivec2(gl_FragCoord.xy) + u_shift) % size, 0).rgb;
+  return texture(u_base, (u_g0 + gl_FragCoord.xy * u_gs) / vec2(size)).rgb;
+}
 
 const vec3 INK = vec3(0.231, 0.141, 0.078);
 const vec3 SIENNA = vec3(0.50, 0.22, 0.10);
@@ -187,11 +191,14 @@ void main() {
     vec2 d = local - u_vault.xy;
     float rpx = (length(d) - 100.0) * cssPpm;
     acc = layer(acc, vec3(0.62, 0.38, 0.18), (1.0 - smoothstep(-0.8, 0.8, rpx)) * 0.07);
-    float n = max(16.0, floor(6.2832 * 100.0 * cssPpm / 13.0));
-    float t = fract(atan(d.y, d.x) / 6.2832 * n);
-    float dash = smoothstep(0.0, 0.05, t) * (1.0 - smoothstep(0.55, 0.62, t));
-    acc = layer(acc, INK, (1.0 - smoothstep(0.8, 1.6, abs(rpx))) * dash * 0.8);
-    acc = layer(acc, INK, (1.0 - smoothstep(0.25, 0.85, abs(rpx + 5.0))) * 0.35);
+    // The ink only lives within a few pixels of the ring: skip the atan everywhere else.
+    if (rpx > -6.0 && rpx < 1.6) {
+      float n = max(16.0, floor(6.2832 * 100.0 * cssPpm / 13.0));
+      float t = fract(atan(d.y, d.x) / 6.2832 * n);
+      float dash = smoothstep(0.0, 0.05, t) * (1.0 - smoothstep(0.55, 0.62, t));
+      acc = layer(acc, INK, (1.0 - smoothstep(0.8, 1.6, abs(rpx))) * dash * 0.8);
+      acc = layer(acc, INK, (1.0 - smoothstep(0.25, 0.85, abs(rpx + 5.0))) * 0.35);
+    }
   }
 
   // Mission: how far this walk must go (beyond the ring) and, on the tomb walk, where the
@@ -201,7 +208,7 @@ void main() {
     float rpx = (length(d) - u_zone.z) * cssPpm;
     float inside = 1.0 - smoothstep(-0.8, 0.8, rpx);
     acc = layer(acc, OXBLOOD, inside * exp(rpx / 18.0) * 0.16);
-    acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.9, 1.7, abs(rpx))) * dashes(d, u_zone.z, cssPpm, 16.0, 0.6) * 0.85);
+    if (abs(rpx) < 1.7) acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.9, 1.7, abs(rpx))) * dashes(d, u_zone.z, cssPpm, 16.0, 0.6) * 0.85);
     // The walk's start, where the distance counts from: a small inked target.
     float spx = length(d) * cssPpm;
     acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(spx - 6.5))) * 0.9);
@@ -211,7 +218,7 @@ void main() {
       vec2 e = local - u_excl[i];
       float epx = (length(e) - 200.0) * cssPpm;
       acc = layer(acc, OXBLOOD, (1.0 - smoothstep(-0.8, 0.8, epx)) * 0.06);
-      acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(epx))) * dashes(e, 200.0, cssPpm, 6.0, 0.35) * 0.6);
+      if (abs(epx) < 1.3) acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(epx))) * dashes(e, 200.0, cssPpm, 6.0, 0.35) * 0.6);
     }
   }
 
@@ -253,15 +260,20 @@ void main() {
     vec2 d = local - u_player.xy;
     float r = length(d);
     float apx = (r - u_player.z) * cssPpm;
-    float pencil = (1.0 - smoothstep(0.35, 1.1, abs(apx))) * (0.5 + 0.5 * znoise(local, cssPpm, 2.0, 97u));
     acc = layer(acc, vec3(0.32, 0.29, 0.26), (1.0 - smoothstep(-0.8, 0.8, apx)) * 0.07);
-    acc = layer(acc, vec3(0.28, 0.26, 0.24), pencil * 0.6);
-    float ph = fract(u_time / 2.6);
-    float pulse = (1.0 - smoothstep(0.5, 1.8, abs(r * cssPpm - ph * 48.0))) * (1.0 - ph) * 0.55;
-    acc = layer(acc, vec3(0.55, 0.1, 0.07), pulse);
+    if (abs(apx) < 1.1) {
+      float pencil = (1.0 - smoothstep(0.35, 1.1, abs(apx))) * (0.5 + 0.5 * znoise(local, cssPpm, 2.0, 97u));
+      acc = layer(acc, vec3(0.28, 0.26, 0.24), pencil * 0.6);
+    }
+    float rcss = r * cssPpm;
+    if (rcss < 50.0) {
+      float ph = fract(u_time / 2.6);
+      float pulse = (1.0 - smoothstep(0.5, 1.8, abs(rcss - ph * 48.0))) * (1.0 - ph) * 0.55;
+      acc = layer(acc, vec3(0.55, 0.1, 0.07), pulse);
+    }
   }
 
-  o = acc;
+  o = vec4(baseColor() * (1.0 - acc.a) + acc.rgb, 1.0);
 }`;
 
 export const POST_FS = HEADER + NOISE_GLSL + /* glsl */`

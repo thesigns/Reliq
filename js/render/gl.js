@@ -51,8 +51,10 @@ export function textureFromCanvas(gl, canvas, { mipmap = true, premultiply = tru
 }
 
 export class RenderTarget {
-  constructor(gl) {
+  // wrap: gl.REPEAT for a toroidal cache (WebGL2 repeats non-power-of-two textures).
+  constructor(gl, { wrap = gl.CLAMP_TO_EDGE } = {}) {
     this.gl = gl;
+    this.wrap = wrap;
     this.tex = gl.createTexture();
     this.fbo = gl.createFramebuffer();
     this.w = 0;
@@ -66,8 +68,8 @@ export class RenderTarget {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.wrap);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.wrap);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.tex, 0);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);

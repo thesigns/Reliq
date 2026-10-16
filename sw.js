@@ -35,6 +35,7 @@ const ASSETS = [
   "js/render/artifact-thumbs.js",
   "js/render/artifact3d.js",
   "js/render/atlas.js",
+  "js/render/base-cache.js",
   "js/render/camera.js",
   "js/render/gl.js",
   "js/render/icons.js",

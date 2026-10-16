@@ -1,5 +1,5 @@
 // Decides which ink icons decorate the fictional map. Deterministic per world cell,
-// with zoom levels that cross-fade so icons keep a roughly constant on-screen size.
+// with zoom levels that switch so icons keep a roughly constant on-screen size.
 
 import { biomeAt, h01 } from '../core/noise.js';
 
@@ -21,34 +21,31 @@ function iconFor(b, hv, hv2) {
 }
 
 // One detail level at a time, switched with hysteresis so icons never sit
-// half-transparent on top of each other. The switch is instant: it happens while a zoom
-// gesture stretches the cached base, and a cross-fade would force a base redraw every
-// frame for its duration (costly on phones).
-const lod = { level: null, prev: null, since: 0 };
-const FADE_MS = 0;
+// half-transparent on top of each other. The switch is instant: a cross-fade would force
+// the cached base layer to repaint every frame for its duration (costly on phones).
+let lodLevel = null;
 
-// True while two detail levels are cross-fading (the cached base layer must redraw).
-export const lodFading = (now = performance.now()) => lod.prev !== null && now - lod.since < FADE_MS;
+// The detail level for a zoom. Call it once per repaint of a cached layer and keep the
+// result for every strip of that layer, so the strips match.
+export function iconLevel(ppm) {
+  const lf = Math.log2(TARGET_PX / (BASE_CELL * ppm));
+  if (lodLevel === null || lf > lodLevel + 0.62 || lf < lodLevel - 0.62) lodLevel = Math.round(lf);
+  return lodLevel;
+}
 
-// Appends sprite instances {x, y, w, h, icon, alpha} for the visible area.
-export function terrainIcons(cam, worldOff, rects, out, now = performance.now()) {
-  const lf = Math.log2(TARGET_PX / (BASE_CELL * cam.ppm));
-  if (lod.level === null) lod.level = Math.round(lf);
-  if (lf > lod.level + 0.62 || lf < lod.level - 0.62) {
-    lod.prev = lod.level;
-    lod.level = Math.round(lf);
-    lod.since = now;
-  }
-  const k = FADE_MS ? Math.min(1, (now - lod.since) / FADE_MS) : 1;
-  if (k < 1 && lod.prev !== null) addLevel(cam, worldOff, rects, out, lod.prev, 1 - k);
-  addLevel(cam, worldOff, rects, out, lod.level, lod.prev === null ? 1 : k);
+// Appends sprite instances {x, y, w, h, icon, alpha} for an area: cam { x, y, ppm, w, h }
+// (centre in local metres, size in css px), with every icon that can reach into it.
+export function terrainIcons(cam, worldOff, rects, out, level) {
+  addLevel(cam, worldOff, rects, out, level, 1);
 }
 
 function addLevel(cam, worldOff, rects, out, level, alpha) {
   if (alpha < 0.02) return;
   const cell = BASE_CELL * Math.pow(2, level);
-  const halfW = cam.w / 2 / cam.ppm + cell * 1.5;
-  const halfH = cam.h / 2 / cam.ppm + cell * 1.5;
+  // Icons reach up to ~1.8 cells from their foot (a tall mountain): take every one that
+  // can poke into the area, so strips painted separately meet without a seam.
+  const halfW = cam.w / 2 / cam.ppm + cell * 2;
+  const halfH = cam.h / 2 / cam.ppm + cell * 2;
   const x0 = Math.floor((cam.x - halfW + worldOff.x) / cell);
   const x1 = Math.ceil((cam.x + halfW + worldOff.x) / cell);
   const y0 = Math.floor((cam.y - halfH + worldOff.y) / cell);

@@ -191,7 +191,7 @@ function setFrame(lat, lon) {
     const p = move(est0);
     filter.update(p.x, p.y, lastSample.acc, clock.now());
   }
-  renderer.baseView = null;
+  renderer.invalidate();
 }
 
 const motion = (now) => ({ ready: tracker.ready(now), speedKmh: tracker.speedKmh(now) });
@@ -790,6 +790,13 @@ function frameLoop() {
   est = filter.estimate(now);
   fix = currentFix(est);
   if (perf - lastSlowTick > 250) {
+    // Measured before this tick writes to the DOM, so reading the layout costs nothing.
+    // In the pointer's own css px: ?inspect scales the whole app with a transform.
+    const box = $('vault-pointer').parentElement, o = box.getBoundingClientRect(), k = box.offsetWidth / o.width || 1;
+    mapButtons = ['btn-tomb', 'mission-tag', 'btn-satchel'].map($).filter((b) => !b.hidden).map((b) => {
+      const r = b.getBoundingClientRect();
+      return { left: (r.left - o.left) * k, right: (r.right - o.left) * k, top: (r.top - o.top) * k, bottom: (r.bottom - o.top) * k };
+    });
     game.prune(now);
     checkMissionLost();
     updateMissionTag(now);
@@ -798,12 +805,6 @@ function frameLoop() {
     if (!busy) satchelUi.set(game.satchelCount());
     $('vault-pointer').classList.toggle('laden', game.satchelCount() > 0);
     maybeDeposit();
-    // In the pointer's own css px: ?inspect scales the whole app with a transform.
-    const box = $('vault-pointer').parentElement, o = box.getBoundingClientRect(), k = box.offsetWidth / o.width || 1;
-    mapButtons = ['btn-tomb', 'mission-tag', 'btn-satchel'].map($).filter((b) => !b.hidden).map((b) => {
-      const r = b.getBoundingClientRect();
-      return { left: (r.left - o.left) * k, right: (r.right - o.left) * k, top: (r.top - o.top) * k, bottom: (r.bottom - o.top) * k };
-    });
     if (sim && state.vault) devSet(DEV_SIM_KEY, JSON.stringify(frame.toGeo(sim.x, sim.y)));
     if (journal.isOpen && journal.tab === 'tombs') journal.refreshChecks();
     lastSlowTick = perf;
@@ -837,23 +838,24 @@ function frameLoop() {
   // animate), 10 fps behind full-screen overlays. Battery saver halves the first two.
   const sinceRender = Math.max(1, perf - lastRender);
   const camPx = Math.hypot(cam.x - lastCam.x, cam.y - lastCam.y) * cam.ppm;
-  const fast = camPx / sinceRender > 0.04 || cam.ppm !== lastCam.ppm || busy || fx.active || perf < animUntil || cam.fly || cam.zoomGoal;
+  const fast = camPx / sinceRender > 0.04 || cam.ppm !== lastCam.ppm || busy || fx.active || perf < animUntil || cam.fly || cam.zoomGoal || renderer.filling;
   const covered = !reveal.root.hidden || journal.isOpen || menu.isOpen || deposit.isOpen || satchelView.isOpen || !$('onboarding').hidden || !gate.root.hidden;
   const interval = covered ? 100 : fast ? (saver() ? 32 : 15) : (saver() ? 50 : 32);
   if (perf - lastRender >= interval) {
     renderMap(perf, now, searches);
+    // Everything pinned to the map moves in the same frames as the map, or it would
+    // swim against it on a screen that refreshes faster than the map is drawn.
+    tooltip.update(cam.w);
+    updateMapLabels();
+    if (state.vault) {
+      vaultPointer.update(cam.toScreen(0, 0), { w: cam.w, h: cam.h, top: insets.top, bottom: insets.bottom, avoid: mapButtons }, est ? formatDistance(Math.hypot(est.x, est.y)) : '');
+    } else {
+      $('vault-pointer').hidden = true;
+    }
+    scaleBar.update(cam.ppm, getLang());
     lastRender = perf;
     lastCam = { x: cam.x, y: cam.y, ppm: cam.ppm };
   }
-
-  tooltip.update(cam.w);
-  updateMapLabels();
-  if (state.vault) {
-    vaultPointer.update(cam.toScreen(0, 0), { w: cam.w, h: cam.h, top: insets.top, bottom: insets.bottom, avoid: mapButtons }, est ? formatDistance(Math.hypot(est.x, est.y)) : '');
-  } else {
-    $('vault-pointer').hidden = true;
-  }
-  scaleBar.update(cam.ppm, getLang());
   if (fx.active || fx.dirty) { fx.update(dt); fx.dirty = fx.active; }
   requestAnimationFrame(frameLoop);
 }

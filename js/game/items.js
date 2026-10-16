@@ -9,6 +9,7 @@ export const JUNK = [
 export const COINS = [
   { id: 'nummus', rarity: 'common', metal: 'bronze' },
   { id: 'kaiyuan', rarity: 'common', metal: 'bronze' },
+  { id: 'kreuzer', rarity: 'common', metal: 'copper' },
   { id: 'denarius', rarity: 'uncommon', metal: 'silver' },
   { id: 'eightreales', rarity: 'uncommon', metal: 'silver' },
   { id: 'tetradrachm', rarity: 'uncommon', metal: 'silver' },
@@ -17,6 +18,7 @@ export const COINS = [
   { id: 'doubloon', rarity: 'rare', metal: 'gold' },
   { id: 'stater', rarity: 'legendary', metal: 'electrum' },
   { id: 'eidmar', rarity: 'legendary', metal: 'gold' },
+  { id: 'ruble', rarity: 'legendary', metal: 'silver' },
 ];
 
 export const coinById = (id) => COINS.find((c) => c.id === id);

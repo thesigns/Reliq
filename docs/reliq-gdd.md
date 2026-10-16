@@ -81,31 +81,35 @@ Common (75% szans)
    - EN: Roman nummus. Rome minted them like pocket change. Someone lost it, you found it, just 1,600 years later.
 2. Kaiyuan Tongbao. Nawlekano je na sznurki po tysiąc sztuk. Ta jedna się wymknęła.
    - EN: Kaiyuan Tongbao. They were strung on cords a thousand at a time. This one slipped away.
+3. Krajcar austriacki (1858–1891). W Galicji płacono nim za chleb i gazetę. Ten wypadł komuś z kieszeni półtora wieku temu.
+   - EN: Austrian kreuzer. In Galicia it paid for bread and the morning paper. This one slipped out of a pocket a century and a half ago.
 
 Uncommon (20% szans)
 
-3. Denar rzymski. Mniej więcej dniówka robotnika. Twoja wpadła za spacer.
+4. Denar rzymski. Mniej więcej dniówka robotnika. Twoja wpadła za spacer.
    - EN: Roman denarius. Roughly a laborer's daily wage. You earned it with a walk.
-4. Hiszpańskie 8 reali. Gdy brakowało drobnych, cięto je na kawałki. Ta jest cała.
+5. Hiszpańskie 8 reali. Gdy brakowało drobnych, cięto je na kawałki. Ta jest cała.
    - EN: Spanish piece of eight. When small change ran short, they were cut into pieces. This one is whole.
-5. Tetradrachma ateńska. „Wozić sowy do Aten” mówili Grecy o czymś zbędnym. Ta sowa zbędna nie jest.
+6. Tetradrachma ateńska. „Wozić sowy do Aten” mówili Grecy o czymś zbędnym. Ta sowa zbędna nie jest.
    - EN: Athenian tetradrachm. “Bringing owls to Athens,” the Greeks said of anything pointless. This owl is anything but.
 
 Rare (4% szans)
 
-6. Dukat wenecki. Doża klęczy przed świętym Markiem. Bity przez pięć wieków, aż Napoleon zakończył Republikę.
+7. Dukat wenecki. Doża klęczy przed świętym Markiem. Bity przez pięć wieków, aż Napoleon zakończył Republikę.
    - EN: Venetian ducat. The Doge kneels before Saint Mark. Minted for five centuries, until Napoleon ended the Republic.
-7. Solidus bizantyjski. Konstantyn ustalił jego wagę, a Bizancjum dotrzymało słowa przez siedem stuleci.
+8. Solidus bizantyjski. Konstantyn ustalił jego wagę, a Bizancjum dotrzymało słowa przez siedem stuleci.
    - EN: Byzantine solidus. Constantine fixed its weight, and Byzantium kept its word for seven centuries.
-8. Dublon hiszpański. Galeony wiozły je przez Atlantyk tonami. Ten jakimś cudem trafił tutaj.
+9. Dublon hiszpański. Galeony wiozły je przez Atlantyk tonami. Ten jakimś cudem trafił tutaj.
    - EN: Spanish doubloon. Galleons carried them across the Atlantic by the ton. Somehow this one ended up here.
 
 Legendary (1% szans)
 
-9. Stater lidyjski. Z krainy Krezusa. Lew na awersie strzeże jednej z pierwszych monet w dziejach ludzkości.
+10. Stater lidyjski. Z krainy Krezusa. Lew na awersie strzeże jednej z pierwszych monet w dziejach ludzkości.
    - EN: Lydian stater. From the land of Croesus. The lion on its face guards one of the first coins in human history.
-10. Aureus EID MAR. Brutus wybił go, by uczcić Idy marcowe. Przetrwała garstka. Jedna jest teraz twoja.
+11. Aureus EID MAR. Brutus wybił go, by uczcić Idy marcowe. Przetrwała garstka. Jedna jest teraz twoja.
     - EN: EID MAR aureus. Brutus struck it to celebrate the Ides of March. Only a handful survive. One of them is now yours.
+12. Rubel Konstantego (1825). Cesarz, który nigdy nie panował: brat objął tron, zanim moneta trafiła do obiegu. Przetrwało ich ledwie kilka.
+    - EN: Constantine ruble. The emperor who never reigned: his brother took the throne before the coin was issued. Only a few survive.
 
 ## Misje
 

@@ -32,6 +32,7 @@ METALS = {  # raised metal, sunken field
     'silver': ((0.84, 0.84, 0.82), (0.52, 0.54, 0.56)),
     'gold': ((0.97, 0.74, 0.28), (0.70, 0.47, 0.14)),
     'electrum': ((0.91, 0.81, 0.50), (0.60, 0.52, 0.30)),
+    'copper': ((0.80, 0.42, 0.27), (0.43, 0.27, 0.19)),   # redder than bronze, a brown patina
 }
 
 # radius and thickness are relative; the game scales every coin to the same size, so
@@ -39,6 +40,8 @@ METALS = {  # raised metal, sunken field
 COINS = {
     'nummus': dict(metal='bronze', radius=0.9, thick=0.17, segments=12, jitter=0.05, front='bust', back='ring'),
     'kaiyuan': dict(metal='bronze', radius=1.0, thick=0.13, segments=12, jitter=0.0, front='hole', back='hole'),
+    # Machine-struck 19th-century coins: true round edges, no jitter.
+    'kreuzer': dict(metal='copper', radius=0.8, thick=0.13, segments=16, jitter=0.0, front='ring', back='bust'),
     'denarius': dict(metal='silver', radius=0.85, thick=0.15, segments=12, jitter=0.05, front='bust', back='bust'),
     'eightreales': dict(metal='silver', radius=1.15, thick=0.12, segments=14, jitter=0.12, front='ring', back='bust'),
     'tetradrachm': dict(metal='silver', radius=0.95, thick=0.3, segments=12, jitter=0.08, front='bust', back='bust', rim=False),
@@ -47,6 +50,7 @@ COINS = {
     'doubloon': dict(metal='gold', radius=1.05, thick=0.15, segments=12, jitter=0.13, front='ring', back='bust'),
     'stater': dict(metal='electrum', radius=0.85, thick=0.36, segments=10, jitter=0.14, stretch=1.25, front='bust', back='punch', rim=False),
     'eidmar': dict(metal='gold', radius=0.9, thick=0.13, segments=12, jitter=0.04, front='bust', back='ring'),
+    'ruble': dict(metal='silver', radius=1.2, thick=0.11, segments=18, jitter=0.0, front='bust', back='ring'),
 }
 
 

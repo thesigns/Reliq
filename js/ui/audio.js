@@ -225,7 +225,7 @@ export const sfx = {
   clink(metal = 'gold') {
     if (!enabled) return;
     const c = ac(), t = c.currentTime;
-    const base = ({ bronze: 1650, silver: 2500, gold: 2150, electrum: 2300 }[metal] ?? 2150) * (0.94 + Math.random() * 0.12);
+    const base = ({ bronze: 1650, copper: 1750, silver: 2500, gold: 2150, electrum: 2300 }[metal] ?? 2150) * (0.94 + Math.random() * 0.12);
     [1, 2.31, 3.97].forEach((p, i) => {
       const o = c.createOscillator();
       o.type = 'sine';

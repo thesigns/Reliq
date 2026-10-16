@@ -10,6 +10,8 @@ Poprawki po pierwszym spacerze testowym. Lista jeszcze się wydłuży.
 
 - Ekran menu ma pod podtytułem krótką notę o bezpieczeństwie. Mówi, żeby patrzeć przed siebie, a nie w ekran, omijać teren prywatny, ogrodzony i niebezpieczny, uważać na ruch uliczny i zatrzymać się, zanim zerknie się na mapę.
 
+- **Dwie nowe monety**, pierwsze z XIX wieku: pospolity krajcar austriacki (miedziany, krążył w Galicji) i legendarny rubel Konstantego (1825, srebrny, cesarza, który nigdy nie panował). W kolekcji jest teraz 12 monet, po trzy w każdej rzadkości.
+
 ### Zmienione
 
 - **Zamykanie okien:** każde okno, które da się po prostu zamknąć, ma ten sam okrągły przycisk „X” w prawym górnym rogu. Dotyczy to ustawień, „O grze”, dziennika skarbca, karty plecaka, karty misji, wrót grobowca, podglądu monet i artefaktów oraz podsumowania „Powrót do skarbca”. Przyciski z prawdziwą akcją zostały: „Do plecaka”, „Wyrzuć”, „Otwórz wrota”, „Pokaż skarbiec”.

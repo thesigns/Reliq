@@ -550,7 +550,7 @@
 .j-version { margin: 14px 0 0; text-align: center; font-family: var(--font-display); font-size: 11px; letter-spacing: .2em; color: rgba(59, 36, 20, .55); }
 
 .debug[hidden] { display: none; }
-.j-map-status { margin: 8px 0 0; font-style: italic; font-size: 16px; line-height: 1.3; color: #5a3a20; }
+.j-mission-status { margin: 8px 0 0; font-style: italic; font-size: 16px; line-height: 1.3; color: #5a3a20; }
 .j-card .checks[hidden] { display: none; }
 .j-card .j-hint { margin: 4px 0 0; }
 .tomb-actions { display: flex; flex-direction: column; align-items: flex-end; }

@@ -312,9 +312,9 @@ export class Reveal {
     return this.close();
   }
 
-  // The tomb of the held map has turned up where the player searched.
+  // The active mission's tomb has turned up where the player searched.
   async showTombFound(n) {
-    this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('map.title', { n: formatRoman(n) }), desc: t('tomb.found.desc') });
+    this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('tomb.found.title', { n: formatRoman(n) }), desc: t('tomb.found.desc') });
     this.setInfo({});
     await this.open('tomb', 'rare');
     sfx.swell(0.8);

@@ -4,7 +4,7 @@
 import { t, formatDate, formatDuration, formatRoman } from '../i18n/i18n.js';
 import { COINS } from '../game/items.js';
 import { RULES, MISSIONS } from '../game/rules.js';
-import { renderChecks, mapStatus } from './tomb-scroll.js';
+import { renderChecks, missionStatus } from './notebook.js';
 import { artifactSketch } from './artifact-sketch.js';
 import { MODELS } from '../render/models/index.js';
 import { shardRow } from './gate-art.js';
@@ -15,7 +15,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 export class Journal {
   // deps: { state, missionCheck(), missionOffer(), thumbnail(id), artifactThumb(id), onViewCoin(id),
-  //         onShowTomb(tomb), onShowMap(), onStartMission(), onAbandonMission(),
+  //         onShowTomb(tomb), onShowNotebook(), onStartMission(), onAbandonMission(),
   //         onViewArtifact({ id, n, from }), fenceOffers(), coinPrice(id), onSellCoin(id),
   //         onBuyArtifact(n) }
   constructor(root, deps) {
@@ -70,7 +70,7 @@ export class Journal {
     const ul = this.el('.journal-page .checks');
     if (ul) renderChecks(ul, check);
     const set = (sel, text) => { const el = this.el(sel); if (el && el.textContent !== text) el.textContent = text; };
-    set('.journal-page .j-map-status', mapStatus(check));
+    set('.journal-page .j-mission-status', missionStatus(check));
     set('.journal-page .j-deadline', t('journal.tombs.left', { t: formatDuration(check.timeLeft) }));
   }
 
@@ -145,10 +145,10 @@ export class Journal {
       html += `<div class="j-card j-mission"><div class="j-mission-sketch small">${artifactSketch(MODELS[check.def.artifact])}</div>
         <h3 class="j-card-title">${esc(t('journal.tombs.mission', { name }))}</h3>
         <ul class="checks"></ul>
-        <p class="j-map-status">${esc(mapStatus(check))}</p>
+        <p class="j-mission-status">${esc(missionStatus(check))}</p>
         <p class="j-hint j-deadline">${esc(t('journal.tombs.left', { t: formatDuration(check.timeLeft) }))}</p>
         <div class="shards-row"><span class="shards-label">${esc(t('gate.shards'))}</span>${shardRow(check.shards, check.keyLength)}</div>
-        <button class="btn-brass btn-small" data-action="show-map">${esc(t('journal.tombs.showMap'))}</button>
+        <button class="btn-brass btn-small" data-action="show-notebook">${esc(t('journal.tombs.openNotebook'))}</button>
         <div class="j-danger">
           <button class="btn-link danger" data-action="abandon">${esc(t('journal.tombs.abandon'))}</button>
           <div class="j-confirm" hidden>
@@ -244,7 +244,7 @@ export class Journal {
       return;
     }
     const a = b.dataset.action;
-    if (a === 'show-map') { this.close(); this.deps.onShowMap(); }
+    if (a === 'show-notebook') { this.close(); this.deps.onShowNotebook(); }
     if (a === 'start-mission') this.deps.onStartMission();
     if (a === 'abandon') { sfx.click(); this.el('.j-card .j-confirm').hidden = false; b.hidden = true; }
     if (a === 'abandon-no') { sfx.click(); this.el('.j-card .j-confirm').hidden = true; this.el('[data-action="abandon"]').hidden = false; }

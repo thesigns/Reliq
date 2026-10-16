@@ -22,15 +22,15 @@ export function renderChecks(ul, check) {
 }
 
 // Where the mission stands, as one line: what to do next.
-export function mapStatus(check) {
+export function missionStatus(check) {
   if (check.stage !== 'gate') {
     if (!check.start) return t('mission.noStart');
     if (check.ok) return t('mission.ready');
     if (check.distance !== null && check.distance >= check.need) return t('mission.tooClose', { d: formatDistance(RULES.tombSeparation) });
     return t('mission.distance', { have: formatDistance(check.distance), need: formatDistance(check.need) });
   }
-  if (check.gate.ok) return t('map.atGate');
-  return check.gate.distance === null ? t('map.tombFound') : t('map.toTomb', { d: formatDistance(check.gate.distance) });
+  if (check.gate.ok) return t('notebook.atGate');
+  return check.gate.distance === null ? t('notebook.tombFound') : t('notebook.toTomb', { d: formatDistance(check.gate.distance) });
 }
 
 // The mission at a glance, for the tag beside the map button: { label, value, progress? }.
@@ -44,7 +44,7 @@ export function missionBrief(check) {
 const setHtml = (el, html) => { if (el.innerHTML !== html) el.innerHTML = html; };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export class TombScroll {
+export class MissionNotebook {
   constructor(root) {
     this.root = root;
     this.card = root.querySelector('.paper-card');
@@ -54,10 +54,10 @@ export class TombScroll {
 
   open(check) {
     this.n = check.n;
-    this.el('.card-label').textContent = t('map.label', { n: formatRoman(check.n) });
+    this.el('.card-label').textContent = t('notebook.label', { n: formatRoman(check.n) });
     this.el('.card-title').textContent = t(`artifacts.${check.def.artifact}.name`);
     this.el('.card-sketch').innerHTML = artifactSketch(MODELS[check.def.artifact]);
-    this.el('#scroll-gate').textContent = t('gate.open');
+    this.el('#notebook-gate').textContent = t('gate.open');
     this.update(check);
     this.root.hidden = false;
     this.isOpen = true;
@@ -69,13 +69,13 @@ export class TombScroll {
     if (!this.isOpen && !this.root.hidden) return;
     if (!check.active) return;
     renderChecks(this.el('.checks'), check);
-    setHtml(this.el('.scroll-shards'), `<span class="shards-label">${t('gate.shards')}</span>${shardRow(check.shards, check.keyLength)}`);
-    const msg = this.el('.scroll-msg');
-    if (!this.failing) msg.textContent = mapStatus(check);
+    setHtml(this.el('.card-symbols'), `<span class="shards-label">${t('gate.shards')}</span>${shardRow(check.shards, check.keyLength)}`);
+    const msg = this.el('.card-msg');
+    if (!this.failing) msg.textContent = missionStatus(check);
     const left = t('journal.tombs.left', { t: formatDuration(check.timeLeft) });
-    const dl = this.el('.scroll-deadline');
+    const dl = this.el('.card-deadline');
     if (dl.textContent !== left) dl.textContent = left;
-    const btn = this.el('#scroll-gate');
+    const btn = this.el('#notebook-gate');
     btn.hidden = check.stage !== 'gate';
     btn.classList.toggle('ready', !!check.gate?.ok);
   }
@@ -83,7 +83,7 @@ export class TombScroll {
   // The gate is out of reach: say so for a moment.
   fail(text) {
     this.failing = true;
-    this.el('.scroll-msg').textContent = text;
+    this.el('.card-msg').textContent = text;
     this.card.classList.remove('shake');
     void this.card.offsetWidth;
     this.card.classList.add('shake');

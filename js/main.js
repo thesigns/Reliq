@@ -23,7 +23,7 @@ import { MapTooltip, EdgePointer, LabelLayer } from './ui/map-ui.js';
 import { ScaleBar } from './ui/scale-bar.js';
 import { Reveal } from './ui/reveal.js';
 import { MODELS } from './render/models/index.js';
-import { TombScroll, missionBrief } from './ui/tomb-scroll.js';
+import { MissionNotebook, missionBrief } from './ui/notebook.js';
 import { GateScreen } from './ui/gate.js';
 import { Journal } from './ui/journal.js';
 import { GameMenu } from './ui/menu.js';
@@ -225,7 +225,7 @@ const renderer = new MapRenderer($('map'));
 const fx = new Particles($('fx'));
 const hud = new Hud();
 const reveal = new Reveal($('reveal'));
-const scroll = new TombScroll($('scroll'));
+const notebook = new MissionNotebook($('notebook'));
 const gate = new GateScreen($('gate'));
 const tooltip = new MapTooltip($('map-tip'));
 const vaultPointer = new EdgePointer($('vault-pointer'));
@@ -265,7 +265,7 @@ const journal = new Journal($('journal'), {
   missionOffer: () => game.missionOffer(),
   onViewCoin: (id) => reveal.viewCoin(id, state.coins[id] ?? 0),
   onShowTomb: (tb) => showTomb(tb),
-  onShowMap: () => onMissionMap(),
+  onShowNotebook: () => openNotebook(),
   onStartMission: () => onStartMission(),
   onAbandonMission: () => onAbandonMission(),
   onViewArtifact: (a) => viewArtifact(a),
@@ -557,7 +557,7 @@ async function stowFind(loot) {
 // chest, with ceremony. Waits while another screen is up.
 let depositing = false;
 function overlayOpen() {
-  return !reveal.root.hidden || journal.isOpen || menu.isOpen || deposit.isOpen || satchelView.isOpen || scroll.isOpen || !gate.root.hidden || !$('onboarding').hidden;
+  return !reveal.root.hidden || journal.isOpen || menu.isOpen || deposit.isOpen || satchelView.isOpen || notebook.isOpen || !gate.root.hidden || !$('onboarding').hidden;
 }
 async function maybeDeposit() {
   if (depositing || busy || mode !== 'play' || overlayOpen() || !game.depositCheck(fix).ok) return;
@@ -615,10 +615,10 @@ async function onPlaceVault() {
   toast.show(t('toast.vaultPlaced'), 5200);
 }
 
-function onMissionMap() {
+function openNotebook() {
   if (busy) return;
   const check = game.missionCheck(fix, clock.now());
-  if (check.active) scroll.open(check);
+  if (check.active) notebook.open(check);
 }
 
 function onStartMission() {
@@ -710,20 +710,20 @@ function viewArtifact(a, opts = {}) {
   });
 }
 
-// The gate of the held map's tomb, on site only. The rings start anywhere but at the key.
+// The gate of the active mission's tomb, on site only. The rings start anywhere but at the key.
 async function onOpenGate() {
   if (busy) return;
   const check = game.missionCheck(fix, clock.now());
   if (check.stage !== 'gate') return;
   if (!check.gate.ok) {
     deny();
-    scroll.fail(t('gate.far', { r: formatDistance(RULES.gateRadius) }));
+    notebook.fail(t('gate.far', { r: formatDistance(RULES.gateRadius) }));
     return;
   }
   busy = true;
   hud.setBusy(true);
   tooltip.hide();
-  await scroll.close();
+  await notebook.close();
   const key = state.mission.key;
   const start = key.map((sym) => (SYMBOLS.indexOf(sym) + 1 + Math.floor(Math.random() * (SYMBOLS.length - 1))) % SYMBOLS.length);
   let opened = null;
@@ -775,7 +775,7 @@ const READY_AFTER = new Set(['searched', 'vault', 'fast']);
 let prevStatus = null;
 let lastSlowTick = 0;
 let mapButtons = []; // screen rects the vault pointer keeps clear of, refreshed with the slow tick
-let lastScrollUpdate = 0;
+let lastNotebookUpdate = 0;
 let lastFrame = performance.now();
 let lastRender = 0;
 let lastCam = { x: 0, y: 0, ppm: 0 };
@@ -828,9 +828,9 @@ function frameLoop() {
   const searches = state.vault ? game.activeSearches(now) : [];
   hud.setGps(GPS_STATUS[source.state] ? null : lastSample?.acc);
   $('btn-tomb').hidden = !state.mission;
-  if (scroll.isOpen && perf - lastScrollUpdate > 400) {
-    scroll.update(game.missionCheck(fix, now));
-    lastScrollUpdate = perf;
+  if (notebook.isOpen && perf - lastNotebookUpdate > 400) {
+    notebook.update(game.missionCheck(fix, now));
+    lastNotebookUpdate = perf;
   }
 
   // Map frame rate: 60 fps for fast motion (drag, zoom, fly, digging), 30 fps for the
@@ -916,10 +916,10 @@ function wireUi() {
   $('btn-menu').addEventListener('click', () => { sfx.paper(); menu.open(); });
   $('btn-search').addEventListener('click', onMedallion);
   $('btn-tomb').innerHTML = notebookSVG();
-  $('btn-tomb').addEventListener('click', onMissionMap);
-  $('mission-tag').addEventListener('click', onMissionMap);
-  $('scroll-gate').addEventListener('click', onOpenGate);
-  $('scroll-close').addEventListener('click', () => scroll.close());
+  $('btn-tomb').addEventListener('click', openNotebook);
+  $('mission-tag').addEventListener('click', openNotebook);
+  $('notebook-gate').addEventListener('click', onOpenGate);
+  $('notebook-close').addEventListener('click', () => notebook.close());
   $('btn-recenter').onclick = () => {
     sfx.click();
     cam.flyTo(null, cam.defaultPpm, 0.7);
@@ -1060,7 +1060,7 @@ async function main() {
     navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('Service worker not registered:', e));
   }
   document.body.classList.add('loaded');
-  window.__reliq = { cam, sim, source, filter, compass, state, game, clock, tracker, reveal, renderer, scroll, gate, store, journal, menu, deposit, satchelUi, toast };
+  window.__reliq = { cam, sim, source, filter, compass, state, game, clock, tracker, reveal, renderer, notebook, gate, store, journal, menu, deposit, satchelUi, toast };
   requestAnimationFrame(frameLoop);
   // Lift the splash once the first map frame is on screen.
   requestAnimationFrame(() => requestAnimationFrame(() => $('splash').classList.add('gone')));

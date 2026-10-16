@@ -64,7 +64,7 @@ export class SatchelView {
     this.deps = deps;
     this.el = (sel) => root.querySelector(sel);
     this.isOpen = false;
-    this.el('.scroll-backdrop').onclick = () => this.close();
+    this.el('.card-backdrop').onclick = () => this.close();
     this.el('#satchel-close').onclick = () => this.close();
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.isOpen) this.close(); });
   }
@@ -85,7 +85,7 @@ export class SatchelView {
     this.el('.card-label').textContent = t('btn.satchel');
     this.el('.card-title').textContent = t('satchel.count', { n: count });
     this.el('.sv-items').innerHTML = html;
-    this.el('.scroll-msg').textContent = distanceText;
+    this.el('.card-msg').textContent = distanceText;
     this.root.hidden = false;
     this.isOpen = true;
     this.deps.sfx.paper();

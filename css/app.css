@@ -685,7 +685,7 @@ html.inspect #app {
   transform: translateY(-140%) rotate(-12deg);
   opacity: 0;
 }
-.scroll-overlay .paper-card:not(.map-card),
+.card-overlay .paper-card:not(.notebook-page),
 .reveal[data-kind='tomb'] .paper-card {
   background:
     var(--grain-soft),
@@ -723,7 +723,7 @@ html.inspect #app {
 .card-sketch { margin: 6px -6px 2px; }
 /* The mission card: a ruled page of the field notebook with a red margin, the artifact
    sketched on it. */
-.map-card {
+.notebook-page {
   padding-left: 38px;
   background:
     var(--grain-soft),
@@ -732,8 +732,8 @@ html.inspect #app {
     repeating-linear-gradient(180deg, transparent 0 27px, rgba(80, 110, 150, .2) 27px 28px),
     linear-gradient(170deg, #f7ebcd, #e8d4a6);
 }
-.map-card .card-sketch { width: 150px; height: 150px; margin: 4px auto 0; }
-.map-card .card-sketch svg { height: 100%; }
+.notebook-page .card-sketch { width: 150px; height: 150px; margin: 4px auto 0; }
+.notebook-page .card-sketch svg { height: 100%; }
 .card-sketch svg { width: 100%; height: auto; display: block; }
 .card-title {
   margin-top: 4px;
@@ -766,7 +766,7 @@ html.inspect #app {
 .checks .mark { flex: none; width: 18px; height: 18px; margin-top: 1px; }
 .checks .mark svg { width: 100%; height: 100%; display: block; }
 
-/* ---------- Mission button & map scroll ---------- */
+/* ---------- Mission button & notebook ---------- */
 /* Top left corner of the map, level with the compass rose on the right. */
 .tomb-btn {
   position: absolute;
@@ -1061,7 +1061,7 @@ html.inspect #app {
 .mt-bar i { display: block; height: 100%; width: 0; background: var(--oxblood); transition: width .4s ease; }
 .mission-tag.reached .mt-bar i { background: #3f6b2a; }
 
-.scroll-overlay {
+.card-overlay {
   position: absolute;
   inset: 0;
   z-index: 40;
@@ -1069,23 +1069,23 @@ html.inspect #app {
   place-items: center;
   padding: calc(var(--safe-top) + 70px) 0 calc(var(--safe-bottom) + 40px);
 }
-.scroll-overlay[hidden] { display: none; }
-.scroll-backdrop {
+.card-overlay[hidden] { display: none; }
+.card-backdrop {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 50% 45%, rgba(40, 20, 8, .55), rgba(8, 4, 2, .88));
   opacity: 0;
   transition: opacity .35s ease;
 }
-.scroll-overlay .paper-card {
+.card-overlay .paper-card {
   opacity: 0;
   transform: scaleY(.05) rotate(-2deg);
   transform-origin: 50% 50%;
   transition: transform .45s cubic-bezier(.2, 1.2, .4, 1), opacity .25s ease;
 }
-.scroll-overlay.show .scroll-backdrop { opacity: 1; }
-.scroll-overlay.show .paper-card { opacity: 1; transform: rotate(-2deg); }
-.scroll-deadline {
+.card-overlay.show .card-backdrop { opacity: 1; }
+.card-overlay.show .paper-card { opacity: 1; transform: rotate(-2deg); }
+.card-deadline {
   margin: 4px 0 0;
   font-family: var(--font-text);
   font-style: italic;
@@ -1093,7 +1093,7 @@ html.inspect #app {
   color: #6b5034;
   text-align: center;
 }
-.scroll-msg {
+.card-msg {
   min-height: 1.3em;
   margin: 10px 0 0;
   font-family: var(--font-text);
@@ -1220,8 +1220,8 @@ html.inspect #app {
   .reveal-rays, .medallion.ready .m-sheen, .medallion.ready::after { animation: none; }
 }
 
-/* ---------- Key shards (scroll, journal, gate) ---------- */
-.scroll-shards,
+/* ---------- Key symbols (notebook, journal, gate) ---------- */
+.card-symbols,
 .shards-row,
 .gate-shards { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
 .shards-label {

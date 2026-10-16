@@ -63,6 +63,9 @@ export const MISSIONS = [
   { artifact: 'crown', tier: 'gold' },
   { artifact: 'scarab', tier: 'gold' },
   { artifact: 'orb', tier: 'gold' },
+  { artifact: 'sextant', tier: 'platinum' },
+  { artifact: 'hourglass', tier: 'platinum' },
+  { artifact: 'nightingale', tier: 'platinum' },
 ];
 
 export const tierDef = (id) => TIERS.find((t) => t.id === id) ?? null;

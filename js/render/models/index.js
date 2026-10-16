@@ -9,12 +9,15 @@ import { CROWN } from './crown.js';
 import { CUP } from './cup.js';
 import { HELMET } from './helmet.js';
 import { HORN } from './horn.js';
+import { HOURGLASS } from './hourglass.js';
 import { INKWELL } from './inkwell.js';
 import { KEY } from './key.js';
 import { LAMP } from './lamp.js';
 import { LUR } from './lur.js';
+import { NIGHTINGALE } from './nightingale.js';
 import { ORB } from './orb.js';
 import { SCARAB } from './scarab.js';
+import { SEXTANT } from './sextant.js';
 import { SKYDISC } from './skydisc.js';
 import { VASE } from './vase.js';
 import { WATCH } from './watch.js';
@@ -29,12 +32,15 @@ export const MODELS = {
   cup: CUP,
   helmet: HELMET,
   horn: HORN,
+  hourglass: HOURGLASS,
   inkwell: INKWELL,
   key: KEY,
   lamp: LAMP,
   lur: LUR,
+  nightingale: NIGHTINGALE,
   orb: ORB,
   scarab: SCARAB,
+  sextant: SEXTANT,
   skydisc: SKYDISC,
   vase: VASE,
   watch: WATCH,

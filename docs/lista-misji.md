@@ -203,7 +203,7 @@ Kształt: złota kula opasana poziomą i pionową opaską wysadzaną kamieniami,
 ### Sekstant kartografa
 
 Tytuł: Sekstant kartografa
-Model: sextant.js
+Model: sextant.js (gotowy)
 Lore: Kartograf zmierzył nim brzeg, którego nie było na żadnej mapie, i nikomu nie zdradził, gdzie leży.
 Detal (po znalezieniu): Na ramieniu wydrapano maleńki kompas i jedną literę.
 Kształt: mosiężna rama w kształcie wycinka koła ze skalą na łuku, ruchome ramię, lusterka i krótka luneta, drewniany uchwyt z tyłu.
@@ -211,7 +211,7 @@ Kształt: mosiężna rama w kształcie wycinka koła ze skalą na łuku, ruchome
 ### Klepsydra alchemika z Pragi
 
 Tytuł: Klepsydra alchemika z Pragi
-Model: hourglass.js
+Model: hourglass.js (gotowy)
 Lore: Alchemik obiecał cesarzowi, że cofnie czas, i w tej klepsydrze piasek naprawdę sypie się w górę.
 Detal (po znalezieniu): Piasek mieni się jak sproszkowane złoto.
 Kształt: dwie bańki z bladoniebieskiego szkła w ramie z ciemnego drewna z toczonymi słupkami, złoty piasek w górnej bańce.
@@ -219,7 +219,7 @@ Kształt: dwie bańki z bladoniebieskiego szkła w ramie z ciemnego drewna z toc
 ### Mechaniczny słowik cesarza
 
 Tytuł: Mechaniczny słowik cesarza
-Model: nightingale.js
+Model: nightingale.js (gotowy)
 Lore: Cesarz wolał go od prawdziwego słowika, dopóki nakręcany ptak nie zamilkł, a prawdziwy nie wrócił, żeby zaśpiewać.
 Detal (po znalezieniu): Za skrzydłem schowano maleńki kluczyk do nakręcania.
 Kształt: złota klatka z kopułą z prętów, w środku na drążku ptaszek z blachy z kamieniami zamiast oczu.

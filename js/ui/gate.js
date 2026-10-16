@@ -1,7 +1,7 @@
 // The tomb gate: three bronze rings turned by dragging (a tap turns one step). The symbols
 // under the marker form the combination, outer ring first; every settled turn is tried.
 
-import { t } from '../i18n/i18n.js';
+import { t, formatRoman } from '../i18n/i18n.js';
 import { SYMBOLS } from '../game/rules.js';
 import { GATE, gateSVG, shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
@@ -33,7 +33,7 @@ export class GateScreen {
   open(opts) {
     this.opts = opts;
     this.el('.gate-label').textContent = t('gate.label');
-    this.el('.gate-title').textContent = t('gate.title', { n: opts.n });
+    this.el('.gate-title').textContent = t('gate.title', { n: formatRoman(opts.n) });
     this.setHint(t('gate.hint'));
     this.setShards(opts.shards, opts.keyLength);
     this.angles = opts.start.map((i) => -i * STEP);

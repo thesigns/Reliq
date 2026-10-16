@@ -36,7 +36,7 @@ import { Particles } from './ui/particles.js';
 import { scrollSVG, closeGlyph } from './ui/art.js';
 import { sfx } from './ui/audio.js';
 import { haptics } from './ui/haptics.js';
-import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate } from './i18n/i18n.js';
+import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate, formatRoman } from './i18n/i18n.js';
 import { seedDemoWorld, DEMO_VAULT, DEMO_PLAYER } from './demo.js';
 import { VERSION } from './version.js';
 
@@ -369,7 +369,7 @@ const treasureName = (tb) => (tb.artifact ? t(`artifacts.${tb.artifact}.name`) :
 function showTombTip(tb) {
   const q = game.toLocal(tb);
   tooltip.show(
-    t('tip.tomb.title', { n: tb.n }),
+    t('tip.tomb.title', { n: formatRoman(tb.n) }),
     tb.opened
       ? t('tip.tomb.body', { date: formatDate(tb.t), treasure: treasureName(tb) })
       : t('tip.tomb.closed', { r: formatDistance(RULES.gateRadius) }),
@@ -705,7 +705,7 @@ function viewArtifact(a, opts = {}) {
   return reveal.viewArtifact(MODELS[a.id], {
     name: t(`artifacts.${a.id}.name`),
     desc: artifactText(a.id),
-    context: a.from === 'fence' ? t('reveal.fromFence') : t('reveal.fromTomb', { n: a.n }),
+    context: a.from === 'fence' ? t('reveal.fromFence') : t('reveal.fromTomb', { n: formatRoman(a.n) }),
     ...opts,
   });
 }

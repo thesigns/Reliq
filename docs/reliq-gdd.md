@@ -138,7 +138,7 @@ Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejd
 
 **Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 450 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
 
-**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i zostaje na mapie na stałe jako ikona. Musi leżeć co najmniej 200 m od innych grobowców — jeśli leżałby bliżej, przeszukanie przebiega normalnie.
+**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i zostaje na mapie na stałe jako ikona. Musi leżeć co najmniej 200 m od innych grobowców — jeśli leżałby bliżej, przeszukanie przebiega normalnie. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
 
 Wszystkie przeszukania misji podlegają tym samym zasadom co zwykłe szukanie: poza przeszukanym terenem i skarbcem, prędkość, dokładność GPS. Każde tworzy obszar jak zwykle.
 

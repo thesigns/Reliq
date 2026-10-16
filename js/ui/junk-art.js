@@ -1,5 +1,7 @@
 // Ink sketches of junk finds and mission maps, in the style of an explorer's notebook.
 
+import { formatRoman } from '../i18n/i18n.js';
+
 const INK = '#3b2414';
 const RED = '#8b1e1e';
 const PAPER = '#efe0bd';
@@ -144,13 +146,6 @@ export const JUNK_ART = { battery, penny, pulltab, ticket, lighter, paperclip, e
 
 export const junkSketch = (id) => JUNK_ART[id] ?? unknown;
 
-function roman(n) {
-  const map = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
-  let s = '';
-  for (const [v, r] of map) while (n >= v) { s += r; n -= v; }
-  return s;
-}
-
 // A torn-out map fragment: dotted route from the vault to an X beside a ruined temple.
 export function mapSketch(n) {
   return `
@@ -168,6 +163,6 @@ export function mapSketch(n) {
     <path d="M150 104 q6 -5 12 0 t12 0 M142 112 q6 -5 12 0 t12 0" stroke-width="1" opacity=".6"/>
   </g>
   <text x="200" y="98" text-anchor="middle" font-family="Cinzel, serif" font-weight="700" font-size="9" fill="${INK}">N</text>
-  <text x="14" y="24" font-family="Cinzel, serif" font-weight="700" font-size="17" fill="${INK}">${roman(n)}</text>
+  <text x="14" y="24" font-family="Cinzel, serif" font-weight="700" font-size="17" fill="${INK}">${formatRoman(n)}</text>
 </svg>`;
 }

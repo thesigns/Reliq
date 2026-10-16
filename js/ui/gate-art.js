@@ -1,6 +1,7 @@
 // Tomb gate art: the eight carved animal symbols, a key shard, a small gate sketch for the
 // discovery card, and the gate itself with its three rings. Symbols are language-neutral.
 
+import { formatRoman } from '../i18n/i18n.js';
 import { SYMBOLS } from '../game/rules.js';
 
 const INK = '#3b2414';
@@ -88,15 +89,8 @@ export function gateSketch(n) {
     <path d="${ticks}" stroke-width="1"/>
     <path d="M110 38 l-5 -8 h10 Z" fill="${RED}" stroke="${RED}" stroke-width="1"/>
   </g>
-  <text x="14" y="26" font-family="Cinzel, serif" font-weight="700" font-size="17" fill="${INK}">${roman(n)}</text>
+  <text x="14" y="26" font-family="Cinzel, serif" font-weight="700" font-size="17" fill="${INK}">${formatRoman(n)}</text>
 </svg>`;
-}
-
-function roman(n) {
-  const map = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
-  let s = '';
-  for (const [v, r] of map) while (n >= v) { s += r; n -= v; }
-  return s;
 }
 
 // The gate: two stone leaves meeting in the middle and three bronze rings carrying the

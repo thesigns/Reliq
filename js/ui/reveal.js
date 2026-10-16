@@ -1,7 +1,7 @@
 // Full-screen reveal of a find: a low-poly coin with rarity staging, a low-poly tomb artifact,
 // or a paper card (junk from the notebook, a key shard, a discovered tomb).
 
-import { t, formatDistance } from '../i18n/i18n.js';
+import { t, formatDistance, formatRoman } from '../i18n/i18n.js';
 import { coinById } from '../game/items.js';
 import { ArtifactRenderer } from '../render/artifact3d.js';
 import { COIN_MODELS } from '../render/models/coins.js';
@@ -212,7 +212,7 @@ export class Reveal {
     this.el('#reveal-x').hidden = !!button;
   }
 
-  // options: { isNew, context } — context is an extra line, e.g. "Treasure of tomb 2".
+  // options: { isNew, context } — context is an extra line, e.g. "Treasure of tomb II".
   async showCoin(id, { isNew = false, context = '' } = {}) {
     const def = coinById(id);
     const rarity = def.rarity;
@@ -316,7 +316,7 @@ export class Reveal {
 
   // The tomb of the held map has turned up where the player searched.
   async showTombFound(n) {
-    this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('map.title', { n }), desc: t('tomb.found.desc') });
+    this.fillCard({ label: t('tomb.found.label'), sketch: gateSketch(n), name: t('map.title', { n: formatRoman(n) }), desc: t('tomb.found.desc') });
     this.setInfo({});
     await this.open('tomb', 'rare');
     sfx.swell(0.8);

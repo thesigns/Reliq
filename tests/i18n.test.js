@@ -69,3 +69,8 @@ test('every item has a name and a description', () => {
     }
   }
 });
+
+test('tomb numbers are written in Roman numerals', async () => {
+  const { formatRoman } = await import('../js/i18n/i18n.js');
+  assert.deepEqual([1, 2, 3, 4, 9, 14, 40, 59, 60].map(formatRoman), ['I', 'II', 'III', 'IV', 'IX', 'XIV', 'XL', 'LIX', 'LX']);
+});

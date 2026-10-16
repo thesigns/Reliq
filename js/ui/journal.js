@@ -1,7 +1,7 @@
 // The vault: a leather-bound journal with the collection (artifact shelf and coins), the
 // missions and tombs, and the fence. Settings and rules live in the game menu.
 
-import { t, formatDate, formatDuration } from '../i18n/i18n.js';
+import { t, formatDate, formatDuration, formatRoman } from '../i18n/i18n.js';
 import { COINS } from '../game/items.js';
 import { RULES, MISSIONS } from '../game/rules.js';
 import { renderChecks, mapStatus } from './tomb-scroll.js';
@@ -11,12 +11,6 @@ import { shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
 
 const RARITIES = ['common', 'uncommon', 'rare', 'legendary'];
-const ROMAN = (n) => {
-  const map = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
-  let s = '';
-  for (const [v, r] of map) while (n >= v) { s += r; n -= v; }
-  return s;
-};
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export class Journal {
@@ -183,7 +177,7 @@ export class Journal {
       const treasure = tb.artifact ? t(`artifacts.${tb.artifact}.name`) : t(`items.${tb.coinId}.name`);
       const line = tb.opened ? t('journal.tombs.item', { date: formatDate(tb.t), treasure }) : t('journal.tombs.closed', { date: formatDate(tb.t) });
       const view = tb.opened && tb.artifact ? `<button class="btn-link" data-artifact="${tb.n}">${esc(t('journal.tombs.view'))}</button>` : '';
-      html += `<li><span class="tomb-num">${ROMAN(tb.n)}</span><span class="tomb-text"><b>${esc(t('tip.tomb.title', { n: tb.n }))}</b><br>${esc(line)}</span>
+      html += `<li><span class="tomb-num">${formatRoman(tb.n)}</span><span class="tomb-text"><b>${esc(t('tip.tomb.title', { n: formatRoman(tb.n) }))}</b><br>${esc(line)}</span>
         <span class="tomb-actions">${view}<button class="btn-link" data-tomb="${tb.n}">${esc(t('journal.tombs.show'))}</button></span></li>`;
     }
     return `${html}</ul>`;

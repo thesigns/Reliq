@@ -1,7 +1,7 @@
 // Persistence in localStorage. Storage can be missing or throw (private mode, blocked
 // site data), so every access is guarded and the game falls back to an in-memory store.
 
-import { createState, migrate } from '../game/state.js';
+import { createState, migrate, SAVE_VERSION } from '../game/state.js';
 
 export const SAVE_KEY = 'reliq.save';
 
@@ -27,18 +27,27 @@ export function defaultStorage() {
 }
 
 export class Store {
-  constructor(storage = defaultStorage()) {
+  // steps: upgrade steps other than the game's, for tests (see migrate()).
+  constructor(storage = defaultStorage(), steps = undefined) {
     this.storage = storage;
+    this.steps = steps;
   }
 
-  // Always returns a usable state. Unreadable saves are kept aside, never silently lost.
+  // Always returns a usable state. Unreadable saves are kept aside, never silently lost, and
+  // an older save that was upgraded is kept as it was under reliq.save.v<version>.
   load(now) {
     let raw = null;
     try { raw = this.storage.getItem(SAVE_KEY); } catch { return createState(now); }
     if (!raw) return createState(now);
     try {
-      const state = migrate(JSON.parse(raw), now);
-      if (state) return state;
+      const saved = JSON.parse(raw);
+      const state = migrate(saved, now, this.steps);
+      if (state) {
+        if (saved.v !== SAVE_VERSION) {
+          try { this.storage.setItem(`${SAVE_KEY}.v${saved.v}`, raw); } catch { /* ignore */ }
+        }
+        return state;
+      }
     } catch { /* fall through to backup */ }
     try { this.storage.setItem(`${SAVE_KEY}.unreadable`, raw); } catch { /* ignore */ }
     return createState(now);

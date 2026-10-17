@@ -4,10 +4,33 @@
 import { SYMBOLS, RULES, missionDef } from './rules.js';
 import { ARTIFACTS } from './items.js';
 
-// v4: missions by tier, named by their artifact and numbered in the order played. Older
-// saves are not migrated (the game has not been released yet): they are set aside and the
-// game starts over.
+// v4: missions by tier, named by their artifact and numbered in the order played.
 export const SAVE_VERSION = 4;
+
+// The oldest save this game can still read. Older ones (from before the first release) are
+// set aside and the game starts over. Raise it only to drop old saves on purpose.
+export const OLDEST_SAVE_VERSION = 4;
+
+// Upgrade steps for the raw saved JSON, before it is validated: MIGRATIONS[v] turns a v save
+// into a v + 1 one. When the save shape changes, raise SAVE_VERSION and add the step from
+// the old version, e.g.
+//   4: (raw) => ({ ...raw, pets: [] }),
+// A step may assume only what the version it reads wrote; validation fills in the rest.
+export const MIGRATIONS = {};
+
+// The raw save brought up to `target`, or null if it is too old, from a newer game, or a
+// step is missing. The input is not changed.
+export function upgrade(raw, migrations = MIGRATIONS, target = SAVE_VERSION, oldest = OLDEST_SAVE_VERSION) {
+  if (!raw || typeof raw !== 'object' || !Number.isInteger(raw.v)) return null;
+  if (raw.v < oldest || raw.v > target) return null;
+  let save = structuredClone(raw);
+  for (let v = raw.v; v < target; v++) {
+    const step = migrations[v];
+    if (!step) return null;
+    save = { ...step(save), v: v + 1 };
+  }
+  return save;
+}
 
 export function createState(now) {
   return {
@@ -35,9 +58,11 @@ const isPoint = (p) => p && isNum(p.lat) && isNum(p.lon) && isNum(p.t);
 const isArtifact = (a) => a && ARTIFACTS.includes(a.id) && Number.isInteger(a.n) && isNum(a.t) && (a.from === 'tomb' || a.from === 'fence');
 const isKey = (k) => Array.isArray(k) && k.length === RULES.keyLength && new Set(k).size === k.length && k.every((s) => SYMBOLS.includes(s));
 
-// Returns a valid state built from untrusted saved data, or null if it cannot be used.
-export function migrate(raw, now) {
-  if (!raw || typeof raw !== 'object' || raw.v !== SAVE_VERSION) return null;
+// Returns a valid state built from untrusted saved data, upgraded from an older version if
+// need be, or null if it cannot be used. steps: { migrations, oldest }, for tests.
+export function migrate(saved, now, { migrations = MIGRATIONS, oldest = OLDEST_SAVE_VERSION } = {}) {
+  const raw = upgrade(saved, migrations, SAVE_VERSION, oldest);
+  if (!raw) return null;
   const s = createState(isNum(raw.createdAt) ? raw.createdAt : now);
   if (isPoint(raw.vault)) s.vault = { lat: raw.vault.lat, lon: raw.vault.lon, t: raw.vault.t };
   if (Number.isInteger(raw.seed) && raw.seed >= 0) s.seed = raw.seed;

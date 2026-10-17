@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Store, SAVE_KEY } from '../js/core/store.js';
-import { createState, migrate, SAVE_VERSION } from '../js/game/state.js';
+import { createState, migrate, upgrade, SAVE_VERSION, OLDEST_SAVE_VERSION, MIGRATIONS } from '../js/game/state.js';
 
 function fakeStorage(initial = {}) {
   const m = new Map(Object.entries(initial));
@@ -116,4 +116,41 @@ test('storage that throws never breaks the game', () => {
   const store = new Store(broken);
   assert.deepEqual(store.load(1), createState(1));
   assert.equal(store.save(createState(1)), false);
+});
+
+test('every save version the game still reads has an upgrade step', () => {
+  for (let v = OLDEST_SAVE_VERSION; v < SAVE_VERSION; v++) {
+    assert.equal(typeof MIGRATIONS[v], 'function', `MIGRATIONS[${v}] is missing: add it, or raise OLDEST_SAVE_VERSION to drop v${v} saves`);
+  }
+});
+
+test('upgrade runs the steps in order and leaves the input alone', () => {
+  const steps = {
+    1: (raw) => ({ ...raw, log: [...raw.log, 'a'] }),
+    2: (raw) => ({ ...raw, log: [...raw.log, 'b'], gone: undefined }),
+  };
+  const raw = { v: 1, log: [], gone: 1 };
+  assert.deepEqual(upgrade(raw, steps, 3, 1), { v: 3, log: ['a', 'b'], gone: undefined });
+  assert.deepEqual(raw, { v: 1, log: [], gone: 1 });
+  assert.deepEqual(upgrade({ v: 3, log: [] }, steps, 3, 1), { v: 3, log: [] }, 'already current');
+});
+
+test('upgrade refuses what it cannot bring up to date', () => {
+  const steps = { 2: (raw) => raw };
+  assert.equal(upgrade({ v: 1 }, steps, 3, 1), null, 'a missing step');
+  assert.equal(upgrade({ v: 4 }, steps, 3, 1), null, 'from a newer game');
+  assert.equal(upgrade({ v: 1 }, steps, 3, 2), null, 'older than the oldest');
+  assert.equal(upgrade({ v: '3' }, steps, 3, 1), null);
+  assert.equal(upgrade(null, steps, 3, 1), null);
+});
+
+test('an upgraded save is kept as it was', () => {
+  const oldV = SAVE_VERSION - 1;
+  const steps = { oldest: oldV, migrations: { [oldV]: (raw) => ({ ...raw, money: raw.cash }) } };
+  const raw = JSON.stringify({ v: oldV, cash: 7 });
+  const storage = fakeStorage({ [SAVE_KEY]: raw });
+  const s = new Store(storage, steps).load(5);
+  assert.equal(s.money, 7);
+  assert.equal(storage.map.get(`${SAVE_KEY}.v${oldV}`), raw);
+  assert.equal(storage.map.has(`${SAVE_KEY}.unreadable`), false);
 });

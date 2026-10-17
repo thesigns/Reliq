@@ -77,6 +77,7 @@ export class SatchelView {
     for (const a of satchel.artifacts) {
       html += `<div class="sv-item sv-art">${img(artifactThumb(a.id))}<span class="sv-name">${esc(t(`artifacts.${a.id}.name`))}</span></div>`;
     }
+    if (html) html = `<div class="sv-arts${satchel.artifacts.length > 2 ? ' many' : ''}">${html}</div>`;
     const coins = Object.entries(satchel.coins).sort(([a], [b]) => coinOrder.indexOf(a) - coinOrder.indexOf(b));
     for (const [id, n] of coins) {
       html += `<div class="sv-item">${img(coinThumb(id))}<span class="sv-name">${esc(t(`items.${id}.name`))}</span><span class="sv-count">×${n}</span></div>`;

@@ -155,7 +155,7 @@ tests/            *.test.js (node --test)
 
 **Wynik przeszukania** (`rollLoot` w `game.js`):
 1. Etap symbolu i przeszukanie co najmniej w dystansie symbolu od startu etapu: nowy symbol klucza.
-2. Ostatni etap i przeszukanie co najmniej w dystansie grobowca, ≥ 200 m od innych grobowców: grobowiec.
+2. Ostatni etap i przeszukanie co najmniej w dystansie grobowca: grobowiec. Otwarte grobowce znikają z mapy i nie blokują nowych.
 3. W przeciwnym razie zwykłe losowanie: 65% śmieć, 35% moneta.
 - Start etapu (`stageStart`) to najstarsze aktywne przeszukanie z tego etapu. Etap jest oceniany, zanim liczy się obszar bieżącego przeszukania.
 - Klucz (3 różne symbole z 8) jest losowany przy rozpoczęciu misji i zapisywany w stanie.
@@ -185,7 +185,7 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu, walidację i migracje `js
   mission: { n, artifact, t, key: [s1, s2, s3], shards: [symbol], stageAt } | null,  // stageAt: początek bieżącego etapu
   tombs: [{ n, lat, lon, t, opened, artifact }],   // zamknięty tylko grobowiec aktywnej misji
   artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // artefakty w skarbcu
-  lost: [{ n, artifact, t }],           // utracone misje; paser sprzedaje artefakt od t + 7 dni
+  lost: [{ n, artifact, t }],           // utracone misje; paser sprzedaje ich artefakty
   settings: { lang, sound, haptics, keepAwake, quality }
 }
 ```
@@ -250,7 +250,7 @@ Statusy etapów poniżej to zapis historii: opisują stan z chwili zamknięcia e
   - przelot `flyTo`, którego używa „Wyśrodkuj”;
   - gracz jest utrzymywany w środku widocznej części mapy, między paskiem a dokiem.
   - Z myszą w trybie symulatora dwuklik nadal oznacza „idź tam”.
-- **Dymki po stuknięciu:** grobowiec (data i skarb), skarbiec (liczba monet), przeszukany teren (za ile zniknie).
+- **Dymki po stuknięciu:** zamknięty grobowiec (z jakiej odległości otworzysz wrota), skarbiec (liczba monet), przeszukany teren (za ile zniknie).
 - **Wskaźnik skarbca:** gdy skarbiec jest poza ekranem, przy krawędzi pojawia się wskaźnik z odległością. Stuknięcie przenosi do skarbca.
 - **Mapa do grobowca na mapie świata:** pierścień minimalnej odległości od skarbca z podpisem oraz kropkowane strefy 200 m wokół grobowców.
 - **Nazwy krain** (`js/render/regions.js`):
@@ -339,7 +339,7 @@ Statusy etapów poniżej to zapis historii: opisują stan z chwili zamknięcia e
   - kupowanie map, losowe symbole (10%) i losowe grobowce (20%) znikają; symbol i grobowiec są pewne po przejściu dystansu etapu;
   - dystans liczy się w linii prostej od pierwszego przeszukania etapu, a po jego wygaśnięciu od najstarszego aktywnego przeszukania z tego etapu (nie od przebytej trasy, bo PWA nie śledzi GPS przy zablokowanym ekranie);
   - następny etap zaczyna się od razu, od przeszukania, które dało symbol (pierwotnie była przerwa 6 h; zniesiona 2026-10-16, bez dodatkowych zabezpieczeń przed oszukiwaniem);
-  - limit 7 dni liczy się do otwarcia wrót; porzucenie działa jak przekroczenie limitu; następna misja od razu;
+  - limit 10 dni liczy się do otwarcia wrót; porzucenie działa jak przekroczenie limitu; następna misja od razu;
   - waluta pasera bez nazwy: „Pieniądze” / „Cena” z liczbą;
   - po ostatniej misji „Wkrótce nowe wyprawy”; docelowo ~60 misji (rok gry);
   - bez migracji: `SAVE_VERSION` w górę i twardy reset starych zapisów (gra nie była jeszcze testowana w terenie).

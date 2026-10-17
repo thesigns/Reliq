@@ -16,7 +16,6 @@ import { parchmentFS, SPRITE_VS, SPRITE_FS, OVERLAY_FS, POST_FS } from './shader
 
 const SPRITE_FLOATS = 16;
 const MAX_BALLS = 64;
-const MAX_EXCL = 32;
 const FILL_SHARE = 0.25;   // of the sharp layer painted per frame while it refills
 
 export class MapRenderer {
@@ -27,7 +26,6 @@ export class MapRenderer {
     this.gl = gl;
     this.dpr = 1;
     this.ballData = new Float32Array(MAX_BALLS * 4);
-    this.exclData = new Float32Array(MAX_EXCL * 2);
     this.baseRedraws = 0;   // times the sharp layer started over (debug readout)
     this.ready = false;
     // Mobile browsers may take the GPU away (backgrounding, memory pressure). Rebuild
@@ -169,7 +167,7 @@ export class MapRenderer {
     return { cache: coarse, sm };
   }
 
-  // scene: { worldOff, grid, vault, balls, tombs, player, zone, exclusions }
+  // scene: { worldOff, grid, vault, balls, tombs, player, zone }
   // opts.zooming: a pinch / smooth zoom is in progress (stretch the base, refill later).
   render(s, cam, time, opts = {}) {
     if (!this.ready || this.gl.isContextLost()) return;
@@ -194,10 +192,6 @@ export class MapRenderer {
     gl.uniform1f(u.u_gs, sm?.gs ?? 1);
     const zone = s.zone;
     gl.uniform4f(u.u_zone, zone?.x ?? 0, zone?.y ?? 0, zone?.radius ?? 0, zone ? 1 : 0);
-    const excl = (s.exclusions ?? []).slice(0, MAX_EXCL);
-    excl.forEach((p, i) => this.exclData.set([p.x, p.y], i * 2));
-    gl.uniform2fv(u.u_excl, this.exclData);
-    gl.uniform1i(u.u_exclCount, excl.length);
     // Only areas whose 200 m influence can reach the screen cost shader time.
     const reachX = W / 2 / view.k + 200, reachY = H / 2 / view.k + 200;
     let count = 0;

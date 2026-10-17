@@ -136,8 +136,6 @@ uniform int u_count;
 uniform vec3 u_vault;       // x, y, present
 uniform vec4 u_player;      // x, y, accuracy, present
 uniform vec4 u_zone;        // mission: centre of the walk, distance to leave it (m), shown
-uniform vec2 u_excl[32];    // mission: existing tombs (200 m keep-out circles)
-uniform int u_exclCount;
 // The cached base layer (a toroidal texture, see base-cache.js), copied at a whole-pixel
 // shift when it matches the zoom, otherwise stretched: g = u_g0 + fragCoord * u_gs.
 uniform sampler2D u_base;
@@ -201,8 +199,7 @@ void main() {
     }
   }
 
-  // Mission: how far this walk must go (beyond the ring) and, on the tomb walk, where the
-  // tomb may not lie (near other tombs).
+  // Mission: how far this walk must go (beyond the ring).
   if (u_zone.w > 0.5) {
     vec2 d = local - u_zone.xy;
     float rpx = (length(d) - u_zone.z) * cssPpm;
@@ -213,13 +210,6 @@ void main() {
     float spx = length(d) * cssPpm;
     acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(spx - 6.5))) * 0.9);
     acc = layer(acc, OXBLOOD, (1.0 - smoothstep(1.6, 2.4, spx)) * 0.9);
-    for (int i = 0; i < 32; i++) {
-      if (i >= u_exclCount) break;
-      vec2 e = local - u_excl[i];
-      float epx = (length(e) - 200.0) * cssPpm;
-      acc = layer(acc, OXBLOOD, (1.0 - smoothstep(-0.8, 0.8, epx)) * 0.06);
-      if (abs(epx) < 1.3) acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(epx))) * dashes(e, 200.0, cssPpm, 6.0, 0.35) * 0.6);
-    }
   }
 
   float f = 0.0, ksum = 0.0, fresh = 0.0, wet = 0.0;

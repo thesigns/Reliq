@@ -36,7 +36,7 @@ import { Particles } from './ui/particles.js';
 import { notebookSVG, closeGlyph, gearSVG } from './ui/art.js';
 import { sfx } from './ui/audio.js';
 import { haptics } from './ui/haptics.js';
-import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatDate, formatRoman } from './i18n/i18n.js';
+import { applyI18n, onLangChange, setLang, getLang, t, formatDistance, formatDuration, formatRoman } from './i18n/i18n.js';
 import { seedDemoWorld, DEMO_VAULT, DEMO_PLAYER } from './demo.js';
 import { VERSION } from './version.js';
 
@@ -266,13 +266,12 @@ const journal = new Journal($('journal'), {
   missionCheck: () => game.missionCheck(fix, clock.now()),
   missionOffer: () => game.missionOffer(),
   onViewCoin: (id) => reveal.viewCoin(id, state.coins[id] ?? 0),
-  onShowTomb: (tb) => showTomb(tb),
   onShowNotebook: () => openNotebook(),
   openMissionPage: (page) => notebook.openPage(page),
   closeMissionPage: () => notebook.close(),
   onStartMission: () => onStartMission(),
   onViewArtifact: (a) => viewArtifact(a),
-  fenceOffers: () => { const now = clock.now(); return game.fenceOffers(now).map((o) => ({ ...o, now })); },
+  fenceOffers: () => game.fenceOffers(),
   coinPrice: (id) => game.coinPrice(id),
   onSellCoin: (id) => onSellCoin(id),
   onBuyArtifact: (n) => onBuyArtifact(n),
@@ -344,6 +343,7 @@ function changeSetting(key, value) {
 function hitTest(sx, sy, now) {
   let best = null;
   for (const tb of state.tombs) {
+    if (tb.opened) continue;
     const q = game.toLocal(tb);
     const s = cam.toScreen(q.x, q.y);
     const d = Math.hypot(sx - s.sx, sy - s.sy);
@@ -367,24 +367,13 @@ function hitTest(sx, sy, now) {
   return null;
 }
 
-const treasureName = (tb) => (tb.artifact ? t(`artifacts.${tb.artifact}.name`) : t(`items.${tb.coinId}.name`));
-
 function showTombTip(tb) {
   const q = game.toLocal(tb);
   tooltip.show(
     t('tip.tomb.title', { n: formatRoman(tb.n) }),
-    tb.opened
-      ? t('tip.tomb.body', { date: formatDate(tb.t), treasure: treasureName(tb) })
-      : t('tip.tomb.closed', { r: formatDistance(RULES.gateRadius) }),
+    t('tip.tomb.closed', { r: formatDistance(RULES.gateRadius) }),
     () => { const s = cam.toScreen(q.x, q.y); return { sx: s.sx, sy: s.sy - 26 }; },
   );
-}
-
-function showTomb(tb) {
-  const q = game.toLocal(tb);
-  cam.flyTo(cam.followPoint(q), Math.max(cam.ppm, 1.2), 0.9);
-  $('btn-recenter').classList.add('attention');
-  setTimeout(() => showTombTip(tb), 950);
 }
 
 function onMapTap(sx, sy) {
@@ -394,7 +383,7 @@ function onMapTap(sx, sy) {
   sfx.click();
   if (hit.kind === 'tomb') {
     // Standing at a closed tomb, a tap on it goes straight to the gate.
-    if (!hit.tb.opened && game.gateCheck(fix).ok) { onOpenGate(); return; }
+    if (game.gateCheck(fix).ok) { onOpenGate(); return; }
     showTombTip(hit.tb);
   } else if (hit.kind === 'vault') {
     const coins = Object.values(state.coins).reduce((a, b) => a + b, 0);
@@ -421,7 +410,7 @@ function updateMapLabels() {
     // Names never cover the markers that matter: vault, tombs and the player.
     const keepClear = [];
     if (state.vault) keepClear.push(cam.toScreen(0, 0));
-    for (const tb of state.tombs) { const q = game.toLocal(tb); keepClear.push(cam.toScreen(q.x, q.y)); }
+    for (const tb of state.tombs) { if (!tb.opened) { const q = game.toLocal(tb); keepClear.push(cam.toScreen(q.x, q.y)); } }
     if (est) keepClear.push(cam.toScreen(est.x, est.y));
     for (const r of regionLabels(cam, worldOff)) {
       const s = cam.toScreen(r.x, r.y);
@@ -673,7 +662,7 @@ function checkMissionLost() {
   const lost = missionSeen !== null && n === null ? state.lost.find((l) => l.n === missionSeen) : null;
   if (lost) {
     const name = t(`artifacts.${lost.artifact}.name`);
-    toast.show(t('toast.missionLost', { name, days: RULES.fenceDelayMs / 864e5 }), 8000);
+    toast.show(t('toast.missionLost', { name }), 8000);
     journal.refresh();
   }
   missionSeen = n;
@@ -878,17 +867,17 @@ function renderMap(perf, now, searches) {
     grid,
     vault: state.vault && ve >= 0 ? { x: 0, y: 0, scale: ve < 1 ? 1.5 - 0.5 * easeOutCubic(ve) : 1 } : null,
     zone,
-    exclusions: zone?.tomb ? state.tombs.map((tb) => game.toLocal(tb)) : [],
     balls: searches.map((s) => {
       const p = game.toLocal(s);
       return { x: p.x, y: p.y, scale: 0.02 + 0.98 * easeOutCubic(appear(s, 1600)), age: clamp01((now - s.t) / RULES.searchTtlMs) };
     }),
-    tombs: state.tombs.map((tb) => {
+    // An opened tomb leaves the map, so the ground around it is free for the next one.
+    tombs: state.tombs.filter((tb) => !tb.opened).map((tb) => {
       const q = game.toLocal(tb);
       // A new tomb is stamped onto the map: hidden while digging, then lands oversized and settles.
       const e = bornAt.has(tb) ? (perf - bornAt.get(tb)) / 700 : 1;
       // A closed tomb breathes gently until its gate is opened.
-      const pulse = tb.opened ? 1 : 1 + 0.06 * Math.sin(perf / 320);
+      const pulse = 1 + 0.06 * Math.sin(perf / 320);
       return { x: q.x, y: q.y, scale: (e < 0 ? 0 : e < 1 ? 1.6 - 0.6 * easeOutCubic(e) : 1) * pulse };
     }),
     player: est ? { x: est.x, y: est.y, heading, acc: lastSample?.acc ?? 30 } : null,
@@ -1004,14 +993,9 @@ function wireDebug() {
     game.changed();
     journal.refresh();
   };
-  // The fence: money to spend, and lost artifacts on sale without the 7-day wait.
+  // The fence: money to spend.
   $('dbg-money').onclick = () => {
     state.money += 50;
-    game.changed();
-    journal.refresh();
-  };
-  $('dbg-fence').onclick = () => {
-    for (const l of state.lost) l.t = Math.min(l.t, clock.now() - RULES.fenceDelayMs);
     game.changed();
     journal.refresh();
   };

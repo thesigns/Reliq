@@ -64,7 +64,7 @@ test('the satchel is stored at the vault, with a looser GPS limit', () => {
   const { game, state } = newGame();
   assert.equal(game.depositCheck(fixAt(10, 0)).ok, false, 'nothing to store');
   state.satchel.coins = { ducat: 1, nummus: 2, eidmar: 1 };
-  state.satchel.artifacts = [{ id: 'cup', n: 1, t: T0, from: 'tomb' }];
+  state.satchel.artifacts = [{ id: 'cup', n: 1, t: T0, from: 'tomb' }, { id: 'vase', n: 2, t: T0 + 1, from: 'tomb' }];
   state.coins = { nummus: 1 };
   assert.equal(game.depositCheck(fixAt(101, 0)).ok, false, 'outside the vault');
   assert.equal(game.depositCheck(fixAt(60, 0, 101)).ok, false, 'GPS too vague');
@@ -73,22 +73,22 @@ test('the satchel is stored at the vault, with a looser GPS limit', () => {
   const r = game.deposit(fixAt(30, 0));
   assert.equal(r.ok, true);
   assert.deepEqual(r.coins.map((c) => [c.id, c.count]), [['nummus', 2], ['ducat', 1], ['eidmar', 1]], 'rarest last');
-  assert.deepEqual(r.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }]);
+  assert.deepEqual(r.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }, { id: 'vase', n: 2, t: T0 + 1, from: 'tomb' }]);
   assert.deepEqual(state.coins, { nummus: 3, ducat: 1, eidmar: 1 });
-  assert.deepEqual(state.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }]);
+  assert.deepEqual(state.artifacts, [{ id: 'cup', n: 1, t: T0, from: 'tomb' }, { id: 'vase', n: 2, t: T0 + 1, from: 'tomb' }]);
   assert.deepEqual(state.satchel, { coins: {}, artifacts: [] });
 });
 
-test('the next mission waits until the last artifact is in the vault', () => {
+test('the next mission can start with artifacts still in the satchel', () => {
   const { game, state } = newGame();
   state.satchel.artifacts = [{ id: 'cup', n: 1, t: T0, from: 'tomb' }];
   const offer = game.missionOffer();
   assert.equal(offer.n, 2, 'the cup counts as won');
-  assert.equal(offer.carrying, 'cup');
-  assert.deepEqual(game.startMission(T0), { ok: false, reason: 'deposit' });
-  game.deposit(fixAt(0, 0));
-  assert.equal(game.missionOffer().carrying, undefined);
-  assert.equal(game.startMission(T0).ok, true);
+  assert.notEqual(offer.artifact, 'cup');
+  const r = game.startMission(T0);
+  assert.equal(r.ok, true);
+  assert.equal(r.n, 2);
+  assert.deepEqual(state.satchel.artifacts.map((a) => a.id), ['cup'], 'still carried');
 });
 
 test('searched areas expire after 6 hours', () => {
@@ -248,14 +248,12 @@ test('after the third shard the last walk finds the tomb', () => {
   assert.equal(c.gate.ok, true);
 });
 
-test('tombs must be 200 m apart', () => {
+test('an opened tomb does not stand in the way of a new one', () => {
   const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'] });
-  state.tombs.push({ n: 2, ...fixAt(460 + TD, 0), t: T0, opened: true, artifact: 'vase' });
+  state.tombs.push({ n: 2, ...fixAt(305 + TD, 0), t: T0, opened: true, artifact: 'vase' });
   state.searches.push({ ...fixAt(300, 0), t: T0 });
-  const near = game.missionCheck(fixAt(310 + TD, 0), T0);
-  assert.equal(near.separated, false, '150 m from the other tomb');
-  assert.equal(near.ok, false);
-  assert.equal(game.missionCheck(fixAt(300, TD + 1), T0).ok, true);
+  assert.equal(game.missionCheck(fixAt(300 + TD, 0), T0).ok, true, '5 m from the old tomb');
+  assert.equal(game.search(fixAt(300 + TD, 0), READY, T0 + 1).loot.type, 'tomb');
 });
 
 test('without a mission, searches give only junk and coins', () => {
@@ -295,15 +293,15 @@ test('the gate opens on site with the right order and wins the artifact', () => 
   assert.deepEqual(game.openGate(fixAt(650, 0), ['fish', 'bird', 'fly'], T0 + 6), { ok: false, reason: 'noTomb' });
 });
 
-test('a mission is lost after 7 days, its tomb with it', () => {
+test('a mission is lost after 10 days, its tomb with it', () => {
   const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'] });
   state.tombs.push({ n: 1, ...fixAt(600, 0), t: T0, opened: false, artifact: 'cup' });
-  game.prune(T0 + 7 * DAY - 1);
+  game.prune(T0 + 10 * DAY - 1);
   assert.ok(state.mission);
-  assert.equal(game.openGate(fixAt(600, 0), ['fish', 'bird', 'fly'], T0 + 7 * DAY + 5).reason, 'noTomb', 'too late');
+  assert.equal(game.openGate(fixAt(600, 0), ['fish', 'bird', 'fly'], T0 + 10 * DAY + 5).reason, 'noTomb', 'too late');
   assert.equal(state.mission, null);
   assert.deepEqual(state.tombs, []);
-  assert.deepEqual(state.lost, [{ n: 1, artifact: 'cup', t: T0 + 7 * DAY }], 'lost at the deadline, not when noticed');
+  assert.deepEqual(state.lost, [{ n: 1, artifact: 'cup', t: T0 + 10 * DAY }], 'lost at the deadline, not when noticed');
   assert.equal(game.missionOffer().n, 2, 'the next mission is offered at once');
 });
 
@@ -326,20 +324,19 @@ test('the fence buys coins one at a time', () => {
   assert.deepEqual([game.coinPrice('denarius'), game.coinPrice('solidus')], [5, 20]);
 });
 
-test('a lost artifact turns up at the fence 7 days later, at its tier\'s price', () => {
+test('a lost artifact is at the fence at once, at its tier\'s price', () => {
   const { game, state } = newGame();
   state.lost = [{ n: 2, artifact: 'vase', t: T0 }];
   state.money = 79;
-  assert.deepEqual(game.fenceOffers(T0 + 7 * DAY), [{ n: 2, artifact: 'vase', price: 80, availableAt: T0 + 7 * DAY, ok: false }]);
+  assert.deepEqual(game.fenceOffers(), [{ n: 2, artifact: 'vase', price: 80, ok: false }]);
+  assert.equal(game.buyArtifact(2, T0 + 1).ok, false, 'not enough money');
   state.money = 80;
-  assert.equal(game.fenceOffers(T0 + 7 * DAY - 1)[0].ok, false, 'not yet');
-  assert.equal(game.buyArtifact(2, T0 + 7 * DAY - 1).ok, false);
-  assert.deepEqual(game.buyArtifact(2, T0 + 7 * DAY), { ok: true, artifact: 'vase' });
+  assert.deepEqual(game.buyArtifact(2, T0 + 1), { ok: true, artifact: 'vase' });
   assert.equal(state.money, 0);
   assert.deepEqual(state.lost, [{ n: 2, artifact: 'vase', t: T0 }], 'the mission stays lost');
-  assert.deepEqual(state.artifacts, [{ id: 'vase', n: 2, t: T0 + 7 * DAY, from: 'fence' }]);
-  assert.deepEqual(game.fenceOffers(T0 + 7 * DAY), [], 'bought back once');
-  assert.equal(game.buyArtifact(2, T0 + 7 * DAY).ok, false);
+  assert.deepEqual(state.artifacts, [{ id: 'vase', n: 2, t: T0 + 1, from: 'fence' }]);
+  assert.deepEqual(game.fenceOffers(), [], 'bought back once');
+  assert.equal(game.buyArtifact(2, T0 + 1).ok, false);
 });
 
 test('every state change is reported for saving', () => {

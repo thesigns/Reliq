@@ -1026,7 +1026,14 @@ html.inspect #app {
 .ds-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 12px; max-height: 34vh; overflow: auto; padding: 10px 8px 2px; }
 .ds-item { position: relative; display: flex; flex-direction: column; align-items: center; width: 58px; font-family: var(--font-text); }
 .ds-item img { width: 52px; height: 52px; image-rendering: pixelated; }
-.ds-art { width: 100%; }
+.ds-arts, .sv-arts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; width: 100%; }
+.ds-art { width: 104px; text-align: center; }
+/* Many artifacts (a holiday's haul): smaller, three to a row. */
+.ds-arts.many .ds-art, .sv-arts.many .sv-art { width: 78px; }
+.ds-arts.many img, .sv-arts.many img { width: 60px; height: 60px; }
+.ds-arts.many .ds-name, .sv-arts.many .sv-name { font-size: 12px; line-height: 1.1; }
+.ds-arts.many .ds-note { display: none; }
+.ds-items, .satchel-card .sv-items { scrollbar-width: thin; scrollbar-color: rgba(122, 74, 34, .45) transparent; }
 .ds-art img { width: 84px; height: 84px; }
 .ds-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
 .ds-note { font-style: italic; font-size: 13px; line-height: 1.2; color: #6b5034; }
@@ -1113,7 +1120,7 @@ html.inspect #app {
 .satchel-card .sv-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 6px; max-height: 46vh; overflow: auto; margin-top: 10px; padding: 2px; }
 .sv-item { display: flex; flex-direction: column; align-items: center; width: 74px; font-family: var(--font-text); text-align: center; }
 .sv-item img { width: 52px; height: 52px; image-rendering: pixelated; }
-.sv-art { width: 100%; }
+.sv-art { width: 104px; }
 .sv-art img { width: 84px; height: 84px; }
 .sv-name { font-size: 12.5px; line-height: 1.12; }
 .sv-art .sv-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; }

@@ -59,6 +59,17 @@ function env(gainNode, t, attack, peak, decay) {
   gainNode.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
 }
 
+const F_MAJOR = [349.2, 440, 523.3];
+const G_MAJOR = [392, 493.9, 587.3];
+const FANFARES = {
+  shard: { hold: 0.7, bright: 0.85, peak: 0.03, big: false },
+  common: { hold: 1.1, bright: 1, peak: 0.045, big: false },
+  uncommon: { hold: 1.4, bright: 1.2, peak: 0.045, big: false },
+  rare: { hold: 1.8, bright: 1.45, peak: 0.045, big: true },
+  legendary: { hold: 2.4, bright: 1.7, peak: 0.045, big: true },
+  artifact: { hold: 3, bright: 1.8, peak: 0.05, big: true, lead: true },
+};
+
 export const sfx = {
   setEnabled(v) { enabled = v; },
   unlock() { if (enabled) ac(); },
@@ -139,6 +150,57 @@ export const sfx = {
       out(g, 1, 0.7);
       o.start(t); o.stop(t + len + 0.1);
     });
+  },
+
+  // A brass "ta-daaa!": short chords resolving to a long held tonic in the key of swell().
+  // kind: a coin's rarity (rarer holds longer, brighter, with more voices), 'shard' (a modest
+  // one) or 'artifact' (the biggest, "ta-ta-daaaa", from an opened gate).
+  fanfare(kind = 'common') {
+    if (!enabled) return;
+    const c = ac(), t0 = c.currentTime;
+    const { hold, bright, peak, big, lead } = FANFARES[kind] ?? FANFARES.common;
+    const horn = (f, t, len, peak, vibrato) => {
+      // Two detuned saws per note: a brass section rather than one player.
+      for (const detune of [-0.004, 0.004]) {
+        const o = c.createOscillator();
+        o.type = 'sawtooth';
+        o.frequency.value = f * (1 + detune);
+        if (vibrato) {
+          const lfo = c.createOscillator();
+          lfo.frequency.value = 5.2;
+          const depth = c.createGain();
+          depth.gain.setValueAtTime(0, t);
+          depth.gain.linearRampToValueAtTime(0, t + 0.3);
+          depth.gain.linearRampToValueAtTime(f * 0.01, t + 0.7);
+          lfo.connect(depth).connect(o.frequency);
+          lfo.start(t); lfo.stop(t + len + 0.05);
+        }
+        // The bell opening on the breath and closing as the note dies: the brass "blat".
+        const lp = c.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.Q.value = 1.5;
+        lp.frequency.setValueAtTime(f * 1.5, t);
+        lp.frequency.exponentialRampToValueAtTime(f * 6 * bright, t + 0.04);
+        lp.frequency.exponentialRampToValueAtTime(f * 2.5, t + len);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + 0.025);
+        const knee = Math.min(0.25, len * 0.4);
+        g.gain.exponentialRampToValueAtTime(peak * 0.7, t + knee);
+        g.gain.setValueAtTime(peak * 0.7, t + Math.max(knee, len * 0.5));
+        g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+        o.connect(lp).connect(g);
+        out(g, 1, big ? 0.6 : 0.4);
+        o.start(t); o.stop(t + len + 0.05);
+      }
+    };
+    // TA: G major, short and punchy, after F major for an artifact.
+    const pickups = lead ? [F_MAJOR, G_MAJOR] : [G_MAJOR];
+    const step = lead ? 0.2 : 0.17;
+    pickups.forEach((chord, i) => { for (const f of chord) horn(f, t0 + i * step, 0.14, peak, false); });
+    // DAAaa: C major, held; the big ones add the octave above and the bass below.
+    const daa = big ? [261.6, 523.3, 659.3, 784, 1046.5] : [523.3, 659.3, 784];
+    for (const f of daa) horn(f, t0 + pickups.length * step, hold, peak, true);
   },
 
   // Deep impact for legendary/rare reveals.

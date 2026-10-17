@@ -1,8 +1,8 @@
 // "Back at the vault": the finds in the satchel go into the chest. A low-poly chest drops
 // in and opens in a burst of light; coins arc down into it one by one, spinning, each
-// landing with a clink and sparks in its rarity's colour while the heap of gold swells; an
-// artifact descends, hangs over the chest under its name and sinks in with a flash; the
-// lid slams shut, and a summary lists what was stored. A tap hurries it along.
+// landing with a clink and sparks in its rarity's colour while the heap of gold swells; each
+// artifact in turn descends, hangs over the chest under its name and sinks in with a flash;
+// the lid slams shut, and a summary lists what was stored. A tap hurries it along.
 
 import { t } from '../i18n/i18n.js';
 import { VaultScene, about, mul, translate, rotX, rotY, scaleM, scale3 } from '../render/vault-scene.js';
@@ -26,6 +26,7 @@ const LID_OPEN = -1.95;        // rad about the hinge
 const CHEST_YAW = -0.32;       // a three-quarter view, so the chest reads as a box
 const COIN_SIZE = 0.34;        // chest units, across a coin
 const ARTIFACT_SIZE = 0.95;
+const SHOWN_ARTIFACTS = 3;     // these hover under their names; any more just drop in
 const MOUTH = [0, 0.86, 0];
 
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -159,16 +160,20 @@ export class DepositScreen {
       f.phase = Math.random() * 6;
     });
     let end = flights.length ? flights[flights.length - 1].t0 + flights[flights.length - 1].dur : tOpen + 0.7;
-    let art = null;
-    if (artifacts.length) {
-      const a = artifacts[0];
-      art = { key: `art:${a.id}`, id: a.id, t0: end + 0.35 };
-      art.tHover = art.t0 + 1.1;
-      art.tDrop = art.tHover + 1.5;
-      art.tIn = art.tDrop + 0.38;
+    // Artifacts one after another; a long haul brings each down quicker, and past the first
+    // few they drop straight in, unnamed (the summary lists them all).
+    const many = artifacts.length > 2;
+    const arts = artifacts.map((a, i) => {
+      const quick = i >= SHOWN_ARTIFACTS;
+      const descent = quick ? 0.45 : many ? 0.8 : 1.1, hover = quick ? 0 : many ? 0.6 : 1.5;
+      const art = { key: `art:${a.id}`, id: a.id, quick, t0: end + (quick ? 0.12 : many ? 0.25 : 0.35), descent, drop: quick ? 0.3 : 0.38 };
+      art.tHover = art.t0 + descent;
+      art.tDrop = art.tHover + hover;
+      art.tIn = art.tDrop + art.drop;
       end = art.tIn;
-    }
-    this.tl = { total, flights, art, tOpen, tClose: end + 0.5, tSummary: end + 1.3 };
+      return art;
+    });
+    this.tl = { total, flights, arts, tOpen, tClose: end + 0.5, tSummary: end + 1.3 };
   }
 
   // Runs once per scene time t.
@@ -230,37 +235,8 @@ export class DepositScreen {
       items.push({ key: f.key, matrix: m, glow: [0.14, 0.1, 0.04] });
     }
 
-    // 4. The artifact: down from above, a moment over the chest, then in.
-    const art = tl.art;
-    if (art && T >= art.t0 && T < art.tIn) {
-      this.at('art', art.t0, () => {
-        sfx.swell(1.1);
-        this.callout(t(`artifacts.${art.id}.name`), 'artifact', true);
-        this.root.classList.add('glare');
-      });
-      let y, s = 1;
-      if (T < art.tHover) y = this.spawnY + 0.4 + (1.95 - this.spawnY - 0.4) * easeOutCubic((T - art.t0) / 1.1);
-      else if (T < art.tDrop) y = 1.95 + Math.sin((T - art.tHover) * 3) * 0.04;
-      else {
-        const k = easeInCubic(clamp01((T - art.tDrop) / 0.38));
-        y = 1.95 + (0.6 - 1.95) * k;
-        s = 1 - 0.35 * k;
-      }
-      const yaw = (T - art.t0) * 1.6 + 0.5;
-      items.push({ key: art.key, matrix: mul(translate(0, y, 0), mul(rotY(yaw), mul(rotX(0.18), scaleM(s)))), glow: [0.42, 0.3, 0.12] });
-    }
-    if (art) {
-      this.at('artIn', art.tIn, () => {
-        this.root.classList.remove('glare');
-        this.el('.deposit-callout').classList.remove('hold');
-        this.flash();
-        sfx.boom();
-        sfx.chime('legendary');
-        haptics.reveal('legendary');
-        this.heapBump = 1.4;
-        this.particles.sparks(mouth.x, mouth.y, 90, SPARKS.legendary);
-      });
-    }
+    // 4. Each artifact: down from above, a moment over the chest, then in.
+    for (const art of tl.arts) this.stepArtifact(art, T, items);
 
     // 5. The lid slams, the lock catches, the summary comes up.
     this.at('slam', tl.tClose + 0.24, () => {
@@ -285,6 +261,45 @@ export class DepositScreen {
     items.push({ key: 'chest-lid', matrix: about(chest, CHEST_LID.pivot, rotX(lid)), glow: bodyGlow });
     items.push({ key: 'chest-gold', matrix: about(chest, CHEST_GOLD.pivot, scale3(1, 1 + fill * 0.1 + this.heapBump * 0.06, 1)), glow: [heapGlow, heapGlow * 0.7, heapGlow * 0.25] });
     this.scene.render(this.camera, items);
+  }
+
+  // One artifact of the haul: its descent, hover and drop, and the flash as it sinks in.
+  stepArtifact(art, T, items) {
+    const mouth = this.mouth;
+    if (T >= art.t0 && T < art.tIn) {
+      if (!art.quick) this.at(`${art.key}:in`, art.t0, () => {
+        sfx.swell(1.1);
+        this.callout(t(`artifacts.${art.id}.name`), 'artifact', true);
+        this.root.classList.add('glare');
+      });
+      let y, s = 1;
+      if (T < art.tHover) y = this.spawnY + 0.4 + (1.95 - this.spawnY - 0.4) * easeOutCubic((T - art.t0) / art.descent);
+      else if (T < art.tDrop) y = 1.95 + Math.sin((T - art.tHover) * 3) * 0.04;
+      else {
+        const k = easeInCubic(clamp01((T - art.tDrop) / art.drop));
+        y = 1.95 + (0.6 - 1.95) * k;
+        s = 1 - 0.35 * k;
+      }
+      const yaw = (T - art.t0) * 1.6 + 0.5;
+      items.push({ key: art.key, matrix: mul(translate(0, y, 0), mul(rotY(yaw), mul(rotX(0.18), scaleM(s)))), glow: [0.42, 0.3, 0.12] });
+    }
+    this.at(art, art.tIn, () => {
+      if (art.quick) {
+        sfx.chime('rare');
+        haptics.tap();
+        this.heapBump = Math.min(1.4, this.heapBump + 0.8);
+        this.particles.sparks(mouth.x, mouth.y, 40, SPARKS.legendary);
+        return;
+      }
+      this.root.classList.remove('glare');
+      this.el('.deposit-callout').classList.remove('hold');
+      this.flash();
+      sfx.boom();
+      sfx.chime('legendary');
+      haptics.reveal('legendary');
+      this.heapBump = 1.4;
+      this.particles.sparks(mouth.x, mouth.y, 90, SPARKS.legendary);
+    });
   }
 
   land(f) {
@@ -338,6 +353,7 @@ export class DepositScreen {
     for (const a of artifacts) {
       html += `<div class="ds-item ds-art">${img(this.ui.artifactThumb(a.id))}<span class="ds-name">${esc(t(`artifacts.${a.id}.name`))}</span><span class="ds-note">${esc(t('deposit.inVault'))}</span></div>`;
     }
+    if (html) html = `<div class="ds-arts${artifacts.length > 2 ? ' many' : ''}">${html}</div>`;
     for (const c of coins) {
       html += `<div class="ds-item">${img(this.ui.coinThumb(c.id))}<span class="ds-count">×${c.count}</span></div>`;
     }

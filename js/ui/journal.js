@@ -15,7 +15,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 export class Journal {
   // deps: { state, missionCheck(), missionOffer(), thumbnail(id), artifactThumb(id), onViewCoin(id),
-  //         onShowTomb(tomb), onShowNotebook(), openMissionPage(page), closeMissionPage(),
+  //         onShowNotebook(), openMissionPage(page), closeMissionPage(),
 //         onStartMission(),
   //         onViewArtifact({ id, n, from }), fenceOffers(), coinPrice(id), onSellCoin(id),
   //         onBuyArtifact(n) }
@@ -195,10 +195,9 @@ export class Journal {
       if (!offer || offer.done) return;
       const notes = [...lore(offer.artifact),
         { text: t('journal.tombs.warning', { stages: RULES.keyLength + 1, symbols: RULES.keyLength, days: RULES.missionTtlMs / 864e5 }) }];
-      if (offer.carrying) notes.push({ text: t('journal.tombs.carrying', { name: t(`artifacts.${offer.carrying}.name`) }) });
       this.deps.openMissionPage({
         n: offer.n, artifact: offer.artifact, status: { text: t('notes.available') }, notes,
-        actions: [{ id: 'start', label: t('journal.tombs.start'), primary: true, disabled: !!offer.carrying }],
+        actions: [{ id: 'start', label: t('journal.tombs.start'), primary: true }],
         onAction: () => {
           this.deps.onStartMission();
           if (this.deps.missionCheck().active) this.deps.onShowNotebook();
@@ -217,7 +216,7 @@ export class Journal {
       if (t(detailKey) !== detailKey) notes.push({ text: t(detailKey), lore: true });
       notes.push({ text: t('notes.tombFound', { n: formatRoman(m.n), date: formatDate(m.tomb.t) }) });
       notes.push({ text: t(stored ? 'notes.inVault' : 'notes.inBackpack') });
-      actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true }, { id: 'tomb', label: t('notes.showTomb') });
+      actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true });
     } else {
       notes.push({ text: t('notes.lostOn', { date: formatDate(m.t) }) });
       if (stored) {
@@ -225,7 +224,7 @@ export class Journal {
         actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true });
       } else {
         const offer = this.deps.fenceOffers().find((o) => o.n === m.n);
-        if (offer) notes.push({ text: offer.availableAt <= offer.now ? t('notes.fenceNow') : t('notes.fenceSoon', { t: formatDuration(offer.availableAt - offer.now) }) });
+        if (offer) notes.push({ text: t('notes.fenceNow') });
         actions.push({ id: 'fence', label: t('notes.toFence') });
       }
     }
@@ -234,7 +233,6 @@ export class Journal {
       status: { text: t(m.won ? 'notes.won' : 'notes.lost'), mark: m.won ? TICK : CROSS },
       onAction: (id) => {
         if (id === 'view') this.deps.onViewArtifact(stored ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' });
-        if (id === 'tomb') { this.deps.closeMissionPage(); this.close(); this.deps.onShowTomb(m.tomb); }
         if (id === 'fence') { this.deps.closeMissionPage(); this.show('fence'); }
       },
     });
@@ -249,8 +247,7 @@ export class Journal {
     const offers = this.deps.fenceOffers();
     if (!offers.length) html += `<p class="j-hint fence-empty">${esc(t('fence.noLost'))}</p>`;
     for (const o of offers) {
-      const open = o.availableAt <= o.now;
-      const note = open ? t('fence.price', { n: o.price }) : t('fence.soon', { t: formatDuration(o.availableAt - o.now) });
+      const note = t('fence.price', { n: o.price });
       html += `<div class="fence-row"><span class="fence-art">${artifactSketch(MODELS[o.artifact])}</span>
         <span class="fence-text"><b>${esc(t(`artifacts.${o.artifact}.name`))}</b><br><span class="fence-note">${esc(note)}</span></span>
         <button class="btn-brass btn-small" data-buy="${o.n}"${o.ok ? '' : ' disabled'}>${esc(t('fence.buy'))}</button></div>`;

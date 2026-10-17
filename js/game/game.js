@@ -172,20 +172,16 @@ export class Game {
   }
 
   // What the mission card shows while no mission is active: the next mission, or
-  // { done: true } once there are none left. carrying: the last mission's artifact is still
-  // in the satchel, and the next expedition starts only once it is in the vault.
+  // { done: true } once there are none left. Artifacts still in the satchel do not hold it up.
   missionOffer() {
     if (this.state.mission) return null;
     const def = this.nextMission();
     if (!def) return { done: true };
-    const offer = { ...def, n: this.nextNumber() };
-    const held = this.state.satchel.artifacts[0];
-    return held ? { ...offer, carrying: held.id } : offer;
+    return { ...def, n: this.nextNumber() };
   }
 
   // Starting clears the searched areas, as if 6 hours had passed, and starts the clock.
   startMission(now) {
-    if (this.state.satchel.artifacts.length) return { ok: false, reason: 'deposit' };
     const def = this.state.vault && !this.state.mission ? this.nextMission() : null;
     if (!def) return { ok: false };
     const n = this.nextNumber();
@@ -203,7 +199,7 @@ export class Game {
     return { ok: true, n };
   }
 
-  // The mission, its tomb and the artifact are gone; the fence gets the artifact later.
+  // The mission and its tomb are gone; the artifact goes to the fence.
   loseMission(t) {
     const { n, artifact } = this.state.mission;
     this.state.tombs = this.state.tombs.filter((tb) => tb.n !== n || tb.opened);
@@ -244,12 +240,7 @@ export class Game {
     const p = fix ? this.toLocal(fix) : null;
     let distance = null;
     if (p && start) { const q = this.toLocal(start); distance = Math.hypot(p.x - q.x, p.y - q.y); }
-    let separated = true;
-    if (stage === 'tomb' && p) {
-      separated = this.state.tombs.every((tb) => { const q = this.toLocal(tb); return Math.hypot(p.x - q.x, p.y - q.y) >= RULES.tombSeparation; });
-    }
-    const far = distance !== null && distance >= need;
-    return { ...base, stage, need, start, distance, separated, ok: far && separated };
+    return { ...base, stage, need, start, distance, ok: distance !== null && distance >= need };
   }
 
   // Each shard shows a key symbol the player does not have yet. The next stage starts at
@@ -313,19 +304,17 @@ export class Game {
     return { ok: true, id, price, money: this.state.money };
   }
 
-  // Artifacts of lost missions not bought back yet. Each is for sale from availableAt; ok:
-  // it can be bought now. The price is its tier's.
-  fenceOffers(now) {
+  // Artifacts of lost missions not bought back yet. ok: there is money enough. The price is its tier's.
+  fenceOffers() {
     const bought = new Set(this.state.artifacts.filter((a) => a.from === 'fence').map((a) => a.n));
-    return this.state.lost.filter((l) => !bought.has(l.n)).map(({ n, artifact, t }) => {
+    return this.state.lost.filter((l) => !bought.has(l.n)).map(({ n, artifact }) => {
       const { price } = missionDef(artifact);
-      const availableAt = t + RULES.fenceDelayMs;
-      return { n, artifact, price, availableAt, ok: now >= availableAt && this.state.money >= price };
+      return { n, artifact, price, ok: this.state.money >= price };
     });
   }
 
   buyArtifact(n, now) {
-    const offer = this.fenceOffers(now).find((o) => o.n === n);
+    const offer = this.fenceOffers().find((o) => o.n === n);
     if (!offer?.ok) return { ok: false, offer };
     this.state.money -= offer.price;
     // The mission stays lost in the notebook; only its artifact comes home.

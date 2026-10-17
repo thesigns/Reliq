@@ -34,7 +34,7 @@ Na początek będziemy mieli po 3 artefakty na poziom, czyli 3x8 = 24 artefakty.
 
 - **Kolejność poziomów:** Złoty jest przed Platynowym, jak w grach (srebro → złoto → platyna → diament).
 - **Nowe łatwiejsze misje** dodane później (do niższego poziomu albo nowy poziom poniżej Drewnianego) dostają wszyscy gracze, także ci na wyższych poziomach. To odskocznia: misja z najniższego poziomu, w którym zostały niezrobione misje, idzie zawsze pierwsza.
-- **Limit czasu** to 7 dni na każdym poziomie.
+- **Limit czasu** to 10 dni na każdym poziomie.
 - **Numer misji** (Misja I, Grobowiec I) to kolejność rozegrania, nie miejsce na tej liście: pierwsza rozegrana misja to zawsze Misja I.
 - **Poziom widać w grze:**
   - w notatniku, we wpisie i na stronie misji (np. „Misja IV · poziom żelazny”);

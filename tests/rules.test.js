@@ -44,13 +44,11 @@ test('missions match docs/lista-misji.md', () => {
 });
 
 test('mission timing, gate key and symbols', () => {
-  assert.equal(RULES.missionTtlMs, 7 * DAY);
-  assert.equal(RULES.fenceDelayMs, 7 * DAY);
+  assert.equal(RULES.missionTtlMs, 10 * DAY);
   assert.equal(SYMBOLS.length, 8);
   assert.equal(new Set(SYMBOLS).size, 8);
   assert.equal(RULES.keyLength, 3);
   assert.equal(RULES.gateRadius, 100);
-  assert.equal(RULES.tombSeparation, 200);
 });
 
 test('fence prices per rarity', () => {

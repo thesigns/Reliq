@@ -2,6 +2,17 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.15.0 — 2026-10-17
+
+### Zmienione
+
+- **Misja trwa 10 dni** zamiast 7, więc można ją zacząć w jeden weekend i skończyć w następny.
+- **Utracony artefakt od razu trafia do pasera**, bez 7 dni czekania. Kto przegapi termin albo porzuci misję, może go odkupić, gdy tylko uzbiera pieniądze.
+- **Kolejna misja od razu**, z artefaktem jeszcze w plecaku. Po krótkiej misji można na tym samym spacerze szukać następnego grobowca, a na wyjeździe zebrać kilka artefaktów i złożyć je w skarbcu razem po powrocie. Plecak mieści dowolnie wiele artefaktów: przy więcej niż dwóch karta plecaka i podsumowanie w skarbcu pokazują je mniejsze, po trzy w rzędzie, a w scenie „Powrót do skarbca” wpadają do skrzyni jeden po drugim, szybciej niż pojedynczy. Pierwsze trzy zawisają nad skrzynią ze swoją nazwą, a kolejne wpadają od razu, z krótkim błyskiem; wszystkie wymienia podsumowanie.
+- **Otwarty grobowiec znika z mapy** i nie zajmuje już miejsca: kolejny może się pojawić w tej samej okolicy, nawet tuż obok. Nie ma więc 200 m odstępu między grobowcami ani kropkowanych stref wokół nich, co ułatwia grę tam, gdzie dróg jest niewiele. Wpis w notatniku zostaje, z datą odkrycia; zniknął z niego przycisk „Pokaż grobowiec na mapie”.
+- **Fanfara przy monecie:** zamiast pojedynczego brzdęku dęciaki grają „ta-daaa!”, czyli krótki akord, który rozwiązuje się w długi, trzymany. Im rzadsza moneta, tym dłużej trzymają, jaśniej brzmią i grają pełniejszym składem.
+- **Fanfara przy artefakcie:** otwarte wrota grają największą fanfarę, „ta-ta-daaaa” z dodatkowym akordem przed rozwiązaniem, więc artefakt brzmi okazalej niż każda moneta. Symbol klucza dostał skromne, krótkie „ta-da” zamiast dzwonka.
+
 ## 0.14.1 — 2026-10-17
 
 ### Poprawione

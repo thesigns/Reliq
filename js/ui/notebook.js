@@ -9,7 +9,7 @@ import { artifactSketch } from './artifact-sketch.js';
 import { MODELS } from '../render/models/index.js';
 import { shardRow } from './gate-art.js';
 import { sfx } from './audio.js';
-import { RULES, missionDef } from '../game/rules.js';
+import { missionDef } from '../game/rules.js';
 
 export const TICK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 11 l4 4 l10 -11" fill="none" stroke="#3b2414" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 export const CROSS = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5 l10 10 M15 5 l-10 10" fill="none" stroke="#8b1e1e" stroke-width="2.6" stroke-linecap="round"/></svg>';
@@ -28,7 +28,6 @@ export function missionStatus(check) {
   if (check.stage !== 'gate') {
     if (!check.start) return t('mission.noStart');
     if (check.ok) return t('mission.ready');
-    if (check.distance !== null && check.distance >= check.need) return t('mission.tooClose', { d: formatDistance(RULES.tombSeparation) });
     return t('mission.distance', { have: formatDistance(check.distance), need: formatDistance(check.need) });
   }
   if (check.gate.ok) return t('notebook.atGate');
@@ -83,7 +82,7 @@ export class MissionNotebook {
     abandon.textContent = t('journal.tombs.abandon');
     abandon.hidden = false;
     ab.querySelector('.j-confirm').hidden = true;
-    ab.querySelector('.j-confirm p').textContent = t('journal.tombs.abandonConfirm', { days: RULES.fenceDelayMs / 864e5 });
+    ab.querySelector('.j-confirm p').textContent = t('journal.tombs.abandonConfirm');
     ab.querySelector('[data-action="abandon-yes"]').textContent = t('journal.tombs.abandonYes');
     ab.querySelector('[data-action="abandon-no"]').textContent = t('settings.resetNo');
     this.update(check);

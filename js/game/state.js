@@ -43,9 +43,9 @@ export function createState(now) {
     satchel: { coins: {}, artifacts: [] },  // finds carried until the player is back at the vault
     money: 0,             // from selling coins to the fence
     mission: null,        // { n, artifact, t, key: [symbol ×3], shards: [symbol], stageAt } — n: the order played; stageAt: when the current stage opens
-    tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission
+    tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission; opened ones are off the map, kept for the notebook
     artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence' }] — in the vault
-    lost: [],             // [{ n, artifact, t }] — failed or abandoned missions; the fence sells the artifact from t + 7 days
+    lost: [],             // [{ n, artifact, t }] — failed or abandoned missions; the fence sells their artifacts
     settings: { ...DEFAULT_SETTINGS },
   };
 }

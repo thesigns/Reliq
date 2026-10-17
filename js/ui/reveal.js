@@ -266,7 +266,7 @@ export class Reveal {
       void flash.offsetWidth;
       flash.classList.add('go');
     }
-    sfx.chime(rarity);
+    sfx.fanfare(rarity);
     haptics.reveal(rarity);
     this.particles.sparks(this.center.x, this.center.y, { common: 18, uncommon: 34, rare: 70, legendary: 130 }[rarity], SPARKS[rarity]);
     await wait(1100);
@@ -317,7 +317,8 @@ export class Reveal {
       void flash.offsetWidth;
       flash.classList.add('go');
     }
-    sfx.chime(fanfare ? 'legendary' : 'rare');
+    if (fanfare) sfx.fanfare('artifact');
+    else sfx.chime('rare');
     haptics.reveal(rarity);
     this.particles.sparks(this.center.x, this.center.y, fanfare ? 130 : 50, SPARKS[rarity]);
     await wait(fanfare ? 1300 : 900);
@@ -333,7 +334,7 @@ export class Reveal {
     this.card.classList.add('drop');
     sfx.paper();
     await wait(380);
-    sfx.chime('uncommon');
+    sfx.fanfare('shard');
     haptics.reveal('uncommon');
     await wait(450);
     this.root.classList.add('info-in');

@@ -14,7 +14,7 @@ Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawl
 
 Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
 
-Łup trzeba jeszcze donieść do domu. Monety i artefakt niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty zostają w skarbcu jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
+Łup trzeba jeszcze donieść do domu. Monety i artefakty niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty zostają w skarbcu jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
 
 Reliq nie każe biec ani bić rekordów. Nagradza ciekawość i nogi: kopać można tylko na piechotę, więc samochód nic tu nie da. Docelowo około 60 misji to rok wypraw zaczynających się od własnych drzwi.
 
@@ -148,10 +148,10 @@ Pod nim, jeśli jakieś misje już się odbyły, jest rozdział „Odbyte misje�
 
 Każdy wpis ma przycisk „Szczegóły”, który otwiera stronę notatnika tej misji (zamykaną krzyżykiem):
 
-- **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 7 dni.” i przycisk „Rozpocznij misję”. Gdy artefakt poprzedniej misji jest jeszcze w plecaku, przycisk czeka, a strona mówi, żeby zanieść go do skarbca;
+- **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 10 dni.” i przycisk „Rozpocznij misję”;
 - **misja w trakcie:** spacery z odhaczonymi etapami, znalezione symbole, co robić dalej, czas do końca, przycisk „Otwórz wrota” przy grobowcu i „Porzuć misję” z potwierdzeniem;
-- **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (w skarbcu czy w plecaku), przyciski „Obejrzyj artefakt” i „Pokaż grobowiec na mapie”;
-- **misja nieudana:** lore, kiedy przepadła i co z artefaktem (kiedy trafi do pasera, czy już tam czeka, czy został odkupiony), przycisk „Zajrzyj do pasera” albo „Obejrzyj artefakt”.
+- **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (w skarbcu czy w plecaku), przycisk „Obejrzyj artefakt” (otwartego grobowca nie ma już na mapie);
+- **misja nieudana:** lore, kiedy przepadła i co z artefaktem (czeka u pasera albo został odkupiony), przycisk „Zajrzyj do pasera” albo „Obejrzyj artefakt”.
 
 Model 3D nie jest pokazywany przed zdobyciem artefaktu — jest nagrodą reprezentującą prawdziwy przedmiot.
 
@@ -170,19 +170,19 @@ Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejd
 
 **Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 800 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
 
-**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i zostaje na mapie na stałe jako ikona. Musi leżeć co najmniej 200 m od innych grobowców — jeśli leżałby bliżej, przeszukanie przebiega normalnie. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
+**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i stoi na mapie jako ikona, dopóki jego wrota są zamknięte. Po otwarciu wrót znika z mapy (zostaje wpis w notatniku), więc nie zajmuje miejsca: kolejny grobowiec może się pojawić w tej samej okolicy, nawet tuż obok. To ważne tam, gdzie dróg jest niewiele. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
 
 Wszystkie przeszukania misji podlegają tym samym zasadom co zwykłe szukanie: poza przeszukanym terenem i skarbcem, prędkość, dokładność GPS. Każde tworzy obszar jak zwykle.
 
-Misja kończy się sukcesem po otwarciu wrót grobowca (zob. „Wrota i klucz”). Artefakt trafia do plecaka. Następną misję można rozpocząć dopiero wtedy, gdy artefakt zostanie złożony w skarbcu — karta następnej misji jest widoczna, ale przycisk „Rozpocznij misję” czeka.
+Misja kończy się sukcesem po otwarciu wrót grobowca (zob. „Wrota i klucz”). Artefakt trafia do plecaka. Następną misję można rozpocząć od razu, z artefaktem jeszcze w plecaku: po krótkiej misji da się szukać kolejnego grobowca na tym samym spacerze, a na wyjeździe zebrać kilka artefaktów i złożyć je w skarbcu razem po powrocie.
 
 ### Limit czasu i porzucenie
 
-Misja ma limit 7 dni od rozpoczęcia. Liczy się otwarcie wrót, nie samo odkrycie grobowca.
+Misja ma limit 10 dni od rozpoczęcia. Liczy się otwarcie wrót, nie samo odkrycie grobowca.
 
 Jeśli limit minie, misja przepada, a z nią grobowiec (jeśli był już odkryty) i artefakt. Gracz może też sam porzucić misję przyciskiem „Porzuć misję” — skutek jest taki sam.
 
-Utracony artefakt pojawia się u pasera 7 dni po utracie misji. Następna misja jest dostępna od razu.
+Utracony artefakt od razu trafia do pasera. Następna misja jest dostępna od razu.
 
 Po ostatniej misji karta pokazuje „Wkrótce nowe wyprawy”.
 
@@ -209,11 +209,11 @@ Po otwarciu wrót gracz otrzymuje zamknięty w grobowcu artefakt.
 
 ## Plecak i skarbiec
 
-Gracz nosi znaleziska w plecaku: monety i artefakt z otwartego grobowca. Symbole do plecaka nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku plecaka na mapie (symbol — do przycisku misji). Przycisk plecaka pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w plecak otwiera kartę z jego zawartością (artefakt, monety z liczbą sztuk) i odległością do skarbca.
+Gracz nosi znaleziska w plecaku: monety i artefakty z otwartych grobowców, w dowolnej liczbie. Symbole do plecaka nie trafiają — należą do misji. Po zamknięciu okna znaleziska moneta wlatuje do przycisku plecaka na mapie (symbol — do przycisku misji). Przycisk plecaka pokazuje liczbę niesionych znalezisk, a wskaźnik kierunku do skarbca pulsuje. Stuknięcie w plecak otwiera kartę z jego zawartością (artefakty, monety z liczbą sztuk) i odległością do skarbca.
 
 Gdy gracz wejdzie w promień skarbca (100 m) z czymś w plecaku, cała zawartość zostaje złożona w skarbcu. Limit GPS jest łagodniejszy niż przy szukaniu: dokładność do 100 m, bo skarbiec to zwykle dom, a w budynku sygnał słabnie. Prędkość nie ma znaczenia.
 
-Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia skarbca spada i otwiera się w blasku, monety wpadają do niej jedna po drugiej (od pospolitych do najrzadszych), artefakt zawisa nad skrzynią z nazwą i wpada do niej na koniec, wieko się zatrzaskuje. Podsumowanie pokazuje, co złożono. Dotknięcie ekranu przyspiesza scenę.
+Złożenie to osobny moment nagrody — scena „Powrót do skarbca”: skrzynia skarbca spada i otwiera się w blasku, monety wpadają do niej jedna po drugiej (od pospolitych do najrzadszych), na koniec artefakty po kolei zawisają nad skrzynią z nazwą i do niej wpadają, wieko się zatrzaskuje. Podsumowanie pokazuje, co złożono. Dotknięcie ekranu przyspiesza scenę.
 
 Zawartość plecaka nigdy nie przepada. Monety w plecaku nie liczą się jeszcze do kolekcji i paser ich nie kupi, dopóki nie trafią do skarbca.
 
@@ -236,7 +236,7 @@ Paser to czarny rynek w skarbcu, na osobnej zakładce „Paser”. Waluta nie ma
 
 Przy szansach z „Szukania skarbów” jedno przeszukanie jest średnio warte około 1,24.
 
-**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji, 7 dni po ich utracie. Kupiony artefakt trafia od razu do skarbca — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu wyznacza poziom misji (tabela w rozdziale „Misje”). Odkupiona misja zostaje w notatniku jako nieudana, a jej artefakt trafia do skarbca.
+**Kupno artefaktów.** U pasera można kupić tylko artefakty z utraconych misji; trafiają do niego od razu po utracie misji. Kupiony artefakt trafia od razu do skarbca — paser jest w skarbcu, więc nie trzeba go nieść. Cenę artefaktu wyznacza poziom misji (tabela w rozdziale „Misje”). Odkupiona misja zostaje w notatniku jako nieudana, a jej artefakt trafia do skarbca.
 
 ## Słownik UI (PL / EN)
 

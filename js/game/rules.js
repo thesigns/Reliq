@@ -12,11 +12,9 @@ export const RULES = {
   minHistoryMs: 15e3,        // need this much GPS history before speed is trusted
   maxAccuracyM: 50,
   depositMaxAccuracyM: 100,  // storing finds at the vault: GPS indoors, at home, is often poorer
-  tombSeparation: 200,       // m between tombs
   loot: { junk: 0.65, coin: 0.35 },
   coinRarity: { common: 0.75, uncommon: 0.20, rare: 0.04, legendary: 0.01 },
-  missionTtlMs: 7 * DAY,     // from starting a mission to opening its gate
-  fenceDelayMs: 7 * DAY,     // a lost artifact turns up at the fence this long after
+  missionTtlMs: 10 * DAY,    // from starting a mission to opening its gate
   gateRadius: 100,           // m: the gate opens only this close to the tomb
   keyLength: 3,              // symbols in a tomb key, all different; one walk each
 };

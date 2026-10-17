@@ -1,11 +1,12 @@
 // Still images of the low-poly models (artifacts and coins in the vault, the backpack card),
-// rendered once each and cached. They keep the chunky pixels of the reveal screen.
+// rendered once each and cached.
 
 import { ArtifactRenderer } from './artifact3d.js';
+import { restingView } from './views.js';
 import { MODELS } from './models/index.js';
 import { COIN_MODELS } from './models/coins.js';
 
-const CSS_SIZE = 84;   // shown at about this size; drawn at 1 / ARTIFACT_PIXEL of it
+const CSS_SIZE = 84;   // shown at about this size, drawn at the screen's density
 let renderer = null;
 const cache = new Map();
 
@@ -25,8 +26,8 @@ function thumbnail(key, model, pose) {
   return thumb;
 }
 
-// An artifact turned three-quarters to the viewer.
-export const artifactThumbnail = (id) => thumbnail(`artifact:${id}`, MODELS[id], { yaw: -0.6, pitch: 0.38, scale: 1 });
+// Turned as on the reveal screen, so the picture that flies into the backpack matches it.
+export const artifactThumbnail = (id) => thumbnail(`artifact:${id}`, MODELS[id], { ...restingView(MODELS[id]), scale: 1 });
 
 // A coin's obverse, turned a little so its rim shows.
-export const coinThumbnail = (id) => thumbnail(`coin:${id}`, COIN_MODELS[id], { yaw: 0.38, pitch: 0.12, scale: 1.3 });
+export const coinThumbnail = (id) => thumbnail(`coin:${id}`, COIN_MODELS[id], { ...restingView(COIN_MODELS[id]), scale: 1.3 });

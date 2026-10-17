@@ -339,6 +339,19 @@ test('a lost artifact is at the fence at once, at its tier\'s price', () => {
   assert.equal(game.buyArtifact(2, T0 + 1).ok, false);
 });
 
+test('examining a vault artifact finds its details one by one, three at most', () => {
+  const { game, state, changes } = newGame();
+  state.artifacts = [{ id: 'cup', n: 1, t: T0, from: 'tomb' }];
+  const before = changes();
+  assert.equal(game.examineArtifact(1), 1);
+  assert.equal(changes(), before + 1);
+  assert.equal(game.examineArtifact(1), 2);
+  assert.equal(game.examineArtifact(1), 3);
+  assert.equal(game.examineArtifact(1), 3);
+  assert.equal(state.artifacts[0].examined, 3);
+  assert.equal(game.examineArtifact(7), 0, 'not in the vault');
+});
+
 test('every state change is reported for saving', () => {
   const { game, changes } = newGame({ rng: seq(...JUNK_ROLL) });
   const before = changes();

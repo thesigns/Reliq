@@ -313,6 +313,16 @@ export class Game {
     });
   }
 
+  // Examining a vault artifact (js/game/examine.js) has found its next detail. Returns how
+  // many of its details are now known.
+  examineArtifact(n) {
+    const a = this.state.artifacts.find((x) => x.n === n);
+    if (!a) return 0;
+    a.examined = Math.min(RULES.examine.details, (a.examined ?? 0) + 1);
+    this.changed();
+    return a.examined;
+  }
+
   buyArtifact(n, now) {
     const offer = this.fenceOffers().find((o) => o.n === n);
     if (!offer?.ok) return { ok: false, offer };

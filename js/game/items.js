@@ -2,8 +2,8 @@
 // artifacts.<id>.name / .desc).
 
 export const JUNK = [
-  'penny', 'pulltab', 'ticket', 'lighter', 'battery',
-  'paperclip', 'earring', 'rubberband', 'bottlecap', 'receipt',
+  'button', 'pulltab', 'ticket', 'lighter', 'battery',
+  'paperclip', 'icestick', 'rubberband', 'bottlecap', 'receipt',
 ];
 
 export const COINS = [

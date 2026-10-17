@@ -37,21 +37,33 @@ def sheet(h, t, levels):
 
 # ---- The things -----------------------------------------------------------------------------
 
-def penny():
-    """A one-grosz coin, dull and dirty: a raised '1' on the face, a bead ring on the back,
-    grime caked in patches round the edge of the field."""
-    COPPER, DARK, GRIME = range(3)
-    colors = (('Copper', (0.74, 0.45, 0.27)), ('CopperDark', (0.46, 0.26, 0.15)), ('Grime', (0.33, 0.33, 0.24)))
+def button():
+    """A four-hole plastic button torn off a coat: a dished face inside a raised rim, the
+    thread still crossed through its holes and a loose end trailing over the edge."""
+    PLASTIC, DARK, LIGHT, HOLE, THREAD = range(5)
+    colors = (('Plastic', (0.2, 0.55, 0.5)), ('PlasticDark', (0.1, 0.34, 0.32)), ('PlasticLight', (0.42, 0.74, 0.67)),
+              ('Hole', (0.04, 0.07, 0.07)), ('Thread', (0.92, 0.89, 0.8)))
     bm = bmesh.new()
     R = 0.5
-    # Face to back; the field has an inner disc and an outer band, so grime keeps to the band.
-    prof = [(0.0, -0.025), (0.3, -0.025), (R - 0.06, -0.025), (R - 0.05, -0.042), (R, -0.036), (R, 0.036), (R - 0.05, 0.042),
-            (R - 0.06, 0.025), (0.3, 0.025), (0.0, 0.025)]
-    lathe(bm, prof, 20, lambda k, i: GRIME if k in (2, 8) and i in (3, 4, 11, 15, 16) else (DARK if k in (1, 2, 3, 7, 8, 9) else COPPER), axis='y')
-    one = [(-0.04, -0.22), (0.05, -0.22), (0.05, 0.24), (-0.01, 0.24), (-0.15, 0.12), (-0.13, 0.08), (-0.04, 0.13)]
-    slab(bm, one, 0.022, COPPER, y=-0.034)
-    torus(bm, (0, 0.025, 0), 0.3, [(-0.016, 0.0), (0.016, 0.0), (0.016, 0.016), (-0.016, 0.016)], 20, lambda k, i: COPPER)
-    return finish(bpy, bm, 'Penny', colors)
+    # Face to back: the flat middle with the holes, the slope up to the rim, round the edge.
+    prof = [(0.0, -0.03), (0.22, -0.03), (0.3, -0.055), (0.36, -0.075), (0.44, -0.075), (R, -0.05), (R, 0.03), (0.46, 0.05), (0.0, 0.05)]
+    lathe(bm, prof, 20, lambda k, i: {2: DARK, 4: LIGHT, 6: DARK}.get(k, PLASTIC), axis='y')
+    holes = [(-0.1, -0.1), (0.1, -0.1), (0.1, 0.1), (-0.1, 0.1)]
+    thread = [(0.014 * u, 0.014 * v) for u, v in circle(5)]
+    # Sewn as a cross: two diagonals on the face, one on top of the other where they meet...
+    for (ax, az), (bx, bz), mid in ((holes[0], holes[2], -0.066), (holes[1], holes[3], -0.05)):
+        sweep(bm, [((ax + (bx - ax) * t, y, az + (bz - az) * t), 1.0) for t, y in ((0.0, -0.02), (0.2, -0.048), (0.5, mid), (0.8, -0.048), (1.0, -0.02))],
+              thread, lambda k, i: THREAD)
+    # ...and two straight stitches up the back.
+    for x in (-0.1, 0.1):
+        sweep(bm, [((x, y, z), 1.0) for z, y in ((-0.1, 0.04), (-0.06, 0.066), (0.06, 0.066), (0.1, 0.04))], thread, lambda k, i: THREAD)
+    tail = [(0.1, -0.02, 0.1), (0.13, -0.06, 0.14), (0.22, -0.09, 0.22), (0.34, -0.1, 0.3), (0.46, -0.09, 0.38), (0.58, -0.07, 0.43),
+            (0.68, -0.05, 0.41), (0.74, -0.04, 0.33)]
+    sweep(bm, [(p, 1.0) for p in tail], thread, lambda k, i: THREAD)
+    for x, z in holes:
+        for y, n in ((-0.033, -1), (0.053, 1)):
+            face_toward(bm, [bm.verts.new((x + 0.045 * u, y, z + 0.045 * v)) for u, v in circle(6)], (0, n, 0), HOLE)
+    return _finish_decals(bm, 'Button', colors, HOLE)
 
 
 def pulltab():
@@ -151,21 +163,39 @@ def paperclip():
     return finish(bpy, bm, 'Paperclip', colors)
 
 
-def earring():
-    """A gilt hoop earring whose pair is lost, the plating rubbed through in places, with a
-    pink glass drop hanging from a little ring."""
-    GOLD, WORN, PINK, PINK_LIGHT = range(4)
-    colors = (('Gilt', (0.88, 0.7, 0.32)), ('Worn', (0.5, 0.45, 0.38)), ('Glass', (0.9, 0.36, 0.58)),
-              ('GlassLight', (0.98, 0.66, 0.8)))
+def icestick():
+    """A wooden ice-cream stick with rounded ends, still brown with chocolate at the end that
+    was in the ice cream, a drip running down towards the clean handle; tilted, end up."""
+    WOOD, WOOD_DARK, CHOC, CHOC_DARK = range(4)
+    colors = (('Wood', (0.88, 0.74, 0.52)), ('WoodDark', (0.66, 0.5, 0.31)), ('Choc', (0.42, 0.24, 0.14)), ('ChocDark', (0.3, 0.16, 0.09)))
     bm = bmesh.new()
-    wire = [(0.035 * u, 0.035 * v) for u, v in circle(6)]
-    torus(bm, (0, 0, 0.12), 0.32, wire, 20, lambda k, i: WORN if k in (4, 5, 13) and i < 3 else GOLD)
-    jump = new_verts(bm, lambda b: torus(b, (0, 0, 0), 0.05, [(-0.012, -0.012), (0.012, -0.012), (0.012, 0.012), (-0.012, 0.012)], 8, lambda k, i: GOLD))
-    rotate(jump, math.pi / 2, (0, 0, 1))
-    move(jump, (0, 0, -0.25))
-    lathe(bm, [(0.0, -0.31), (0.035, -0.31), (0.03, -0.33), (0.0, -0.335)], 6, lambda k, i: GOLD)
-    lathe(bm, [(0.0, -0.55), (0.1, -0.43), (0.075, -0.36), (0.0, -0.33)], 6, lambda k, i: PINK_LIGHT if k == 3 or i % 2 else PINK)
-    return finish(bpy, bm, 'Earring', colors)
+    L, R, W, T, c = 0.43, 0.07, 0.07, 0.02, 0.009
+    # Swept along x: u is the width (z), v the thickness (side 2 faces -y, side 6 +y). The
+    # rounded ends narrow the width along a quarter circle.
+    section = [(W, -T + c), (W, T - c), (W - c, T), (-W + c, T), (-W, T - c), (-W, -T + c), (-W + c, -T), (W - c, -T)]
+    ends = [math.radians(a) for a in (80, 60, 35)]
+    xs = [(-(L + R * math.sin(a)), math.cos(a)) for a in ends]
+    xs += [(x, 1.0) for x in (-L, -0.25, -0.1, -0.02, 0.04, 0.1, 0.25, L)]
+    xs += [(L + R * math.sin(a), math.cos(a)) for a in reversed(ends)]
+    # Where the chocolate starts on each side, so its edge is ragged.
+    stain = {2: -0.08, 6: 0.04, 0: 0.0, 4: 0.05}
+
+    def mat(k, i):
+        if k == 0:
+            return WOOD_DARK
+        if k == len(xs):
+            return CHOC_DARK
+        flat = i in (2, 6)
+        if (xs[k - 1][0] + xs[k][0]) / 2 > stain.get(i, 0.02):
+            return CHOC if flat else CHOC_DARK
+        return WOOD if flat else WOOD_DARK
+    sweep(bm, [((x, 0.0, 0.0), (s, 1.0)) for x, s in xs], section, mat)
+    drip = [(-0.1, 0.04), (-0.1, -0.03), (-0.15, -0.035), (-0.215, -0.015), (-0.2, 0.012), (-0.15, 0.025)]
+    face_toward(bm, [bm.verts.new((x, -T - 0.002, z)) for x, z in drip], (0, -1, 0), CHOC)
+    drop = [(0.04, -0.055), (0.04, 0.0), (-0.01, -0.01), (-0.045, -0.035), (-0.02, -0.058)]
+    face_toward(bm, [bm.verts.new((x, T + 0.002, z)) for x, z in drop], (0, 1, 0), CHOC)
+    rotate(bm.verts, math.radians(-20), (0, 1, 0))
+    return _finish_decals(bm, 'Icestick', colors, CHOC)
 
 
 def rubberband():
@@ -249,8 +279,8 @@ def _finish_decals(bm, name, colors, decal):
 
 
 JUNK = {
-    'penny': penny, 'pulltab': pulltab, 'ticket': ticket, 'lighter': lighter, 'battery': battery,
-    'paperclip': paperclip, 'earring': earring, 'rubberband': rubberband, 'bottlecap': bottlecap, 'receipt': receipt,
+    'button': button, 'pulltab': pulltab, 'ticket': ticket, 'lighter': lighter, 'battery': battery,
+    'paperclip': paperclip, 'icestick': icestick, 'rubberband': rubberband, 'bottlecap': bottlecap, 'receipt': receipt,
 }
 
 for o in list(bpy.data.objects):

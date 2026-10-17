@@ -87,6 +87,14 @@ test('migrate drops malformed entries', () => {
   assert.deepEqual(s.settings, { lang: null, sound: false, haptics: true, keepAwake: true, quality: 'full' });
 });
 
+test('an artifact keeps how many details were found, 1 to 3', () => {
+  const art = (examined) => ({ id: 'cup', n: 1, t: 3, from: 'tomb', examined });
+  const load = (examined) => migrate({ v: SAVE_VERSION, artifacts: [art(examined)] }, 0).artifacts[0];
+  assert.equal(load(2).examined, 2);
+  assert.equal(load(9).examined, 3);
+  for (const bad of [0, -1, 1.5, 'x', undefined]) assert.equal('examined' in load(bad), false, String(bad));
+});
+
 test('a mission needs a valid key; foreign and repeated shards are dropped', () => {
   const broken = migrate({ v: SAVE_VERSION, mission: { ...MISSION, key: ['fish', 'fish', 'cat'] } }, 0);
   assert.equal(broken.mission, null);

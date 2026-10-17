@@ -1,11 +1,12 @@
 // Renders a low-poly tomb artifact in the style of early 90s polygon games: flat-shaded
-// faces in solid palette colours, drawn at a low resolution and scaled up with hard
-// pixels. Models are generated modules in js/render/models/ (see scripts/blender/).
+// faces in solid palette colours, drawn at the screen's own resolution with smoothed
+// edges. Models are generated modules in js/render/models/ (see scripts/blender/).
 
 import { program } from './gl.js';
 
-// CSS pixels per rendered pixel: the chunkiness of the look.
-export const ARTIFACT_PIXEL = 3;
+// Rendered pixels per CSS pixel: the screen's density (2 under ?inspect), at most 3.
+export const artifactDpr = () =>
+  document.documentElement.classList.contains('inspect') ? 2 : Math.min(devicePixelRatio || 1, 3);
 
 // Lighting runs per vertex with flat outputs, so each face gets one colour.
 export const VS = /* glsl */`#version 300 es
@@ -101,7 +102,7 @@ export function buildArtifactMesh(model, { fit = 2 } = {}) {
 export class ArtifactRenderer {
   constructor(canvas) {
     this.canvas = canvas;
-    this.gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
+    this.gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: true });
     this.setup();
     canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
     canvas.addEventListener('webglcontextrestored', () => {
@@ -134,9 +135,9 @@ export class ArtifactRenderer {
     this.count = data.length / 9;
   }
 
-  // Low internal resolution; CSS scales it up with image-rendering: pixelated.
+  // A square canvas shown cssSize CSS pixels across.
   resize(cssSize) {
-    const px = Math.max(48, Math.round(cssSize / ARTIFACT_PIXEL));
+    const px = Math.max(48, Math.round(cssSize * artifactDpr()));
     if (this.canvas.width !== px) { this.canvas.width = px; this.canvas.height = px; }
   }
 

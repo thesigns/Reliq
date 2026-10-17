@@ -46,11 +46,10 @@ function render() {
     for (const { artifact: id } of missions) {
       const model = MODELS[id];
       const name = t(`artifacts.${id}.name`);
-      const detail = t(`artifacts.${id}.detail`);
       const card = document.createElement('article');
       card.className = 'card';
       card.innerHTML = `<div class="stage" tabindex="0"><canvas width="${RES}" height="${RES}"></canvas></div>
-        <div class="info"><h3>${esc(name)}</h3><p class="lore">${esc(t(`artifacts.${id}.lore`))}</p>${detail !== `artifacts.${id}.detail` ? `<p class="detail">${esc(detail)}</p>` : ''}
+        <div class="info"><h3>${esc(name)}</h3><p class="lore">${esc(t(`artifacts.${id}.lore`))}</p>${[1, 2, 3].map((k) => `<p class="detail">${esc(t(`artifacts.${id}.detail${k}`))}</p>`).join('')}
         <span class="stats">${esc(t('gallery.stats', { tris: model.tris.length / 4, colors: model.palette.length }))}</span></div>`;
       shelf.appendChild(card);
       const stage = card.querySelector('.stage');

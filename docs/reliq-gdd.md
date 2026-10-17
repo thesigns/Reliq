@@ -52,8 +52,8 @@ Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie s
 
 **Lista śmieci (65% prawdopodobieństwa):**
 
-- Grosz. Grosz do grosza: tak zaczyna się każda fortuna. Kop dalej!
-  - EN: Penny. Every fortune starts with a single penny. Keep digging!
+- Urwany guzik. Ktoś tu zgubił guzik, ale twoja wyprawa jest dopięta na ostatni guzik. Kop dalej!
+  - EN: Lost button. Someone came undone here, but you've got this expedition all buttoned up. Keep digging!
 - Zawleczka od puszki. Każdy wielki poszukiwacz ma w kieszeni kilka takich. Witaj w klubie!
   - EN: Can pull tab. Every great treasure hunter has a pocketful of these. Welcome to the club!
 - Skasowany bilet. Czyjaś podróż już się skończyła. Twoja dopiero się zaczyna!
@@ -64,8 +64,8 @@ Gracz ma 65% szans na znalezienie losowego śmiecia i 35% szans na znalezienie s
   - EN: AA battery. Flat as a pancake. You've surely got more energy than this!
 - Spinacz biurowy. Mały, a nigdy nie odpuszcza. Weź z niego przykład!
   - EN: Paper clip. Small, but it never lets go. Take a leaf out of its book!
-- Kolczyk bez pary. Jego para leży gdzieś w okolicy. Kto wie, co jeszcze tu znajdziesz?
-  - EN: Lone earring. Its twin is somewhere nearby. Who knows what else you'll turn up?
+- Patyczek po lodzie. Lód dawno zjedzony, a najsłodsze znalezisko wciąż przed tobą. Do łopaty!
+  - EN: Ice-cream stick. The ice cream is long gone, but the sweetest find is still ahead. Grab that spade!
 - Gumka recepturka. Wciąż sprężysta. Wystrzel się nią w stronę następnego skarbu!
   - EN: Rubber band. Still springy. Use it to launch yourself at the next treasure!
 - Nakrętka od butelki. Ktoś tu odkręcił napój, a ty odkręcasz przygodę. Następna łopata może być złota!
@@ -155,6 +155,8 @@ Każdy wpis ma przycisk „Szczegóły”, który otwiera stronę notatnika tej 
 
 Model 3D nie jest pokazywany przed zdobyciem artefaktu — jest nagrodą reprezentującą prawdziwy przedmiot.
 
+Na spacerze modele (śmieci, monety, artefakt z otwartych wrót lub odkupiony od pasera) nie obracają się i nie da się ich obracać: stoją pod stałym kątem, zwykle w trzech czwartych, dobranym tak, żeby przedmiot było dobrze widać. Obracać palcem, swobodnie i z rozpędem, można tylko monety i artefakty oglądane w skarbcu, gdzie obracanie artefaktu służy do jego badania (zob. „Badanie artefaktów”). Ekran otwarcia wrót i zakupu od pasera pokazuje nazwę i lore, ale nie detale.
+
 Rozpoczęcie misji czyści wszystkie przeszukane obszary, tak jakby minęło 6 godzin, i uruchamia limit czasu.
 
 ### Przebieg misji
@@ -219,7 +221,20 @@ Zawartość plecaka nigdy nie przepada. Monety w plecaku nie liczą się jeszcze
 
 ## Artefakty w skarbcu
 
-Artefakty złożone w skarbcu mają własną zakładkę „Artefakty”, obok zakładki „Monety”: artefaktów z czasem będzie dużo, a monety mają być pod ręką. Stoją po 3 w rzędzie: obrazek artefaktu, a pod nim nazwa. Brakujący artefakt to pusty prostokąt z zaokrąglonymi rogami i znakiem zapytania. Artefakt, który jest jeszcze w plecaku, widać wyblakły, z dopiskiem „w plecaku”. Stuknięcie w artefakt pokazuje go w 3D z możliwością obracania, razem z nazwą i lore.
+Artefakty złożone w skarbcu mają własną zakładkę „Artefakty”, obok zakładki „Monety”: artefaktów z czasem będzie dużo, a monety mają być pod ręką. Stoją po 3 w rzędzie: obrazek artefaktu, a pod nim nazwa. Brakujący artefakt to pusty prostokąt z zaokrąglonymi rogami i znakiem zapytania. Artefakt, który jest jeszcze w plecaku, widać wyblakły, z dopiskiem „w plecaku”. Stuknięcie w artefakt pokazuje go w 3D, z nazwą i odkrytymi dotąd detalami. Można go obracać palcem, i tak się go bada. Tak samo obraca się monety z zakładki „Monety”, ale monet się nie bada.
+
+### Badanie artefaktów
+
+Każdy artefakt ma 3 detale, od najbardziej oczywistego do najbardziej tajemniczego (teksty w `docs/lista-misji.md`). Detale 1 i 2 opisują to, co widać na modelu; detal 3 to dotyk, zapach, dźwięk albo domysł, czego na modelu nie widać.
+
+- Detale odkrywa się po kolei, badając artefakt w skarbcu: podgląd mówi „Obracaj artefakt palcem, by go zbadać” i pokazuje pasek postępu z napisem „Detal 1 z 3”.
+- Pasek rośnie, gdy gracz trzyma artefakt palcem i ogląda go z różnych stron. Wokół artefaktu jest 24 kierunków; strona liczy się, gdy była zwrócona do gracza łącznie przez 0,5 s. Obracanie szybciej niż 6 rad/s to kręcenie, nie oglądanie, i się nie liczy. Nie liczy się też obrót z rozpędu po puszczeniu palca.
+- Każdy detal to osobne badanie od zera: pierwszy wymaga 30% stron (wystarczy obrócić artefakt dookoła), drugi 60% (trzeba go też pochylić), trzeci 85% (trzeba zajrzeć z góry i od spodu).
+- Odkryty detal dopisuje się pod nazwą, z dźwiękiem pióra i wibracją, i zaczyna się badanie następnego. Po trzecim podgląd mówi „Zbadano wszystkie detale”.
+- Postęp zapisuje się przy artefakcie (liczba odkrytych detali). Przerwane badanie detalu zaczyna się od nowa.
+- Odkryte detale pojawiają się też na stronie misji w notatniku, pod lore.
+- Nagrodą są same informacje; nie ma za to pieniędzy ani odznak.
+- Podgląd w skarbcu nie pokazuje poziomu, numeru grobowca ani lore: poziom widać na półce, a lore w notatniku.
 
 ## Paser
 

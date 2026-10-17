@@ -3,7 +3,7 @@
 // shading and chunky pixels of the reveal screen. Its own WebGL2 context, created on first use.
 
 import { program } from './gl.js';
-import { VS, FS, ARTIFACT_PIXEL, buildArtifactMesh, mat4, mul, perspective, translate, rotX, rotY, scaleM } from './artifact3d.js';
+import { VS, FS, artifactDpr, buildArtifactMesh, mat4, mul, perspective, translate, rotX, rotY, scaleM } from './artifact3d.js';
 
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -30,7 +30,7 @@ export { mul, translate, rotX, rotY, scaleM };
 export class VaultScene {
   constructor(canvas) {
     this.canvas = canvas;
-    this.gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
+    this.gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: true });
     this.models = new Map();   // key -> { model, fit }, kept to rebuild after a context loss
     this.w = 1;
     this.h = 1;
@@ -72,11 +72,12 @@ export class VaultScene {
     this.meshes.set(key, { vao, count: data.length / 9 });
   }
 
-  // CSS size of the canvas; it renders at 1 / ARTIFACT_PIXEL of it.
+  // CSS size of the canvas; it renders at the screen's density.
   resize(w, h) {
     this.w = w;
     this.h = h;
-    const pw = Math.max(1, Math.round(w / ARTIFACT_PIXEL)), ph = Math.max(1, Math.round(h / ARTIFACT_PIXEL));
+    const dpr = artifactDpr();
+    const pw = Math.max(1, Math.round(w * dpr)), ph = Math.max(1, Math.round(h * dpr));
     if (this.canvas.width !== pw || this.canvas.height !== ph) { this.canvas.width = pw; this.canvas.height = ph; }
   }
 

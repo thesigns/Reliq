@@ -270,7 +270,11 @@ const journal = new Journal($('journal'), {
   openMissionPage: (page) => notebook.openPage(page),
   closeMissionPage: () => notebook.close(),
   onStartMission: () => onStartMission(),
-  onViewArtifact: (a) => viewArtifact(a),
+  // Only an artifact in the vault can be turned and examined, not one still in the backpack.
+  onViewArtifact: (a) => {
+    const examine = examineOpts(a.n);
+    return viewArtifact(a, examine ? { turnable: true, examine } : {});
+  },
   fenceOffers: () => game.fenceOffers(),
   coinPrice: (id) => game.coinPrice(id),
   onSellCoin: (id) => onSellCoin(id),
@@ -689,18 +693,21 @@ function onAbandonMission() {
   journal.refresh();
 }
 
-// The lore, then the optional line about how the artifact looks (seen only once found).
-function artifactText(id) {
-  const key = `artifacts.${id}.detail`;
-  const lore = t(`artifacts.${id}.lore`), detail = t(key);
-  return detail === key ? lore : `${lore} ${detail}`;
+// An artifact's three details, from the plainest to the most mysterious.
+const artifactDetails = (id) => [1, 2, 3].map((k) => t(`artifacts.${id}.detail${k}`));
+
+// The vault's look at artifact n: turning it uncovers its details one at a time.
+function examineOpts(n) {
+  const a = state.artifacts.find((x) => x.n === n);
+  if (!a) return null;
+  return { found: a.examined ?? 0, details: artifactDetails(a.id), onFound: () => game.examineArtifact(n) };
 }
 
 // a: { id, n, from: 'tomb' | 'fence' }, as stored in the vault.
 function viewArtifact(a, opts = {}) {
   return reveal.viewArtifact(MODELS[a.id], {
     name: t(`artifacts.${a.id}.name`),
-    desc: artifactText(a.id),
+    desc: t(`artifacts.${a.id}.lore`),
     tomb: a.n,
     context: [t('tier.label', { tier: t(`tiers.${missionDef(a.id)?.tier}`) }), a.from === 'fence' ? t('reveal.fromFence') : ''].filter(Boolean).join(' · '),
     ...opts,
@@ -979,7 +986,8 @@ function wireDebug() {
   $('dbg-artifact').onclick = () => {
     if (!reveal.root.hidden) return;
     const id = ARTIFACTS[dbgArtifact++ % ARTIFACTS.length];
-    reveal.viewArtifact(MODELS[id], { name: t(`artifacts.${id}.name`), desc: artifactText(id) });
+    // Examined from scratch each time, and nothing is saved.
+    reveal.viewArtifact(MODELS[id], { name: t(`artifacts.${id}.name`), turnable: true, examine: { found: 0, details: artifactDetails(id) } });
   };
   $('dbg-coins-add').onclick = () => {
     for (const id of ['nummus', 'kaiyuan']) state.coins[id] = (state.coins[id] ?? 0) + 12;

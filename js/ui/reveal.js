@@ -3,7 +3,9 @@
 
 import { t, formatDistance, formatRoman } from '../i18n/i18n.js';
 import { coinById } from '../game/items.js';
+import { Examination } from '../game/examine.js';
 import { ArtifactRenderer } from '../render/artifact3d.js';
+import { restingView } from '../render/views.js';
 import { COIN_MODELS } from '../render/models/coins.js';
 import { JUNK_MODELS } from '../render/models/junk.js';
 import { Particles } from './particles.js';
@@ -40,20 +42,18 @@ export class Reveal {
     this.card = this.el('#paper-card');
     this.running = false;
     this.pose = null;
-    this.coinCanvas.addEventListener('click', () => this.flip());
     this.artCanvas = this.el('#reveal-artifact');
     this.artifact = null; // created on first use: a second WebGL context
-    this.wireDrag();
+    this.wireDrag(this.coinCanvas);
+    this.wireDrag(this.artCanvas);
   }
 
-  // Dragging turns the artifact; letting go keeps some spin, which then eases back to
-  // the slow idle turn.
-  wireDrag() {
-    const c = this.artCanvas;
+  // In the vault, dragging turns the model; letting go keeps some spin, which runs down.
+  wireDrag(c) {
     let last = null;
     c.addEventListener('pointerdown', (e) => {
       const p = this.pose;
-      if (!p || p.kind !== 'artifact' || p.mode !== 'idle') return;
+      if (!p?.turnable || p.mode !== 'idle') return;
       c.setPointerCapture(e.pointerId);
       last = { x: e.clientX, y: e.clientY, t: performance.now() };
       p.drag = true;
@@ -65,7 +65,7 @@ export class Reveal {
       const now = performance.now();
       const dx = e.clientX - last.x, dy = e.clientY - last.y;
       p.yaw += dx * 0.012;
-      p.pitch = Math.max(-0.2, Math.min(1.1, p.pitch + dy * 0.008));
+      p.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, p.pitch + dy * 0.008));   // from straight below to straight above
       p.vel = (dx * 0.012) / Math.max(0.008, (now - last.t) / 1000);
       last = { x: e.clientX, y: e.clientY, t: now };
     });
@@ -90,47 +90,15 @@ export class Reveal {
     this.center = { x: w / 2, y: stage.offsetTop + stage.offsetHeight / 2 };
   }
 
-  flip() {
-    if (!this.pose || this.pose.mode !== 'idle') return;
-    sfx.click();
-    haptics.tap();
-    this.pose.flipFrom = this.pose.target;
-    this.pose.target += Math.PI;
-    this.pose.flipT = 0;
-  }
-
   loop() {
     if (!this.running) return;
     const now = performance.now();
     const dt = Math.min(0.05, (now - this.last) / 1000);
     this.last = now;
     const p = this.pose;
-    if (p?.kind === 'artifact') {
-      this.poseArtifact(p, now, dt);
-    } else if (p) {
-      const e = (now - p.t0) / 1000;
-      let spin, scale, y;
-      if (p.mode === 'enter') {
-        const k = Math.min(1, e / (p.dur ?? 2.3));
-        spin = p.target + (1 - easeOutCubic(k)) * Math.PI * (p.spins ?? 7);
-        scale = 0.25 + 0.75 * easeOutBack(Math.min(1, e / 1.0));
-        y = -0.5 * (1 - easeOutCubic(Math.min(1, e / 1.0)));
-        if (k >= 1) { p.mode = 'idle'; p.idleT0 = now; }
-      } else {
-        const ie = (now - p.idleT0) / 1000;
-        if (p.flipT !== undefined && p.flipT < 1) {
-          p.flipT = Math.min(1, p.flipT + dt / 0.7);
-          spin = p.flipFrom + (p.target - p.flipFrom) * easeOutCubic(p.flipT);
-        } else {
-          spin = p.target;
-        }
-        spin += Math.sin(ie * 0.7) * 0.32;
-        scale = 1;
-        y = Math.sin(ie * 1.3) * 0.02;
-      }
-      const tilt = 0.1 + Math.sin(e * 0.9) * 0.06;
-      this.coin.render({ yaw: spin, pitch: tilt, scale, y }, GLOW[p.rarity]);
-      if ((p.rarity === 'legendary' || p.rarity === 'rare') && Math.random() < dt * (p.rarity === 'legendary' ? 14 : 6)) {
+    if (p) {
+      this.animatePose(p, now, dt);
+      if (p.kind === 'coin' && (p.rarity === 'legendary' || p.rarity === 'rare') && Math.random() < dt * (p.rarity === 'legendary' ? 14 : 6)) {
         const w = this.root.clientWidth, h = this.root.clientHeight;
         this.particles.motes(1, SPARKS[p.rarity], { x: w * 0.15, y: h * 0.25, w: w * 0.7, h: h * 0.45 });
       }
@@ -139,7 +107,8 @@ export class Reveal {
     requestAnimationFrame(() => this.loop());
   }
 
-  poseArtifact(p, now, dt) {
+  // The model pops up (or junk drops in) already at its resting angle, and then only bobs.
+  animatePose(p, now, dt) {
     const e = (now - p.t0) / 1000;
     let scale = 1, y = 0;
     if (p.mode === 'toss') {
@@ -148,23 +117,32 @@ export class Reveal {
       scale = Math.max(0, 1 - k * k);
       y = 0.8 * k;
     } else if (p.mode === 'enter' && p.drop) {
-      // Junk falls in from above, full size, half a turn, and lands with a bounce.
+      // Junk falls in from above, full size, and lands with a bounce.
       const k = Math.min(1, e / 0.75);
-      p.yaw = (1 - easeOutCubic(k)) * Math.PI - 0.5;
       y = 0.9 * (1 - easeOutBounce(k));
-      if (k >= 1) { p.mode = 'idle'; p.vel = 0; }
+      if (k >= 1) { p.mode = 'idle'; p.idleT0 = now; }
     } else if (p.mode === 'enter') {
-      const k = Math.min(1, e / 1.6);
-      p.yaw = (1 - easeOutCubic(k)) * Math.PI * 4 - 0.5;
-      scale = 0.25 + 0.75 * easeOutBack(Math.min(1, e / 0.9));
-      y = -0.5 * (1 - easeOutCubic(Math.min(1, e / 0.9)));
-      if (k >= 1) { p.mode = 'idle'; p.vel = 0; }
-    } else if (!p.drag) {
-      p.vel *= Math.exp(-dt * 2.5);
-      p.yaw += (p.vel + 0.45) * dt;
-      y = Math.sin(e * 1.3) * 0.03;
+      const k = Math.min(1, e / 0.9);
+      scale = 0.25 + 0.75 * easeOutBack(k);
+      y = -0.5 * (1 - easeOutCubic(k));
+      if (k >= 1) { p.mode = 'idle'; p.idleT0 = now; }
+    } else {
+      if (!p.drag) {
+        p.vel *= Math.exp(-dt * 2.5);
+        p.yaw += p.vel * dt;
+      }
+      y = Math.sin(((now - p.idleT0) / 1000) * 1.3) * 0.03;
+      if (this.exam) this.examineStep(p, dt);
     }
-    this.artifact.render({ yaw: p.yaw, pitch: p.pitch, scale, y }, GLOW[p.rarity]);
+    p.renderer.render({ yaw: p.yaw, pitch: p.pitch, scale, y }, GLOW[p.rarity]);
+  }
+
+  // kind: 'coin' or 'artifact' (junk too). The model rests at its own angle (restingView): out
+  // on a walk it stays there; turnable: in the vault, the finger turns it.
+  setPose(kind, renderer, rarity, { turnable = false, drop = false } = {}) {
+    this.pose = { kind, renderer, mode: 'enter', drop, turnable, t0: performance.now(), rarity, ...restingView(renderer.model), vel: 0 };
+    this.root.classList.toggle('turnable', turnable);
+    this.el('#reveal-hint').hidden = !turnable;
   }
 
   start() {
@@ -230,7 +208,12 @@ export class Reveal {
     this.el('#reveal-rarity').textContent = rarity;
     this.el('#reveal-name').textContent = name;
     this.el('#reveal-desc').textContent = desc;
-    this.el('#reveal-hint').textContent = t('reveal.tapToFlip');
+    this.el('#reveal-rarity').hidden = !rarity;
+    this.el('#reveal-desc').hidden = !desc;
+    this.el('#reveal-exam').hidden = true;
+    this.exam = null;
+    this.el('#reveal-hint').textContent = t('reveal.dragToTurn');
+    this.el('#reveal-hint').hidden = true;
     this.el('#reveal-close').textContent = button;
     this.el('#reveal-close').hidden = !button;
     this.el('#reveal-x').hidden = !cross;
@@ -257,7 +240,7 @@ export class Reveal {
       await wait(250);
     }
     this.coin.setModel(COIN_MODELS[id]);
-    this.pose = { mode: 'enter', t0: performance.now(), target: 0, rarity };
+    this.setPose('coin', this.coin, rarity);
     this.root.classList.add('lit');
     if (big) {
       sfx.boom();
@@ -274,7 +257,7 @@ export class Reveal {
     return this.close();
   }
 
-  // Looking at a coin already in the collection: no fanfare, a quick turn into view.
+  // Looking at a coin already in the collection: no fanfare, and it can be turned.
   async viewCoin(id, count) {
     const def = coinById(id);
     this.setInfo({
@@ -285,7 +268,7 @@ export class Reveal {
     });
     await this.open('coin', def.rarity);
     this.coin.setModel(COIN_MODELS[id]);
-    this.pose = { mode: 'enter', t0: performance.now(), target: 0, rarity: def.rarity, dur: 1.1, spins: 2 };
+    this.setPose('coin', this.coin, def.rarity, { turnable: true });
     this.root.classList.add('lit');
     sfx.chime(def.rarity === 'legendary' ? 'rare' : 'common');
     await wait(250);
@@ -296,19 +279,23 @@ export class Reveal {
   // A tomb artifact. model: a generated module from js/render/models/.
   // fanfare: the moment a gate opens; otherwise a quiet look at one from the vault.
   // tomb: the number of the tomb it came from, shown with the label.
-  async viewArtifact(model, { name, desc, context = '', button = '', fanfare = false, tomb = null }) {
+  // turnable: looked at in the vault, where the finger turns it.
+  // examine: { found, details, onFound(found) } — in the vault, turning it uncovers its details
+  // one at a time; the screen then shows only the name and the details found.
+  async viewArtifact(model, { name, desc, context = '', button = '', fanfare = false, tomb = null, turnable = false, examine = null }) {
     const rarity = fanfare ? 'legendary' : 'rare';
     if (!this.artifact) this.artifact = new ArtifactRenderer(this.artCanvas);
     this.artifact.setModel(model);
     const label = tomb ? t('reveal.artifactOf', { n: formatRoman(tomb) }) : t('reveal.artifact');
-    this.setInfo({ context, rarity: label, name, desc, button });
+    if (examine) this.setInfo({ name, button });
+    else this.setInfo({ context, rarity: label, name, desc, button });
     await this.open('artifact', rarity);
-    this.el('#reveal-hint').textContent = t('reveal.dragToTurn');
     if (fanfare) {
       sfx.swell(1.2);
       await wait(1000);
     }
-    this.pose = { kind: 'artifact', mode: 'enter', t0: performance.now(), rarity, yaw: 0, pitch: 0.38, vel: 0 };
+    this.setPose('artifact', this.artifact, rarity, { turnable });
+    if (examine) this.startExam(examine);
     this.root.classList.add('lit');
     if (fanfare) {
       sfx.boom();
@@ -324,6 +311,51 @@ export class Reveal {
     await wait(fanfare ? 1300 : 900);
     this.root.classList.add('info-in');
     return this.close();
+  }
+
+  startExam(examine) {
+    this.exam = { ...examine, search: null };
+    this.el('#reveal-details').replaceChildren(...examine.details.slice(0, examine.found).map((d) => this.detailLine(d)));
+    this.el('#reveal-exam').hidden = false;
+    this.nextSearch();
+  }
+
+  // The search for the next detail, if any is left.
+  nextSearch() {
+    const x = this.exam, total = x.details.length;
+    x.search = x.found < total ? new Examination(x.found) : null;
+    this.el('#reveal-exam-label').textContent = x.search ? t('examine.stage', { n: x.found + 1, of: total }) : '';
+    this.el('#reveal-exam-label').hidden = !x.search;
+    this.el('#reveal-exam-bar').hidden = !x.search;
+    this.el('#reveal-exam-fill').style.width = '0%';
+    this.el('#reveal-hint').textContent = t(x.search ? 'examine.hint' : 'examine.done');
+  }
+
+  detailLine(text, fresh = false) {
+    const p = document.createElement('p');
+    p.className = fresh ? 'reveal-detail fresh' : 'reveal-detail';
+    p.textContent = text;
+    return p;
+  }
+
+  // Each frame the player holds the model in the vault, the side facing them is looked at; a
+  // flick that leaves it spinning on its own does not count.
+  examineStep(p, dt) {
+    const x = this.exam;
+    const turned = Math.hypot(p.yaw - (p.lastYaw ?? p.yaw), p.pitch - (p.lastPitch ?? p.pitch));
+    p.lastYaw = p.yaw;
+    p.lastPitch = p.pitch;
+    if (!x.search || !p.drag) return;
+    x.search.look(p.yaw, p.pitch, dt * 1000, turned / Math.max(dt, 1e-3));
+    this.el('#reveal-exam-fill').style.width = `${x.search.progress * 100}%`;
+    if (!x.search.done) return;
+    x.found++;
+    x.onFound?.(x.found);
+    this.el('#reveal-details').append(this.detailLine(x.details[x.found - 1], true));
+    sfx.ink();
+    sfx.chime('uncommon');
+    haptics.reveal('uncommon');
+    this.nextSearch();
   }
 
   // A potsherd with one symbol of the tomb key.
@@ -366,15 +398,14 @@ export class Reveal {
     this.el('#paper-desc').textContent = desc;
   }
 
-  // Junk: the thing drops onto the ground, a sad little fanfare plays it down, and it can be
-  // turned like an artifact before it goes back where it came from.
+  // Junk: the thing drops onto the ground and a sad little fanfare plays it down, before it
+  // goes in the bin.
   async showJunk(id) {
     if (!this.artifact) this.artifact = new ArtifactRenderer(this.artCanvas);
     this.artifact.setModel(JUNK_MODELS[id]);
     this.setInfo({ rarity: t('reveal.junk'), name: t(`items.${id}.name`), desc: t(`items.${id}.desc`), button: t('reveal.discard') });
     await this.open('junk', 'junk');
-    this.el('#reveal-hint').textContent = t('reveal.dragToTurn');
-    this.pose = { kind: 'artifact', mode: 'enter', drop: true, t0: performance.now(), rarity: 'junk', yaw: 0, pitch: 0.38, vel: 0 };
+    this.setPose('artifact', this.artifact, 'junk', { drop: true });
     this.root.classList.add('lit');
     await wait(380);
     sfx.thud();

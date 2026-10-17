@@ -68,10 +68,14 @@ Czerwień służy do tras i akcentów.
 
 **Szukanie skarbu.** Kopanie (pył, wstrząs, haptyka), potem atrament rozlewa się w nowy obszar, a na końcu odsłania się znalezisko.
 
-**Śmieć.** Model low-poly spada z odbiciem przy komicznym „tu-tu-tuuuu”, a „Wyrzuć” odrzuca go w dal.
+**Pozy modeli.** Na spacerze modele stoją nieruchomo pod kątem z `restingView()` (`js/render/views.js`, z wyjątkami dla długich i płaskich przedmiotów); tak samo ustawione są miniatury. Palcem obraca się je tylko w skarbcu (`turnable` w `Reveal`).
+
+**Badanie artefaktów.** W skarbcu obracanie artefaktu odkrywa jego 3 detale po kolei (`Examination` w `js/game/examine.js`, liczby w `RULES.examine`, postęp w `examined` przy artefakcie, `game.examineArtifact(n)`). Podgląd pokazuje nazwę, odkryte detale i pasek postępu; liczy się tylko czas, gdy palec trzyma model.
+
+**Śmieć.** Model low-poly spada z odbiciem przy komicznym „tu-tu-tuuuu”, a „Do kosza” odrzuca go w dal.
 
 **Moneta.**
-- Obracająca się moneta low-poly z płaskim cieniowaniem i odblaskiem. Po zamknięciu wlatuje do plecaka.
+- Moneta low-poly z płaskim cieniowaniem i odblaskiem wyskakuje i stoi nieruchomo w trzech czwartych. Po zamknięciu wlatuje do plecaka.
 - Oprawa zależy od rzadkości:
 
 | Rzadkość  | Oprawa                                                          |

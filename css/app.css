@@ -535,10 +535,9 @@ html.inspect #app {
   display: grid;
   place-items: center;
 }
-.reveal-coin { cursor: pointer; image-rendering: pixelated; }
 .reveal:not([data-kind='coin']) .reveal-coin { display: none; }
-.reveal-artifact { cursor: grab; touch-action: none; image-rendering: pixelated; }
-.reveal-artifact:active { cursor: grabbing; }
+.reveal.turnable :is(.reveal-coin, .reveal-artifact) { cursor: grab; touch-action: none; }
+.reveal.turnable :is(.reveal-coin, .reveal-artifact):active { cursor: grabbing; }
 .reveal:not([data-kind='artifact'], [data-kind='junk']) .reveal-artifact { display: none; }
 .reveal:is([data-kind='coin'], [data-kind='artifact'], [data-kind='junk']) .paper-card { display: none; }
 .reveal[data-kind='tomb'] { --glow: rgba(255, 196, 110, .32); --tone: #f0cf86; }
@@ -623,6 +622,50 @@ html.inspect #app {
   color: #ead9b6;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
 }
+/* The vault's look at an artifact: the details found so far and the search for the next. */
+.reveal-exam { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.reveal-exam [hidden] { display: none; }
+.reveal-details { display: flex; flex-direction: column; gap: 9px; max-width: 30em; font-size: 19px; }
+.reveal-details:empty { display: none; }
+.reveal-detail {
+  margin: 0;
+  font-family: var(--font-text);
+  line-height: 1.25;
+  color: #ead9b6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+}
+.reveal-detail.fresh { animation: detail-in 1.6s ease both; }
+@keyframes detail-in {
+  0% { opacity: 0; transform: translateY(8px); color: #fff3cf; text-shadow: 0 0 14px var(--glow), 0 1px 2px rgba(0, 0, 0, .8); }
+  30% { opacity: 1; transform: none; color: #fff3cf; text-shadow: 0 0 14px var(--glow), 0 1px 2px rgba(0, 0, 0, .8); }
+}
+.reveal-exam-label {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: .26em;
+  padding-left: .26em;
+  text-transform: uppercase;
+  color: var(--tone);
+}
+.reveal-exam-bar {
+  width: min(220px, 70%);
+  height: 4px;
+  margin-top: 7px;
+  border-radius: 2px;
+  background: rgba(234, 214, 166, .15);
+  overflow: hidden;
+}
+.reveal-exam-bar > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #8a5a1e, var(--tone));
+  box-shadow: 0 0 8px var(--glow);
+  transition: width .25s ease;
+}
+.reveal-hint[hidden] { display: none; }
 .reveal-hint {
   margin-top: 12px;
   font-family: var(--font-display);
@@ -844,7 +887,6 @@ html.inspect #app {
   height: 84px;
   margin: -42px 0 0 -42px;
   pointer-events: none;
-  image-rendering: pixelated;
   filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .5)) drop-shadow(0 0 10px rgba(255, 210, 120, .5));
 }
 /* Something to carry home: the vault pointer glows. */
@@ -913,7 +955,7 @@ html.inspect #app {
 }
 .deposit.lit .deposit-halo { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .deposit.glare .deposit-halo { transform: translate(-50%, -50%) scale(1.25); }
-.deposit-scene { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.deposit-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
 .deposit-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .deposit .flash { background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 247, 222, .95), rgba(255, 210, 130, .35) 35%, transparent 70%); }
 .deposit-head {
@@ -1025,7 +1067,7 @@ html.inspect #app {
 .ds-title { margin: 0 0 10px; font-family: var(--font-display); font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: #6b4716; }
 .ds-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 12px; max-height: 34vh; overflow: auto; padding: 10px 8px 2px; }
 .ds-item { position: relative; display: flex; flex-direction: column; align-items: center; width: 58px; font-family: var(--font-text); }
-.ds-item img { width: 52px; height: 52px; image-rendering: pixelated; }
+.ds-item img { width: 52px; height: 52px; }
 .ds-arts, .sv-arts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; width: 100%; }
 .ds-art { width: 104px; text-align: center; }
 /* Many artifacts (a holiday's haul): smaller, three to a row. */
@@ -1119,7 +1161,7 @@ html.inspect #app {
 /* The satchel card: what is carried home. */
 .satchel-card .sv-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 6px; max-height: 46vh; overflow: auto; margin-top: 10px; padding: 2px; }
 .sv-item { display: flex; flex-direction: column; align-items: center; width: 74px; font-family: var(--font-text); text-align: center; }
-.sv-item img { width: 52px; height: 52px; image-rendering: pixelated; }
+.sv-item img { width: 52px; height: 52px; }
 .sv-art { width: 104px; }
 .sv-art img { width: 84px; height: 84px; }
 .sv-name { font-size: 12.5px; line-height: 1.12; }

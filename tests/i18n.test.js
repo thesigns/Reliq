@@ -44,13 +44,13 @@ test('every literal key used in code exists', () => {
   assert.deepEqual(missing, []);
 });
 
-// artifacts.<id>.detail is optional: a line about how the artifact looks, shown once it is found.
-test('every symbol and artifact has a name, every artifact lore and a model', () => {
+test('every symbol and artifact has a name, every artifact lore, three details and a model', () => {
   for (const lang of [pl, en]) {
     for (const id of SYMBOLS) assert.ok(lang[`symbols.${id}`], `symbol ${id}`);
     for (const id of ARTIFACTS) {
       assert.ok(lang[`artifacts.${id}.name`], `${id} name`);
       assert.ok(lang[`artifacts.${id}.lore`], `${id} lore`);
+      for (const k of [1, 2, 3]) assert.ok(lang[`artifacts.${id}.detail${k}`], `${id} detail ${k}`);
     }
   }
   for (const id of ARTIFACTS) assert.ok(MODELS[id], `${id} model`);

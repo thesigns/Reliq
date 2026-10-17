@@ -17,7 +17,7 @@ export class Journal {
   // deps: { state, missionCheck(), missionOffer(), thumbnail(id), artifactThumb(id), onViewCoin(id),
   //         onShowNotebook(), openMissionPage(page), closeMissionPage(),
 //         onStartMission(),
-  //         onViewArtifact({ id, n, from }), fenceOffers(), coinPrice(id), onSellCoin(id),
+  //         onViewArtifact({ id, n, from }) → Promise, fenceOffers(), coinPrice(id), onSellCoin(id),
   //         onBuyArtifact(n) }
   constructor(root, deps) {
     this.root = root;
@@ -209,11 +209,11 @@ export class Journal {
     const m = this.pastMissions().find((p) => p.n === +num && p.won === (kind === 'won'));
     if (!m) return;
     const notes = lore(m.artifact);
-    const detailKey = `artifacts.${m.artifact}.detail`;
     const actions = [];
     const stored = s.artifacts.find((x) => x.n === m.n);
+    // The details found by examining it in the vault.
+    for (let k = 1; k <= (stored?.examined ?? 0); k++) notes.push({ text: t(`artifacts.${m.artifact}.detail${k}`), lore: true });
     if (m.won) {
-      if (t(detailKey) !== detailKey) notes.push({ text: t(detailKey), lore: true });
       notes.push({ text: t('notes.tombFound', { n: formatRoman(m.n), date: formatDate(m.tomb.t) }) });
       notes.push({ text: t(stored ? 'notes.inVault' : 'notes.inBackpack') });
       actions.push({ id: 'view', label: t('notes.viewArtifact'), primary: true });
@@ -232,7 +232,12 @@ export class Journal {
       n: m.n, artifact: m.artifact, notes, actions,
       status: { text: t(m.won ? 'notes.won' : 'notes.lost'), mark: m.won ? TICK : CROSS },
       onAction: (id) => {
-        if (id === 'view') this.deps.onViewArtifact(stored ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' });
+        if (id === 'view') {
+          // Details found while looking at it go onto this page straight away.
+          const found = stored?.examined ?? 0;
+          Promise.resolve(this.deps.onViewArtifact(stored ?? s.satchel.artifacts.find((x) => x.n === m.n) ?? { id: m.artifact, n: m.n, from: 'tomb' }))
+            .then(() => { if ((stored?.examined ?? 0) !== found) this.openEntry(key); });
+        }
         if (id === 'fence') { this.deps.closeMissionPage(); this.show('fence'); }
       },
     });

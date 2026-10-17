@@ -17,6 +17,15 @@ export const RULES = {
   missionTtlMs: 10 * DAY,    // from starting a mission to opening its gate
   gateRadius: 100,           // m: the gate opens only this close to the tomb
   keyLength: 3,              // symbols in a tomb key, all different; one walk each
+  // Examining an artifact in the vault: turned with a finger, it gives up its details one at
+  // a time, and each takes a fresh look at enough of its sides (js/game/examine.js).
+  examine: {
+    details: 3,
+    sides: 24,               // view directions spread evenly round the model
+    dwellMs: 500,            // a side counts once it has faced the player this long in all
+    maxTurnRate: 6,          // rad/s: turning faster than this is spinning, not looking
+    share: [0.3, 0.6, 0.85], // of the sides, to find the first, second and third detail
+  },
 };
 
 // What the fence pays for one coin, by rarity.

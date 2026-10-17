@@ -44,7 +44,7 @@ export function createState(now) {
     money: 0,             // from selling coins to the fence
     mission: null,        // { n, artifact, t, key: [symbol ×3], shards: [symbol], stageAt } — n: the order played; stageAt: when the current stage opens
     tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission; opened ones are off the map, kept for the notebook
-    artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence' }] — in the vault
+    artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence', examined? }] — in the vault; examined: details found (1–3), absent before the first
     lost: [],             // [{ n, artifact, t }] — failed or abandoned missions; the fence sells their artifacts
     settings: { ...DEFAULT_SETTINGS },
   };
@@ -93,7 +93,10 @@ export function migrate(saved, now, { migrations = MIGRATIONS, oldest = OLDEST_S
       s.tombs.push({ n: tb.n, lat: tb.lat, lon: tb.lon, t: tb.t, opened: tb.opened, artifact: tb.artifact });
     }
   }
-  if (Array.isArray(raw.artifacts)) s.artifacts = raw.artifacts.filter(isArtifact).map(({ id, n, t, from }) => ({ id, n, t, from }));
+  if (Array.isArray(raw.artifacts)) {
+    s.artifacts = raw.artifacts.filter(isArtifact).map(({ id, n, t, from, examined }) =>
+      (Number.isInteger(examined) && examined > 0 ? { id, n, t, from, examined: Math.min(examined, RULES.examine.details) } : { id, n, t, from }));
+  }
   if (Array.isArray(raw.lost)) {
     for (const l of raw.lost) if (l && Number.isInteger(l.n) && missionDef(l.artifact) && isNum(l.t)) s.lost.push({ n: l.n, artifact: l.artifact, t: l.t });
   }

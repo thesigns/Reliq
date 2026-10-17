@@ -2,6 +2,20 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.16.0 — 2026-10-17
+
+### Zmienione
+
+- **„Do kosza” zamiast „Wyrzuć”** na przycisku przy śmieciu, a wprowadzenie mówi, że śmieci „od razu lądują w koszu”. Nie trzeba ich nosić do domu, ale nie rzuca się ich też z powrotem w trawę.
+- **Guzik i patyczek po lodzie zamiast grosza i kolczyka.** Grosz za bardzo przypominał zbierane monety, a jego opis („tak zaczyna się każda fortuna”) kusił, żeby go zatrzymać. Kolczyk mimo wszystko wyglądał na coś cennego. Teraz z ziemi wychodzi urwany guzik z nitką wciąż przeplecioną przez dziurki i drewniany patyczek z resztką czekolady na końcu.
+- **Ostre modele 3D:** artefakty, monety, śmieci i skrzynia w skarbcu rysują się w pełnej rozdzielczości ekranu, z wygładzonymi krawędziami, zamiast w grubych pikselach (dotąd jeden piksel obrazu zajmował 3×3 punkty, a na telefonie nawet 9×9). Zostają płaskie ściany i kolory w stylu wczesnych gier 3D. Tak samo wyglądają miniatury w dzienniku, u pasera, w plecaku i w podsumowaniu „Powrót do skarbca”.
+- **Modele stoją nieruchomo na spacerze.** Śmieci, monety, artefakt z wrót i ten odkupiony od pasera nie kręcą się już, także przy pojawieniu się, i nie da się ich obracać. Wyskakują od razu pod kątem, pod którym dobrze je widać, zwykle w trzech czwartych. Długie przedmioty, jak szabla, klucz czy patyczek, są obrócone tak, żeby było widać całą ich długość. Miniatury w dzienniku i w plecaku mają ten sam kąt. Obracać palcem, swobodnie i z rozpędem, można tylko w skarbcu: artefakty z półki i, po raz pierwszy, monety z kolekcji. Monety nie odwracają się już stuknięciem.
+
+### Nowe
+
+- **Badanie artefaktów w skarbcu.** Każdy artefakt ma teraz trzy detale, od najbardziej oczywistego do najbardziej tajemniczego, i odkrywa się je po kolei, obracając artefakt palcem. Pasek postępu („Detal 1 z 3”) rośnie, gdy artefakt ogląda się z różnych stron. Pierwszy detal wystarczy obrócić dookoła, drugi wymaga pochylenia, a trzeci zajrzenia z góry i od spodu. Liczy się tylko oglądanie z palcem na artefakcie, nie szybkie kręcenie ani obrót z rozpędu. Odkryty detal dopisuje się pod nazwą z dźwiękiem pióra i trafia też na stronę misji w notatniku. Postęp się zapisuje.
+- **Prostszy podgląd w skarbcu:** nazwa, odkryte detale i pasek. Poziom widać na półce, a lore w notatniku, więc zniknęły z podglądu, podobnie jak numer grobowca. Ekran otwarcia wrót pokazuje lore, ale już nie detal.
+
 ## 0.15.0 — 2026-10-17
 
 ### Zmienione

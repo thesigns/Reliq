@@ -126,7 +126,7 @@ Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedn�
 | Platynowy  | 2300 m | 4600 m    | 230   |
 | Diamentowy | 3000 m | 6000 m    | 300   |
 
-Lista misji z poziomami, tytułami, lore i opisem modeli jest w `docs/lista-misji.md`. Na start ma być po 3 artefakty na poziom; nowe będą dochodzić z czasem.
+Lista misji z poziomami, tytułami, lore i opisem modeli jest w `docs/lista-misji.md`. Na start jest po 3 artefakty na poziom (24 misje); nowe będą dochodzić z czasem.
 
 **Kolejność.** Gra proponuje misję z najniższego poziomu, na którym zostały misje nierozegrane. Wewnątrz poziomu kolejność jest losowa, ale stała dla danej gry: losuje się ją przy zakładaniu skarbca. Misja dodana później do łatwiejszego poziomu trafia do wszystkich graczy, także tych na wyższych poziomach — jako odskocznia.
 
@@ -203,7 +203,7 @@ Grobowiec jest zamknięty wrotami z kluczem kołowym z 3 pierścieni. Każdy pie
 
 Każdy grobowiec ma własny klucz: 3 różne symbole w ustalonej kolejności, np. Ryba–Ptak–Mucha. Gracz ustawia pierścienie tak, żeby symbole zgadzały się w odpowiedniej kolejności.
 
-Wrota otwiera się na miejscu — gracz musi być w promieniu 100 m od grobowca. Liczba prób jest nieograniczona, a zły układ nie ma żadnych konsekwencji poza tym, że wrota się nie otwierają. Grobowiec pozostaje zamknięty, dopóki gracz nie ustawi klucza.
+Wrota otwiera się na miejscu — gracz musi być w promieniu 100 m od grobowca. Karta odkrycia grobowca ma przycisk „Otwórz grobowiec”, który od razu prowadzi do wrót; krzyżyk zamyka kartę, a wrota czekają (przycisk „Otwórz wrota” w notatniku albo stuknięcie w grobowiec na mapie). Liczba prób jest nieograniczona, a zły układ nie ma żadnych konsekwencji poza tym, że wrota się nie otwierają. Grobowiec pozostaje zamknięty, dopóki gracz nie ustawi klucza.
 
 Po otwarciu wrót gracz otrzymuje zamknięty w grobowcu artefakt.
 

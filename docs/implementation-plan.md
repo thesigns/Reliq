@@ -5,12 +5,12 @@
 - **Zero zależności i zero build stepu.** Natywne ES modules, WebGL2, Web Audio, CSS. Gra działa z dowolnego statycznego hostingu.
 - **Logika oddzielona od renderingu.** Reguły gry to czyste moduły bez DOM, testowane `node --test` (Node 24 jest zainstalowany).
 - **Pełny offline.** Mapa jest fikcyjna, więc nie potrzebuje kafelków z sieci. Po pierwszym wczytaniu cała gra działa bez internetu.
-- **Środowisko dev:** na razie tylko desktop, ze statycznym serwerem lokalnym i symulatorem GPS. Hosting z HTTPS do testów na telefonie ustalimy później (geolokalizacja na telefonie wymaga bezpiecznego kontekstu).
+- **Środowisko dev:** desktop ze statycznym serwerem lokalnym i symulatorem GPS. Wersje do testów w terenie trafiają na hosting z HTTPS (GitHub Pages), bo geolokalizacja na telefonie wymaga bezpiecznego kontekstu.
 
 **Decyzje:**
-- Grafiki monet rysuję sam w SVG, w stylu ryciny.
+- Monety, śmieci, artefakty i skrzynia skarbca to ręcznie modelowane siatki low-poly (`scripts/blender/`). Szkice, ikony terenu i grafika interfejsu to SVG rysowane tuszem.
 - Mapa jest płaska, widziana z góry, bez perspektywy 3D.
-- Dodatki, które wchodzą: czerwona linia trasy, dźwięk i haptyka, kompas.
+- Dodatki, które weszły: dźwięk i haptyka, kompas (obraca igłę gracza). Czerwona linia trasy i róża wiatrów były, ale zostały usunięte.
 
 ## 1. Kierunek artystyczny — „Dziennik ekspedycji”
 
@@ -51,27 +51,27 @@ Czerwień służy do tras i akcentów.
 
 1. **Pergamin.** Proceduralny shader z włóknami, plamami, przetarciami i liniami zgięć.
 2. **Biomy.** Deterministyczny szum liczony z absolutnych współrzędnych, więc to samo miejsce zawsze wygląda tak samo. Na nim ikony gór, lasów i równin rysowane tuszem (SVG wypalane do atlasu tekstur). Rozmieszczenie ikon jest deterministyczne, z LOD zależnym od zoomu.
-3. **Siatka i róża wiatrów.** Siatka współrzędnych jak na starych mapach, do tego róża wiatrów.
+3. **Siatka.** Siatka współrzędnych jak na starych mapach, z podpisami stopni, i łacińskie nazwy krain.
 4. **Skarbiec.** Pieczęć lakowa i przerywany okrąg o promieniu 100 m.
 5. **Przeszukane obszary (metaballe).**
    - Wnętrze jest lawowane tuszem, a krawędź to linia tuszu.
    - Nowy obszar rozlewa się animacją.
    - Starszy obszar blednie, ale jego kształt się nie zmienia. Granica jest zawsze dokładnie tą, którą liczy gra.
-6. **Trasa.** Czerwona przerywana linia z ostatnich 6 godzin marszu (punkty co ≥ 10 m). Wyłącznie ozdoba, nie wpływa na zasady.
-7. **Grobowce.** Rysunek świątyni z czerwonym X.
+6. **Strefa misji.** Okrąg dystansu etapu i celownik w punkcie startu etapu.
+7. **Grobowce.** Rysunek wrót grobowca; stuknięcie pokazuje dymek z numerem. Zamknięty grobowiec aktywnej misji pulsuje.
 8. **Gracz.** Mosiężna igła kompasu, która obraca się zgodnie z kierunkiem telefonu. Bez danych z kompasu pokazuje kierunek ruchu. Dokładność GPS pokazuje okrąg rysowany jakby ołówkiem.
-9. **Post-processing.** Color grading, ziarno, winieta i bloom na złocie.
+9. **Post-processing.** Color grading, miękka winieta i ziarno filmowe.
 
 ### Kluczowe momenty
 
-**Onboarding.** List wprowadzający, potem założenie skarbca przez odciśnięcie pieczęci na mapie.
+**Onboarding.** List wprowadzający, 4 strony zasad ze szkicami i strona o lokalizacji, potem założenie skarbca przez odciśnięcie pieczęci na mapie.
 
 **Szukanie skarbu.** Kopanie (pył, wstrząs, haptyka), potem atrament rozlewa się w nowy obszar, a na końcu odsłania się znalezisko.
 
-**Śmieć.** Szybka, lekko komiczna karta ze szkicem z dziennika. Po zamknięciu śmieć znika.
+**Śmieć.** Model low-poly spada z odbiciem przy komicznym „tu-tu-tuuuu”, a „Wyrzuć” odrzuca go w dal.
 
 **Moneta.**
-- Obracająca się moneta 3D: metaliczny shader, odblaski i relief. Relief to normal mapa liczona z rysunku SVG monety (rysunek → mapa wysokości → normalne).
+- Obracająca się moneta low-poly z płaskim cieniowaniem i odblaskiem. Po zamknięciu wlatuje do plecaka.
 - Oprawa zależy od rzadkości:
 
 | Rzadkość  | Oprawa                                                          |
@@ -81,13 +81,17 @@ Czerwień służy do tras i akcentów.
 | Rare      | złoto i poświata                                                |
 | Legendary | promienie światła, iskry, mocny akcent dźwiękowy i haptyczny    |
 
-**Mapa do grobowca.** Rozwijany zwój z warunkami. Każdy warunek ma odhaczenie na żywo, np. „przeszukania 4/6”.
+**Symbol klucza.** Papierowa karta ze skorupą, na której namalowano symbol. „Zanotuj” posyła ją do przycisku misji.
 
-**Grobowiec.** Wstrząs, rozbłysk pochodni, ikona wbita w mapę, a na koniec odsłonięcie monety.
+**Grobowiec.** Dłuższe kopanie, wstrząs, wrota wbite w mapę i karta „Odkrycie” ze szkicem wrót. „Otwórz grobowiec” prowadzi od razu do wrót, krzyżyk odkłada to na później.
 
-**Skarbiec (kolekcja).**
-- Oprawiony w skórę dziennik z monetami.
-- Nieznalezione monety mają postać zarysów „???”.
+**Wrota.** Trzy pierścienie z symbolami obraca się palcem. Po otwarciu artefakt 3D wychodzi z fanfarą i trafia do plecaka.
+
+**Powrót do skarbca.** Scena 3D: skrzynia otwiera się w blasku, monety wpadają po kolei, artefakt na końcu, wieko się zatrzaskuje.
+
+**Skarbiec (dziennik).**
+- Cztery zakładki: Notatnik (misje), Monety, Artefakty, Paser.
+- Nieznalezione monety i artefakty mają postać pustych miejsc ze znakiem zapytania.
 - Przy każdej monecie jest licznik sztuk.
 
 **Przycisk akcji (mosiężny medalion).** Zawsze pokazuje, dlaczego jest nieaktywny:
@@ -102,21 +106,31 @@ Czerwień służy do tras i akcentów.
 ```
 index.html
 manifest.webmanifest
-sw.js
-css/              style UI, fonty
-assets/           fonts/, coins/, icons/ (SVG), app-icons/
+sw.js             generowany przez scripts/build-sw.mjs
+css/              app.css (mapa, HUD, znaleziska, skarbiec), screens.css (onboarding,
+                  dziennik, menu, toast), fonts.css
+assets/           fonts/, icons/ (ikony aplikacji)
 js/
-  main.js         bootstrap, pętla, routing ekranów
+  main.js         bootstrap, pętla klatek, spięcie wszystkiego
+  version.js      wersja wydania (nazwa cache offline)
+  demo.js         gotowy świat demo dla panelu ⚙
   i18n/           pl.js, en.js, i18n.js
-  core/           geo.js, rng.js, store.js, events.js
-  game/           rules.js (stałe z GDD), loot.js, field.js (metaballe),
-                  tombs.js, game.js (akcje i stan)
-  gps/            location.js (watchPosition, okno prędkości), compass.js,
-                  simulator.js
-  render/         gl.js, camera.js, terrain.js, atlas.js, map-layers.js,
-                  particles.js, post.js, coin3d.js, shaders/*.js
-  ui/             hud.js, reveal.js, scroll.js, journal.js, onboarding.js,
-                  settings.js, audio.js, haptics.js
+  core/           geo.js, noise.js, rng.js, clock.js, store.js, wakelock.js
+  game/           rules.js (liczby z GDD, poziomy i misje), items.js, loot.js,
+                  field.js (metaballe), state.js (kształt zapisu, migracje),
+                  game.js (akcje i stan)
+  gps/            geolocation.js, simulator.js, filter.js (Kalman),
+                  location.js (okno prędkości), compass.js
+  render/         gl.js, camera.js, map-renderer.js, base-cache.js, terrain.js,
+                  atlas.js, icons.js, regions.js, shaders/map.js,
+                  artifact3d.js, artifact-thumbs.js, vault-scene.js,
+                  models/ (generowane przez skrypty Blendera)
+  ui/             hud.js, map-ui.js, menu.js, onboarding.js, journal.js, notebook.js,
+                  reveal.js, satchel.js, deposit.js, gate.js, toast.js, scale-bar.js,
+                  particles.js, audio.js, haptics.js, grafika: art.js,
+                  onboarding-art.js, gate-art.js, artifact-sketch.js
+scripts/          serwer dev, build-sw, ikony; blender/ (modele low-poly)
+gallery/          galeria artefaktów poza grą
 tests/            *.test.js (node --test)
 ```
 
@@ -137,37 +151,42 @@ tests/            *.test.js (node --test)
 - Suma odcinków odpada, bo drgania GPS na stojąco potrafią ją zawyżyć ponad 10 km/h.
 - Potrzebne jest ≥ 15 s historii. Do tego czasu przycisk pokazuje „Ustalanie pozycji…”.
 
-**Grobowce.** Są 4 mapy, każda z własnym wierszem w `TOMB_MAPS` (`js/game/rules.js`): cena, min. dystans, min. aktywnych przeszukań, artefakt.
+**Misje.** Poziomy (`TIERS`) i misje (`MISSIONS`) są w `js/game/rules.js`, z `docs/lista-misji.md`. `missionDef(artifact)` daje dystanse i cenę u pasera.
 
-**Kolejność losowania przy przeszukaniu (E9).**
-1. Gracz ma mapę, grobowiec nieodkryty i spełnia warunki: 20% na grobowiec.
-2. W przeciwnym razie albo po nieudanym rzucie, jeśli gracz ma mapę, grobowiec jest nieotwarty i gracz ma mniej niż 3 symbole: 10% na nowy symbol.
+**Wynik przeszukania** (`rollLoot` w `game.js`):
+1. Etap symbolu i przeszukanie co najmniej w dystansie symbolu od startu etapu: nowy symbol klucza.
+2. Ostatni etap i przeszukanie co najmniej w dystansie grobowca, ≥ 200 m od innych grobowców: grobowiec.
 3. W przeciwnym razie zwykłe losowanie: 65% śmieć, 35% moneta.
-- Klucz (3 różne symbole z 8) jest losowany przy kupnie mapy i zapisywany w stanie.
+- Start etapu (`stageStart`) to najstarsze aktywne przeszukanie z tego etapu. Etap jest oceniany, zanim liczy się obszar bieżącego przeszukania.
+- Klucz (3 różne symbole z 8) jest losowany przy rozpoczęciu misji i zapisywany w stanie.
 
-**Losowanie.** `crypto.getRandomValues`.
+**Losowanie.** `crypto.getRandomValues`. Kolejność misji w poziomie tasuje ziarno `state.seed`, losowane przy zakładaniu skarbca.
 
 **Wygasanie.** Przeszukania starsze niż 6 h są usuwane przy każdym odczycie stanu.
 
 ## 4. Stan i zapis
 
-Stan jest zapisywany w localStorage jako wersjonowany JSON. Do pierwszego wydania nie ma migracji: starszy zapis trafia pod `reliq.save.unreadable`, a gra startuje od nowa. Dodatkowo `navigator.storage.persist()` zmniejsza ryzyko, że przeglądarka skasuje dane.
+Stan jest zapisywany w localStorage jako wersjonowany JSON. Dodatkowo `navigator.storage.persist()` zmniejsza ryzyko, że przeglądarka skasuje dane.
 
-Zapis obsługuje `js/core/store.js`, a kształt stanu i migracje `js/game/state.js`. Nieczytelny zapis nie przepada: trafia pod klucz `reliq.save.unreadable`, a gra startuje od nowa.
+**Migracje** (`js/game/state.js`): gdy zmienia się kształt zapisu, `SAVE_VERSION` idzie w górę, a do `MIGRATIONS` dochodzi krok ze starej wersji do nowej. Kroki działają na surowym JSON-ie, jeden po drugim (v4 → v5 → v6…), a dopiero potem zapis przechodzi walidację. Zapis sprzed migracji zostaje nietknięty pod `reliq.save.v<stara wersja>`. Test pilnuje, żeby każda czytana wersja miała swój krok. Zapisy starsze niż `OLDEST_SAVE_VERSION` (sprzed pierwszego wydania, dziś v1–v3) i zapisy z nowszej gry trafiają pod `reliq.save.unreadable`, a gra startuje od nowa. Na razie `MIGRATIONS` jest puste: v4 to pierwsza wersja, którą będziemy przenosić.
+
+Zapis obsługuje `js/core/store.js`, a kształt stanu, walidację i migracje `js/game/state.js`. Nieczytelny zapis nie przepada: trafia pod klucz `reliq.save.unreadable`, a gra startuje od nowa.
 
 ```js
 {
-  v: 3,
+  v: 4,
   createdAt,
   vault: { lat, lon, t } | null,
+  seed,                                 // tasuje misje w poziomie; losowane przy zakładaniu skarbca
   searches: [{ lat, lon, t }],          // tylko aktywne (< 6 h)
-  coins: { [coinId]: count },
+  coins: { [coinId]: count },           // w skarbcu
+  satchel: { coins: { [coinId]: count }, artifacts: [{ id, n, t, from }] },  // plecak
   money,                                // ze sprzedaży monet paserowi
-  mission: { n, t, key: [s1, s2, s3], shards: [symbol], stageAt } | null,  // stageAt: kiedy otwiera się bieżący etap
+  mission: { n, artifact, t, key: [s1, s2, s3], shards: [symbol], stageAt } | null,  // stageAt: początek bieżącego etapu
   tombs: [{ n, lat, lon, t, opened, artifact }],   // zamknięty tylko grobowiec aktywnej misji
   artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // artefakty w skarbcu
-  lost: [{ n, t }],                     // utracone misje; paser sprzedaje artefakt od t + 7 dni
-  settings: { lang, sound, haptics }
+  lost: [{ n, artifact, t }],           // utracone misje; paser sprzedaje artefakt od t + 7 dni
+  settings: { lang, sound, haptics, keepAwake, quality }
 }
 ```
 
@@ -182,7 +201,7 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu i migracje `js/game/state.
 | E5 Przepływy gry | Onboarding, szukanie, odsłonięcia, zwój mapy, szukanie grobowca, kolekcja, ustawienia (język, dźwięk, jakość) |
 | E6 Juice | Dźwięk, haptyka, cząsteczki, przejścia, dopracowanie |
 | E7 PWA | Manifest, service worker (offline), ikony, instalacja |
-| E8 Testy na urządzeniach | iOS Safari, Android Chrome, wydajność, bateria. Czeka na decyzję o hostingu. |
+| E8 Testy na urządzeniach | iOS Safari, Android Chrome, wydajność, bateria. Trwają spacery testowe. |
 | E9 Mapy za monety i wrota | Kupno map za monety, odkrywanie grobowca przyciskiem szukania, symbole klucza, zamek z 3 pierścieni przy grobowcu, artefakty low-poly 3D, migracja zapisu |
 | E10 Misje | Misje zamiast kupowania map: karta misji ze szkicem, etapy z dystansem od punktu startu (jeden po drugim, bez przerw), limit 7 dni, półka z artefaktami, paser (sprzedaż monet, kupno utraconych artefaktów). Twardy reset zapisu. |
 
@@ -201,6 +220,8 @@ Potem w przeglądarce otwórz `http://127.0.0.1:8137/`.
 - Sterowanie symulatorem: WASD / strzałki to marsz, Shift to bieg.
 
 Testy: `node --test` (albo `npm test`).
+
+Statusy etapów poniżej to zapis historii: opisują stan z chwili zamknięcia etapu, a część rzeczy (mapy grobowców, zwój, reliefy monet, trasa) później zniknęła. Obecny stan opisują rozdziały 0–4, GDD i `changelogs.md`.
 
 **Status E1:** zaakceptowany.
 
@@ -271,7 +292,7 @@ Testy: `node --test` (albo `npm test`).
 - **Instalacja:** przycisk „Zainstaluj grę” w ustawieniach (Chrome/Android) i podpowiedź dla iPhone'a. Po aktualizacji pojawia się toast „Gra została zaktualizowana”.
 - **Wydanie wersji:** podbij `VERSION` w `js/version.js` i uruchom `node scripts/build-sw.mjs`.
 
-**Status E8:** gotowe to, co da się zrobić bez telefonu. Testy na urządzeniach czekają na hosting.
+**Status E8:** gotowe to, co da się zrobić bez telefonu. Testy na urządzeniach trwają: gra jest na hostingu i chodzi się z nią na spacery testowe.
 - **Wydajność** (zmierzona timerem GPU; na komputerze przy 720×1280: tło 3,1 ms, klatka z cache 0,6 ms):
   - podczas zoomu tło jest rozciągane z cache, a przerysowywane dopiero po geście (1 przerysowanie zamiast ~11–20 na zoom);
   - poziomy szczegółowości ikon przełączają się natychmiast;
@@ -294,7 +315,7 @@ Testy: `node --test` (albo `npm test`).
   - instalacja PWA na iOS i Androidzie;
   - zachowanie po powrocie z tła.
 
-**Status E9:** gotowy (2026-10-16).
+**Status E9:** gotowy (2026-10-16). To historia: mapy za monety, losowe symbole i losowe grobowce zastąpiły w E10 misje, a monety dostały potem modele low-poly.
 - **Decyzje** (szczegóły w GDD, „Mapy i grobowce”):
   - mapy kupuje się za monety (płaci się też ostatnim egzemplarzem), a dawne 5% na mapę przechodzi na monety (65/35);
   - na razie są 4 mapy, a w każdym grobowcu jest artefakt (na razie wszędzie kielich) zamiast monety;
@@ -334,32 +355,43 @@ Testy: `node --test` (albo `npm test`).
 
 **Po E10 (2026-10-16):** monety są low-poly jak artefakty (`scripts/blender/coins.py`, `COIN_MODELS`), rysowane przez `ArtifactRenderer`. Reliefy z Canvas 2D (`coin-art.js`, `coin3d.js`) zostały usunięte. Medalion szukania ma samą łopatę, bez napisu pod spodem. Licznik obszarów zniknął z górnego paska, a jego miejsce zajął przycisk menu.
 
-**Menu gry** (`js/ui/menu.js`): gra zawsze startuje na stronie tytułowej z „Kontynuuj grę” (przy pierwszym uruchomieniu „Rozpocznij”, który prowadzi do onboardingu), „Ustawienia” i „O grze”, przeniesionymi ze skarbca. Menu niczego nie pauzuje: pod spodem ładuje się mapa i, jeśli skarbiec już jest, rusza GPS, więc menu pokazuje jego stan („GPS gotowy · ±8 m”). Skarbiec ma 3 zakładki: Kolekcja, Misje, Paser.
+**Menu gry** (`js/ui/menu.js`): gra zawsze startuje na stronie tytułowej z „Kontynuuj grę” (przy pierwszym uruchomieniu „Rozpocznij”, który prowadzi do onboardingu), „Ustawienia” i „O grze”, przeniesionymi ze skarbca. Menu niczego nie pauzuje: pod spodem ładuje się mapa i, jeśli skarbiec już jest, rusza GPS, więc menu pokazuje jego stan („GPS gotowy · ±8 m”). Skarbiec ma 4 zakładki: Notatnik, Monety, Artefakty, Paser.
+
+**Później (2026-10-16 – 2026-10-17):**
+- **Poziomy misji:** 8 poziomów po 3 misje, wszystkie 24 artefakty mają modele (`docs/lista-misji.md`). Galeria artefaktów w `gallery/`.
+- **Notatnik:** karta misji to strona notatnika, a wpisy misji są na zakładce „Notatnik”.
+- **Śmieci w 3D** z modelami z `scripts/blender/junk.py`.
+- **Onboarding** z 4 stronami zasad (także w „O grze”); liczby w tekstach pochodzą z `RULES`.
+- **„Otwórz grobowiec”** na karcie odkrytego grobowca prowadzi od razu do wrót.
+- **Migracje zapisu:** szkielet w `state.js` (rozdział 4).
+
+Pełna lista zmian dla graczy jest w `changelogs.md`.
 
 **Plecak (wcześniej „sakwa”) i powrót do skarbca** (2026-10-16): monety i artefakt trafiają do plecaka, a składa się je w promieniu skarbca (GPS do 100 m). Ceremonia to scena 3D: low-poly skrzynia z `scripts/blender/chest.py` (korpus, wieko na zawiasie, stos złota), monety lecące łukiem z brzękiem i iskrami w kolorze rzadkości, artefakt zawisający nad skrzynią, trzask wieka i podsumowanie. Nowa misja dopiero po złożeniu artefaktu. Dźwięki: `clink`, `creak`, `slam`, `latch` w `audio.js`. Panel ⚙: „Plecak: +6 monet”, „Teleport do skarbca”.
 
-### Otwarte kwestie (stan na 2026-10-16)
+### Otwarte kwestie (stan na 2026-10-17)
 
-- **Treść misji.** Są 3 (kubek, waza, kielich); docelowo ~60, każda z modelem low-poly, szkicem i lore.
-- **Testy na telefonie.** Odłożone do publikacji na GitHub Pages. Lista rzeczy do sprawdzenia jest w statusie E8.
+- **Treść misji.** Są 24 (po 3 na poziom); docelowo ~60, każda z modelem low-poly, szkicem i lore.
+- **Testy w terenie.** Lista rzeczy do sprawdzenia jest w statusie E8. Do tego: czy dystanse poziomów dobrze się chodzą.
+- **Do rozważenia:** eksport i import zapisu (iOS potrafi skasować dane niezainstalowanej strony) oraz przenoszenie skarbca (GDD: „na razie nie można”).
 
 ## 6. Wydajność i bateria
 
-- DPR jest ograniczony do 2. Poziomy jakości dobierają się automatycznie, z ręczną zmianą w ustawieniach.
-- Pełne 60 fps tylko podczas interakcji i animacji. W spoczynku ~30 fps, a gdy karta jest w tle, renderowanie się zatrzymuje.
+- DPR jest ograniczony do 2. Tryb oszczędny w ustawieniach obniża rozdzielczość i liczbę klatek.
+- Pełne 60 fps tylko przy szybkim ruchu mapy. W marszu i spoczynku 30 fps, pod pełnoekranowymi oknami 10 fps, a gdy karta jest w tle, renderowanie się zatrzymuje.
 - WebGL2 jest wymagany. Na nieobsługiwanym urządzeniu gra pokazuje czytelny komunikat.
 
 ## 7. Założenia (do potwierdzenia w razie wątpliwości)
 
-- Warunki mapy są sprawdzane przed dodaniem obszaru z bieżącego szukania (to szukanie nie liczy się do „aktywnych przeszukań”).
-- E9: otwieranie wrót wymaga tylko odległości ≤ 100 m od grobowca. Limit prędkości i dokładność GPS go nie dotyczą, poza tym, że pozycja musi być znana.
-- E9: kupić mapę można z dowolnego miejsca, przyciskiem na zakładce grobowców w skarbcu. Przy braku monet przycisk jest nieaktywny i pokazuje stan, np. „Nummus 5/8”.
+- Dystans etapu jest oceniany przed dodaniem obszaru z bieżącego szukania.
+- Otwieranie wrót wymaga tylko odległości ≤ 100 m od grobowca. Limit prędkości i dokładność GPS go nie dotyczą, poza tym, że pozycja musi być znana.
+- Złożenie łupu w skarbcu wymaga dokładności GPS ≤ 100 m (łagodniej niż szukanie, bo w domu sygnał słabnie).
 - Śmieci nie są nigdzie liczone.
 - Duplikaty monet zwiększają licznik w kolekcji.
 
 ## 8. Ograniczenia i ryzyka
 
-- **Grafiki.** Monety, śmieci i ikony rysuję sam w SVG, w stylu ryciny i szkicu tuszem. Będą spójne, ale nie malarskie ani fotorealistyczne. Wrażenie „AAA” mają budować przede wszystkim shadery, ruch, typografia i dźwięk.
+- **Grafiki.** Modele są celowo kanciaste (low-poly, płaskie cieniowanie), a szkice i ikony to SVG w stylu ryciny. Są spójne, ale nie malarskie ani fotorealistyczne. Wrażenie „AAA” mają budować przede wszystkim shadery, ruch, typografia i dźwięk.
 - **iOS.**
   - Przeglądarka nie daje dostępu do wibracji.
   - Kompas wymaga osobnej zgody użytkownika.

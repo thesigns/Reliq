@@ -2,6 +2,12 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.14.1 — 2026-10-17
+
+### Poprawione
+
+- **Własny identyfikator aplikacji** (`"id": "/Reliq/"` w manifeście). Dotąd `"./"` oznaczało całą domenę `thesigns.github.io`, tak samo jak w Xenowalk, więc przeglądarka brała obie gry za jedną aplikację: po zainstalowaniu jednej druga wyglądała na już zainstalowaną. Zainstalowaną wcześniej grę trzeba odinstalować i zainstalować ponownie; postępy zostają, bo zapis zależy od domeny, nie od identyfikatora.
+
 ## 0.14.0 — 2026-10-17
 
 ### Zmienione

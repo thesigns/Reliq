@@ -2,7 +2,7 @@
   "name": "Reliq",
   "short_name": "Reliq",
   "description": "A treasure-hunting game for your daily walks.",
-  "id": "./",
+  "id": "/Reliq/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -2,6 +2,16 @@
 
 Zmiany w grze Reliq, od najnowszej wersji. Wersję podaje `VERSION` w `js/version.js`.
 
+## 0.17.0 — 2026-10-18
+
+### Zmienione
+
+- **Symbole i grobowiec za liczbę przeszukań, nie za dystans.** Dotąd każdy etap misji wymagał oddalenia się w linii prostej od miejsca, gdzie się zaczął, a na wyższych poziomach to były kilometry w jedną stronę. Teraz etap wymaga określonej liczby przeszukań, zrobionych gdziekolwiek: można chodzić zygzakiem, w kółko albo codziennie tą samą trasą, byle po nowym terenie. Licznik nie znika razem z przeszukanym terenem na mapie, więc etap, także symbol, można rozłożyć na kilka spacerów. Misja drewniana to 10 przeszukań (około 1 km), diamentowa 80 (około 10 km). Rozpoczęta misja zachowuje postęp: liczą się przeszukania z bieżącego etapu, które są jeszcze na mapie.
+- **Postęp etapu w etykiecie misji**, na przykład „Symbol 1 z 3 · 3 / 5” z paskiem. Gdy zostało jedno przeszukanie, gra o tym mówi. Czerwony pierścień i celownik strefy misji zniknęły z mapy.
+- **Niższe ceny u pasera na wyższych poziomach**, dopasowane do mniejszego wysiłku: od 25 na drewnianym do 200 na diamentowym (dotąd 20–300).
+
+- **Rozpoczęcie misji nie czyści już przeszukanego terenu.** Dotąd można było otworzyć wrota, od razu wziąć kolejną misję i kopać jeszcze raz w tych samych miejscach, nie ruszając się z miejsca. Teraz przeszukany teren zostaje na mapie i znika jak zwykle po 6 godzinach. Pierwszy spacer misji liczy się od pierwszego przeszukania po jej rozpoczęciu.
+
 ## 0.16.0 — 2026-10-17
 
 ### Zmienione

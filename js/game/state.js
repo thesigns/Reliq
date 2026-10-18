@@ -42,7 +42,7 @@ export function createState(now) {
     coins: {},            // { [coinId]: count } — in the vault; only counts above zero
     satchel: { coins: {}, artifacts: [] },  // finds carried until the player is back at the vault
     money: 0,             // from selling coins to the fence
-    mission: null,        // { n, artifact, t, key: [symbol ×3], shards: [symbol], stageAt } — n: the order played; stageAt: when the current stage opens
+    mission: null,        // { n, artifact, t, key: [symbol ×3], shards: [symbol], dug } — n: the order played; dug: searches made in the current stage
     tombs: [],            // [{ n, lat, lon, t, opened, artifact }] — closed only for the active mission; opened ones are off the map, kept for the notebook
     artifacts: [],        // [{ id, n, t, from: 'tomb' | 'fence', examined? }] — in the vault; examined: details found (1–3), absent before the first
     lost: [],             // [{ n, artifact, t }] — failed or abandoned missions; the fence sells their artifacts
@@ -80,9 +80,12 @@ export function migrate(saved, now, { migrations = MIGRATIONS, oldest = OLDEST_S
   }
 
   const m = raw.mission;
-  if (m && Number.isInteger(m.n) && missionDef(m.artifact) && isNum(m.t) && isNum(m.stageAt) && isKey(m.key)) {
+  if (m && Number.isInteger(m.n) && missionDef(m.artifact) && isNum(m.t) && isKey(m.key)) {
     const shards = Array.isArray(m.shards) ? [...new Set(m.shards.filter((x) => m.key.includes(x)))] : [];
-    s.mission = { n: m.n, artifact: m.artifact, t: m.t, key: [...m.key], shards, stageAt: m.stageAt };
+    // Saves up to 0.16 measured a stage by distance and keep stageAt instead: the stage's
+    // searches still on the map count.
+    const dug = Number.isInteger(m.dug) && m.dug >= 0 ? m.dug : isNum(m.stageAt) ? s.searches.filter((x) => x.t >= m.stageAt).length : 0;
+    s.mission = { n: m.n, artifact: m.artifact, t: m.t, key: [...m.key], shards, dug };
   }
 
   if (Array.isArray(raw.tombs)) {

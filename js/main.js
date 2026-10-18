@@ -422,27 +422,7 @@ function updateMapLabels() {
       items.push({ id: r.id, sx: s.sx, sy: s.sy, text: r.name, rot: r.rot, cls: `region-${r.kind}`, opacity: fade });
     }
   }
-  const z = seekingZone(clock.now());
-  if (z) {
-    const c = cam.toLocal(cam.w / 2, (insets.top + cam.h - insets.bottom) / 2);
-    const dx = c.x - z.x, dy = c.y - z.y;
-    const len = Math.hypot(dx, dy);
-    const ux = len > 1 ? dx / len : 0, uy = len > 1 ? dy / len : 1;
-    const s = cam.toScreen(z.x + ux * z.radius, z.y + uy * z.radius);
-    if (s.sx > 40 && s.sx < cam.w - 40 && s.sy > insets.top + 20 && s.sy < cam.h - insets.bottom) {
-      items.push({ id: 'zone', sx: s.sx, sy: s.sy - 14, text: t('tip.zone', { d: formatDistance(z.radius) }), rot: 0, cls: 'zone-label', opacity: 1 });
-    }
-  }
   labels.update(items);
-}
-
-// The ring this walk has to leave: around the stage's start, while a symbol or the tomb
-// is still to be found and the stage is open.
-function seekingZone(now) {
-  const c = game.missionCheck(fix, now);
-  if (!c.active || c.stage === 'gate' || !c.start) return null;
-  const p = game.toLocal(c.start);
-  return { x: p.x, y: p.y, radius: c.need, tomb: c.stage === 'tomb' };
 }
 
 // Compass first, then the receiver's course, then the direction the filter sees us moving.
@@ -632,7 +612,7 @@ function onStartMission() {
   toast.show(t('toast.missionStarted'), 5200);
 }
 
-// The tag beside the mission button, and a word when the walk is long enough.
+// The tag beside the mission button, and a word when one more search ends the stage.
 // stageNote: { key, told } for the current stage.
 let stageNote = null;
 function updateMissionTag(now) {
@@ -651,13 +631,12 @@ function updateMissionTag(now) {
 
   const key = `${check.n}:${check.shards.length}:${check.stage}`;
   if (stageNote?.key !== key) stageNote = { key, told: !!check.ok };
-  // Once per stage, so GPS jitter at the edge of the ring does not repeat it.
+  // Once per stage, after the find's reveal has closed. No ready chime: the player is
+  // still standing on ground just searched.
   if (check.ok && !stageNote.told && !busy) {
     stageNote.told = true;
-    sfx.ready();
     haptics.tap();
-    hud.ping();
-    toast.show(t('toast.farEnough'), 4200);
+    toast.show(t(check.stage === 'symbol' ? 'toast.lastSearch.symbol' : 'toast.lastSearch.tomb'), 4200);
   }
 }
 
@@ -868,12 +847,10 @@ function renderMap(perf, now, searches) {
   const grid = pickGrid(cam, frame);
   const appear = (o, ms) => (bornAt.has(o) ? clamp01((perf - bornAt.get(o)) / ms) : 1);
   const ve = vaultBornAt ? (perf - vaultBornAt) / 600 : 1;
-  const zone = seekingZone(now);
   renderer.render({
     worldOff,
     grid,
     vault: state.vault && ve >= 0 ? { x: 0, y: 0, scale: ve < 1 ? 1.5 - 0.5 * easeOutCubic(ve) : 1 } : null,
-    zone,
     balls: searches.map((s) => {
       const p = game.toLocal(s);
       return { x: p.x, y: p.y, scale: 0.02 + 0.98 * easeOutCubic(appear(s, 1600)), age: clamp01((now - s.t) / RULES.searchTtlMs) };

@@ -16,7 +16,7 @@ export const RULES = {
   coinRarity: { common: 0.75, uncommon: 0.20, rare: 0.04, legendary: 0.01 },
   missionTtlMs: 10 * DAY,    // from starting a mission to opening its gate
   gateRadius: 100,           // m: the gate opens only this close to the tomb
-  keyLength: 3,              // symbols in a tomb key, all different; one walk each
+  keyLength: 3,              // symbols in a tomb key, all different; one stage each
   // Examining an artifact in the vault: turned with a finger, it gives up its details one at
   // a time, and each takes a fresh look at enough of its sides (js/game/examine.js).
   examine: {
@@ -34,18 +34,18 @@ export const FENCE_PRICES = { common: 1, uncommon: 5, rare: 20, legendary: 100 }
 // The eight symbols on every ring of a tomb gate. Names: i18n symbols.<id>.
 export const SYMBOLS = ['fish', 'spider', 'fly', 'turtle', 'bird', 'man', 'cat', 'snake'];
 
-// Mission tiers (docs/lista-misji.md), easiest first. Every mission of a tier shares its
-// walks, in a straight line from the stage's start, and the price the fence asks for its
-// artifact once the mission is lost. Names: i18n tiers.<id>.
+// Mission tiers (docs/lista-misji.md), easiest first. Every mission of a tier shares the
+// number of searches each stage takes (the last of them pays out the symbol or the tomb)
+// and the price the fence asks for its artifact once the mission is lost. Names: i18n tiers.<id>.
 export const TIERS = [
-  { id: 'wood', symbolDistance: 200, tombDistance: 400, price: 20 },
-  { id: 'copper', symbolDistance: 300, tombDistance: 600, price: 30 },
-  { id: 'bronze', symbolDistance: 500, tombDistance: 1000, price: 50 },
-  { id: 'iron', symbolDistance: 800, tombDistance: 1600, price: 80 },
-  { id: 'silver', symbolDistance: 1200, tombDistance: 2400, price: 120 },
-  { id: 'gold', symbolDistance: 1700, tombDistance: 3400, price: 170 },
-  { id: 'platinum', symbolDistance: 2300, tombDistance: 4600, price: 230 },
-  { id: 'diamond', symbolDistance: 3000, tombDistance: 6000, price: 300 },
+  { id: 'wood', symbolSearches: 2, tombSearches: 4, price: 25 },
+  { id: 'copper', symbolSearches: 3, tombSearches: 6, price: 40 },
+  { id: 'bronze', symbolSearches: 4, tombSearches: 8, price: 50 },
+  { id: 'iron', symbolSearches: 5, tombSearches: 11, price: 65 },
+  { id: 'silver', symbolSearches: 7, tombSearches: 13, price: 85 },
+  { id: 'gold', symbolSearches: 9, tombSearches: 18, price: 110 },
+  { id: 'platinum', symbolSearches: 12, tombSearches: 24, price: 150 },
+  { id: 'diamond', symbolSearches: 16, tombSearches: 32, price: 200 },
 ];
 
 // The missions in the game so far, one per artifact (docs/lista-misji.md lists the ones
@@ -81,7 +81,7 @@ export const MISSIONS = [
 export const tierDef = (id) => TIERS.find((t) => t.id === id) ?? null;
 
 // Everything about the mission for an artifact: { artifact, tier, rank (0 = easiest tier),
-// symbolDistance, tombDistance, price }, or null if there is no such mission.
+// symbolSearches, tombSearches, price }, or null if there is no such mission.
 export function missionDef(artifact) {
   const m = MISSIONS.find((x) => x.artifact === artifact);
   if (!m) return null;

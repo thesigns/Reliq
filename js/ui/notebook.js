@@ -17,8 +17,8 @@ export const CROSS = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5 
 export function renderChecks(ul, check) {
   const { def, shards, keyLength } = check;
   const rows = [];
-  for (let i = 1; i <= keyLength; i++) rows.push([t('mission.step.symbol', { i, d: formatDistance(def.symbolDistance) }), shards.length >= i]);
-  rows.push([t('mission.step.tomb', { d: formatDistance(def.tombDistance) }), check.stage === 'gate']);
+  for (let i = 1; i <= keyLength; i++) rows.push([t('mission.step.symbol', { i, count: def.symbolSearches }), shards.length >= i]);
+  rows.push([t('mission.step.tomb', { count: def.tombSearches }), check.stage === 'gate']);
   const html = rows.map(([text, ok]) => `<li class="${ok ? 'ok' : 'no'}"><span class="mark">${ok ? TICK : CROSS}</span><span>${text}</span></li>`).join('');
   if (ul.innerHTML !== html) ul.innerHTML = html;
 }
@@ -26,9 +26,8 @@ export function renderChecks(ul, check) {
 // Where the mission stands, as one line: what to do next.
 export function missionStatus(check) {
   if (check.stage !== 'gate') {
-    if (!check.start) return t('mission.noStart');
-    if (check.ok) return t('mission.ready');
-    return t('mission.distance', { have: formatDistance(check.distance), need: formatDistance(check.need) });
+    if (check.ok) return t(check.stage === 'symbol' ? 'mission.ready.symbol' : 'mission.ready.tomb');
+    return t('mission.progress', { have: check.have, need: check.need });
   }
   if (check.gate.ok) return t('notebook.atGate');
   return check.gate.distance === null ? t('notebook.tombFound') : t('notebook.toTomb', { d: formatDistance(check.gate.distance) });
@@ -38,8 +37,7 @@ export function missionStatus(check) {
 export function missionBrief(check) {
   if (check.stage === 'gate') return { label: t('mission.tag.gate'), value: formatDistance(check.gate.distance) };
   const label = check.stage === 'symbol' ? t('mission.tag.symbol', { i: check.shards.length + 1, of: check.keyLength }) : t('mission.tag.tomb');
-  if (!check.start) return { label, value: t('mission.tag.start') };
-  return { label, value: `${formatDistance(check.distance)} / ${formatDistance(check.need)}`, progress: Math.min(1, (check.distance ?? 0) / check.need) };
+  return { label, value: `${check.have} / ${check.need}`, progress: Math.min(1, check.have / check.need) };
 }
 
 const setHtml = (el, html) => { if (el.innerHTML !== html) el.innerHTML = html; };

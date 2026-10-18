@@ -13,18 +13,20 @@ Misje i artefakty dzielą się na 8 POZIOMÓW (Tier):
 7. Platynowy
 8. Diamentowy
 
-Wszystkie artefakty z tego samego POZIOMU mają te same parametry odległości symbolu/grobowca i cenę u pasera:
+Wszystkie artefakty z tego samego POZIOMU mają te same parametry liczby przeszukań i cenę u pasera:
 
 | Poziom     | Symbol   | Grobowiec | Paser    |
 | ---------- | -------- | --------- | -------- |
-| Drewniany  | 200m     | 400m      | 20       |
-| Miedziany  | 300m     | 600m      | 30       |
-| Brązowy    | 500m     | 1000m     | 50       |
-| Żelazny    | 800m     | 1600m     | 80       |
-| Srebrny    | 1200m    | 2400m     | 120      |
-| Złoty      | 1700m    | 3400m     | 170      |
-| Platynowy  | 2300m    | 4600m     | 230      |
-| Diamentowy | 3000m    | 6000m     | 300      |
+| Drewniany  | 2        | 4         | 25       |
+| Miedziany  | 3        | 6         | 40       |
+| Brązowy    | 4        | 8         | 50       |
+| Żelazny    | 5        | 11        | 65       |
+| Srebrny    | 7        | 13        | 85       |
+| Złoty      | 9        | 18        | 110      |
+| Platynowy  | 12       | 24        | 150      |
+| Diamentowy | 16       | 32        | 200      |
+
+Symbol i Grobowiec to liczba przeszukań w jednym etapie (ostatnie z nich daje symbol albo grobowiec). Cała misja to 3 symbole i grobowiec: od 10 przeszukań (około 1 km) na drewnianym do 80 (około 10 km) na diamentowym. Zakładamy jedną misję na tydzień: od poziomu brązowego wysiłek rośnie o najwyżej 1/3 na poziom, czyli poniżej 10% na tydzień. Paser bierze 2,5 za każde wymagane przeszukanie, zaokrąglone do piątki.
 
 Misje pokazują się w kolejności od Drewnianego do Diamentowego - od najłatwiejszej do najtrudniejszej, ale WEWNĄTRZ jednego poziomu kolejność misji jest losowa.
 

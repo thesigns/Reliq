@@ -1,7 +1,7 @@
 // Full-screen reveal of a find: a low-poly coin with rarity staging, a low-poly tomb artifact
 // or piece of junk, or a paper card (a key shard, a discovered tomb).
 
-import { t, formatDistance, formatRoman } from '../i18n/i18n.js';
+import { t, formatRoman } from '../i18n/i18n.js';
 import { coinById } from '../game/items.js';
 import { Examination } from '../game/examine.js';
 import { ArtifactRenderer } from '../render/artifact3d.js';
@@ -360,7 +360,7 @@ export class Reveal {
 
   // A potsherd with one symbol of the tomb key.
   async showShard({ symbol, n, have, of, next }) {
-    this.fillCard({ label: t('shard.label'), sketch: shardSketch(symbol), name: t(`symbols.${symbol}`), desc: t('shard.desc', { have, of, n, d: formatDistance(next) }) });
+    this.fillCard({ label: t('shard.label'), sketch: shardSketch(symbol), name: t(`symbols.${symbol}`), desc: t('shard.desc', { have, of, n, count: next }) });
     this.setInfo({ button: t('reveal.note') });
     await this.open('shard', 'rare');
     this.card.classList.add('drop');

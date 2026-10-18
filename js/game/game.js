@@ -87,7 +87,6 @@ export class Game {
     const status = this.searchStatus(fix, motion, now);
     if (status.code !== 'ready') return { ok: false, status };
     this.prune(now);
-    // The stage is judged before this search's own area counts.
     const check = this.missionCheck(fix, now);
     const area = { lat: fix.lat, lon: fix.lon, t: now };
     this.state.searches.push(area);
@@ -96,14 +95,15 @@ export class Game {
     return { ok: true, area, loot };
   }
 
-  // A mission's stage pays out once the player is far enough from the stage's start: a
-  // key shard for each of the first walks, then the tomb. Otherwise the ordinary junk-or-
-  // coin roll. forceLoot (debug only) picks the outcome; a forced shard or tomb skips the
-  // distance and the gap between stages but still needs an active mission at that stage.
+  // Every search counts towards the mission's stage, wherever it is made, and the stage's
+  // last search pays out: a key shard for each of the first stages, then the tomb. Otherwise
+  // the ordinary junk-or-coin roll. forceLoot (debug only) picks the outcome; a forced shard
+  // or tomb skips the count but still needs an active mission at that stage.
   rollLoot(fix, now, check, forced) {
     const f = forced?.type;
-    if (check.stage === 'symbol' && (f === 'shard' || (!f && check.ok))) return this.addShard(now);
+    if (check.stage === 'symbol' && (f === 'shard' || (!f && check.ok))) return this.addShard();
     if (check.stage === 'tomb' && (f === 'tomb' || (!f && check.ok))) return this.discoverTomb(fix, now);
+    if (check.stage === 'symbol' || check.stage === 'tomb') this.state.mission.dug++;
     const loot = f === 'junk' || f === 'coin' ? forced : rollSearchLoot(this.rng);
     return loot.type === 'coin' ? this.addCoin(loot.id) : loot;
   }
@@ -180,13 +180,12 @@ export class Game {
     return { ...def, n: this.nextNumber() };
   }
 
-  // Starting clears the searched areas, as if 6 hours had passed, and starts the clock.
+  // Starting starts the clock. The searched areas stay, so the first stage needs fresh ground.
   startMission(now) {
     const def = this.state.vault && !this.state.mission ? this.nextMission() : null;
     if (!def) return { ok: false };
     const n = this.nextNumber();
-    this.state.searches = [];
-    this.state.mission = { n, artifact: def.artifact, t: now, key: rollKey(this.rng), shards: [], stageAt: now };
+    this.state.mission = { n, artifact: def.artifact, t: now, key: rollKey(this.rng), shards: [], dug: 0 };
     this.changed();
     return { ok: true, n, artifact: def.artifact };
   }
@@ -215,18 +214,9 @@ export class Game {
     return m ? this.state.tombs.find((tb) => tb.n === m.n && !tb.opened) ?? null : null;
   }
 
-  // Where the current stage's walk counts from: its oldest search still on the map. The
-  // first search of a stage starts it; when that area expires the next oldest takes over.
-  stageStart(now) {
-    const m = this.state.mission;
-    if (!m) return null;
-    let start = null;
-    for (const s of this.activeSearches(now)) if (s.t >= m.stageAt && (!start || s.t < start.t)) start = s;
-    return start;
-  }
-
-  // Live state of the active mission. stage: 'symbol' (a shard per walk), 'tomb' (the
-  // last walk) or 'gate' (tomb found, gate closed). ok: a search here now pays out the stage.
+  // Live state of the active mission. stage: 'symbol' (a shard per stage), 'tomb' (the last
+  // stage) or 'gate' (tomb found, gate closed). have of need: the stage's searches so far and
+  // how many it takes. ok: the next search pays out the stage.
   missionCheck(fix, now) {
     const m = this.state.mission;
     if (!m || !this.state.vault) return { active: false };
@@ -235,23 +225,19 @@ export class Game {
     const tomb = this.closedTomb();
     if (tomb) return { ...base, stage: 'gate', tomb, gate: this.gateCheck(fix), ok: false };
     const stage = m.shards.length < m.key.length ? 'symbol' : 'tomb';
-    const need = stage === 'symbol' ? def.symbolDistance : def.tombDistance;
-    const start = this.stageStart(now);
-    const p = fix ? this.toLocal(fix) : null;
-    let distance = null;
-    if (p && start) { const q = this.toLocal(start); distance = Math.hypot(p.x - q.x, p.y - q.y); }
-    return { ...base, stage, need, start, distance, ok: distance !== null && distance >= need };
+    const need = stage === 'symbol' ? def.symbolSearches : def.tombSearches;
+    return { ...base, stage, have: m.dug, need, ok: m.dug + 1 >= need };
   }
 
   // Each shard shows a key symbol the player does not have yet. The next stage starts at
-  // once, from this very search: next is how far the player has to walk on from here.
-  addShard(now) {
+  // once, with the next search: next is how many searches it takes.
+  addShard() {
     const m = this.state.mission;
     const def = missionDef(m.artifact);
     const symbol = rollShard(m.key, m.shards, this.rng);
     m.shards.push(symbol);
-    m.stageAt = now;
-    const next = m.shards.length < m.key.length ? def.symbolDistance : def.tombDistance;
+    m.dug = 0;
+    const next = m.shards.length < m.key.length ? def.symbolSearches : def.tombSearches;
     return { type: 'shard', symbol, n: m.n, have: m.shards.length, of: m.key.length, next };
   }
 

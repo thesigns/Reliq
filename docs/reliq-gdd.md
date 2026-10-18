@@ -12,7 +12,7 @@ Wychodzisz z domu i nie jesteś już na swojej ulicy, tylko na skraju nieznanego
 
 Gdzie się zatrzymasz, tam możesz kopać. Najczęściej wykopiesz śmieci: zawleczkę od puszki, skasowany bilet, baterię, która ma mniej energii niż ty. Ale co trzecie przeszukanie daje monetę: rzymskiego denara, chińską Kaiyuan Tongbao, wenecki dukat. Każda ma krótką historię prawdziwego pieniądza, a gdzieś na dnie losowania czeka aureus, którym Brutus uczcił Idy marcowe. Przeszukany teren zostaje zaznaczony na mapie, więc żeby kopać dalej, trzeba iść dalej.
 
-Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się oddalić: trzy odcinki wędrówki dają trzy symbole klucza, czwarty odsłania grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień.
+Prawdziwa przygoda zaczyna się od misji. Każda opowiada o jednym przedmiocie, na przykład o skromnym kubku mnicha, którym wzgardzili łupieżcy, i dlatego przetrwał. Żeby go odnaleźć, trzeba się nachodzić: kolejne przeszukania dają trzy symbole klucza, a w końcu odsłaniają grobowiec. Jego wrota otworzysz tylko na miejscu, ustawiając pierścienie z symbolami we właściwej kolejności. Misję przejdziesz jednym długim spacerem albo rozłożysz na tydzień, chodząc, którędy chcesz.
 
 Łup trzeba jeszcze donieść do domu. Monety i artefakty niesiesz w plecaku, a gdy wrócisz do skarbca, skrzynia otwiera się w blasku i przyjmuje wszystko, co przynosisz, sztuka po sztuce. Artefakty zostają w skarbcu jako kanciaste modele 3D, które można obracać w palcach. Nadwyżkę monet kupi paser, a u niego da się też odkupić artefakt z misji, która przepadła.
 
@@ -113,18 +113,22 @@ Legendary (1% szans)
 
 ## Misje
 
-Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedną aktywną misję. Każda misja należy do jednego z 8 poziomów, od najłatwiejszego: drewniany, miedziany, brązowy, żelazny, srebrny, złoty, platynowy, diamentowy. Poziom wyznacza dystanse spacerów i cenę artefaktu u pasera; wszystkie misje poziomu mają te same:
+Misje prowadzą do grobowców z unikalnymi artefaktami. Gracz ma najwyżej jedną aktywną misję. Każda misja należy do jednego z 8 poziomów, od najłatwiejszego: drewniany, miedziany, brązowy, żelazny, srebrny, złoty, platynowy, diamentowy. Poziom wyznacza, ile przeszukań wymaga każdy etap, i cenę artefaktu u pasera; wszystkie misje poziomu mają te same:
 
-| Poziom     | Symbol | Grobowiec | Paser |
-|------------|--------|-----------|-------|
-| Drewniany  | 200 m  | 400 m     | 20    |
-| Miedziany  | 300 m  | 600 m     | 30    |
-| Brązowy    | 500 m  | 1000 m    | 50    |
-| Żelazny    | 800 m  | 1600 m    | 80    |
-| Srebrny    | 1200 m | 2400 m    | 120   |
-| Złoty      | 1700 m | 3400 m    | 170   |
-| Platynowy  | 2300 m | 4600 m    | 230   |
-| Diamentowy | 3000 m | 6000 m    | 300   |
+| Poziom     | Symbol | Grobowiec | Razem w misji | Paser |
+|------------|--------|-----------|---------------|-------|
+| Drewniany  | 2      | 4         | 10            | 25    |
+| Miedziany  | 3      | 6         | 15            | 40    |
+| Brązowy    | 4      | 8         | 20            | 50    |
+| Żelazny    | 5      | 11        | 26            | 65    |
+| Srebrny    | 7      | 13        | 34            | 85    |
+| Złoty      | 9      | 18        | 45            | 110   |
+| Platynowy  | 12     | 24        | 60            | 150   |
+| Diamentowy | 16     | 32        | 80            | 200   |
+
+„Symbol” i „Grobowiec” to liczba przeszukań w jednym etapie; „Razem w misji” to trzy symbole i grobowiec. Jedno przeszukanie to w praktyce około 120 m drogi po nowym terenie, więc misja drewniana to około 1 km, a diamentowa około 10 km.
+
+**Skąd te liczby.** Zakładamy jedną misję na tydzień. Na każdym poziomie są 3 misje, więc poziom zmienia się co 3 tygodnie. Od poziomu brązowego wymagany wysiłek rośnie o najwyżej jedną trzecią na poziom, czyli o mniej niż 10% na tydzień (1,1³ ≈ 1,33). Na początku rośnie szybciej, bo liczby są małe. Cena u pasera to 2,5 za każde wymagane przeszukanie, zaokrąglone do piątki: przy średniej wartości przeszukania około 1,24 to mniej więcej tyle, ile monety z dwóch takich misji.
 
 Lista misji z poziomami, tytułami, lore i opisem modeli jest w `docs/lista-misji.md`. Na start jest po 3 artefakty na poziom (24 misje); nowe będą dochodzić z czasem.
 
@@ -132,7 +136,7 @@ Lista misji z poziomami, tytułami, lore i opisem modeli jest w `docs/lista-misj
 
 **Numer misji** to kolejność rozegrania: pierwsza rozpoczęta misja to Misja I i Grobowiec I, następna II itd. Poziom widać w notatniku (przy wpisie i w nagłówku strony misji), na podglądzie artefaktu i w skarbcu, gdzie artefakty są pogrupowane po poziomach.
 
-**Długie spacery.** Punkt startu etapu wygasa razem z przeszukaniem po 6 godzinach, więc każdy etap trzeba przejść w ciągu 6 godzin od jego startu. Na wysokich poziomach to wyprawa na cały dzień.
+**Wiele spacerów.** Licznik przeszukań nie wygasa razem z obszarami na mapie, więc każdy etap, także symbol, można rozłożyć na dowolnie wiele spacerów w ramach limitu misji. Na wysokich poziomach to kilka spacerów w ciągu tygodnia.
 
 ### Notatnik poszukiwacza
 
@@ -148,8 +152,8 @@ Pod nim, jeśli jakieś misje już się odbyły, jest rozdział „Odbyte misje�
 
 Każdy wpis ma przycisk „Szczegóły”, który otwiera stronę notatnika tej misji (zamykaną krzyżykiem):
 
-- **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec. Przejdziesz je jednym spacerem albo rozłożysz na 10 dni.” i przycisk „Rozpocznij misję”;
-- **misja w trakcie:** spacery z odhaczonymi etapami, znalezione symbole, co robić dalej, czas do końca, przycisk „Otwórz wrota” przy grobowcu i „Porzuć misję” z potwierdzeniem;
+- **dostępna misja:** szkic, zdanie lore, ostrzeżenie „4 etapy: 3 symbole i grobowiec, razem przeszukań: 26. Liczy się każde przeszukanie, gdziekolwiek je zrobisz, więc możesz chodzić, jak chcesz, i rozłożyć misję na 10 dni.” i przycisk „Rozpocznij misję”;
+- **misja w trakcie:** etapy z liczbą przeszukań, odhaczane po kolei, znalezione symbole, co robić dalej, czas do końca, przycisk „Otwórz wrota” przy grobowcu i „Porzuć misję” z potwierdzeniem;
 - **misja udana:** lore, opis wyglądu artefaktu, kiedy odkryto grobowiec i gdzie jest artefakt (w skarbcu czy w plecaku), przycisk „Obejrzyj artefakt” (otwartego grobowca nie ma już na mapie);
 - **misja nieudana:** lore, kiedy przepadła i co z artefaktem (czeka u pasera albo został odkupiony), przycisk „Zajrzyj do pasera” albo „Obejrzyj artefakt”.
 
@@ -157,22 +161,23 @@ Model 3D nie jest pokazywany przed zdobyciem artefaktu — jest nagrodą repreze
 
 Na spacerze modele (śmieci, monety, artefakt z otwartych wrót lub odkupiony od pasera) nie obracają się i nie da się ich obracać: stoją pod stałym kątem, zwykle w trzech czwartych, dobranym tak, żeby przedmiot było dobrze widać. Obracać palcem, swobodnie i z rozpędem, można tylko monety i artefakty oglądane w skarbcu, gdzie obracanie artefaktu służy do jego badania (zob. „Badanie artefaktów”). Ekran otwarcia wrót i zakupu od pasera pokazuje nazwę i lore, ale nie detale.
 
-Rozpoczęcie misji czyści wszystkie przeszukane obszary, tak jakby minęło 6 godzin, i uruchamia limit czasu.
+Rozpoczęcie misji uruchamia limit czasu. Przeszukane obszary zostają na mapie i wygasają jak zwykle, więc po otwarciu wrót nie da się od razu kopać jeszcze raz w tym samym miejscu pod nową misję. Do misji liczą się tylko przeszukania wykonane po jej rozpoczęciu.
 
 ### Przebieg misji
 
-Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Sprawny piechur przejdzie je jednym spacerem; można je też rozłożyć w czasie, w granicach limitu misji.
+Misja ma 4 etapy: trzy symbole klucza, a potem grobowiec. Na niskich poziomach przejdzie się je jednym spacerem; na wyższych rozkłada się je na kilka, w granicach limitu misji.
 
-**Dystans etapu.** Poziom misji podaje dwa dystanse: na symbol i na grobowiec (np. 800 m i 1600 m na poziomie żelaznym). Dystans liczy się w linii prostej od punktu startu etapu do miejsca przeszukania:
+**Przeszukania etapu.** Poziom misji podaje dwie liczby: ile przeszukań wymaga symbol, a ile grobowiec (np. 5 i 11 na poziomie żelaznym). Liczy się każde udane przeszukanie w trakcie misji, gdziekolwiek zostało zrobione: nie ma punktu startu ani dystansu do pokonania. Można chodzić zygzakiem, w kółko albo codziennie tą samą trasą. Przeszukany teren i tak wymusza ruch: żeby kopać dalej, trzeba wyjść poza obszar o promieniu 100 m, a ta sama trasa liczy się znowu dopiero wtedy, gdy obszary wygasną po 6 godzinach.
 
-- punktem startu jest pierwsze przeszukanie w danym etapie;
-- jeśli ten obszar wygaśnie (po 6 godzinach), punktem startu staje się najstarsze aktywne przeszukanie z tego etapu, a jeśli takiego nie ma — następne przeszukanie.
+- Licznik etapu jest zapisany w misji i nie wygasa razem z obszarami na mapie; etap można rozłożyć na wiele spacerów.
+- Przeszukanie odrzucone (przeszukany teren, skarbiec, prędkość, GPS) się nie liczy.
+- Etykieta przy przycisku misji pokazuje postęp etapu („Symbol 1 z 3 · 3 / 5”), a gdy zostało jedno przeszukanie, gra o tym mówi.
 
-**Symbol.** Przeszukanie wykonane co najmniej w dystansie symbolu od punktu startu zawsze daje symbol klucza zamiast zwykłego znaleziska (śmiecia lub monety). Jest to zawsze symbol, którego gracz jeszcze nie ma. Gra nie zdradza, na którym pierścieniu leży.
+**Symbol.** Ostatnie przeszukanie etapu zawsze daje symbol klucza zamiast zwykłego znaleziska (śmiecia lub monety). Wcześniejsze przeszukania dają zwykłe znaleziska. Jest to zawsze symbol, którego gracz jeszcze nie ma. Gra nie zdradza, na którym pierścieniu leży.
 
-**Kolejny etap.** Zaczyna się od razu, bez przerwy: przeszukanie, które dało symbol, jest punktem startu następnego etapu. Karta symbolu podpowiada, ile trzeba przejść dalej („Szukasz dalej? Odejdź stąd 800 m.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
+**Kolejny etap.** Zaczyna się od razu, bez przerwy, z licznikiem od zera. Karta symbolu podpowiada, ile przeszukań wymaga następny etap („Szukasz dalej? Przeszukania do następnego etapu: 5.”). Szybkość nie jest sprawdzana poza zwykłym limitem 10 km/h przy szukaniu — kto podjeżdża samochodem, oszukuje tylko siebie.
 
-**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy spacer. Przeszukanie wykonane co najmniej w dystansie grobowca od punktu startu odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i stoi na mapie jako ikona, dopóki jego wrota są zamknięte. Po otwarciu wrót znika z mapy (zostaje wpis w notatniku), więc nie zajmuje miejsca: kolejny grobowiec może się pojawić w tej samej okolicy, nawet tuż obok. To ważne tam, gdzie dróg jest niewiele. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
+**Grobowiec.** Po trzecim symbolu zaczyna się ostatni, najdłuższy etap. Jego ostatnie przeszukanie odkrywa grobowiec zamiast zwykłego znaleziska. Grobowiec powstaje dokładnie w miejscu przeszukania i stoi na mapie jako ikona, dopóki jego wrota są zamknięte. Po otwarciu wrót znika z mapy (zostaje wpis w notatniku), więc nie zajmuje miejsca: kolejny grobowiec może się pojawić w tej samej okolicy, nawet tuż obok. To ważne tam, gdzie dróg jest niewiele. Grobowce mają numery misji pisane cyframi rzymskimi: Grobowiec I, Grobowiec II, Grobowiec III itd.
 
 Wszystkie przeszukania misji podlegają tym samym zasadom co zwykłe szukanie: poza przeszukanym terenem i skarbcem, prędkość, dokładność GPS. Każde tworzy obszar jak zwykle.
 

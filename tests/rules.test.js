@@ -8,13 +8,16 @@ const DAY = 24 * 3600e3;
 
 test('tiers match docs/lista-misji.md', () => {
   const table = [
-    ['wood', 200, 400, 20], ['copper', 300, 600, 30], ['bronze', 500, 1000, 50], ['iron', 800, 1600, 80],
-    ['silver', 1200, 2400, 120], ['gold', 1700, 3400, 170], ['platinum', 2300, 4600, 230], ['diamond', 3000, 6000, 300],
+    ['wood', 2, 4, 25], ['copper', 3, 6, 40], ['bronze', 4, 8, 50], ['iron', 5, 11, 65],
+    ['silver', 7, 13, 85], ['gold', 9, 18, 110], ['platinum', 12, 24, 150], ['diamond', 16, 32, 200],
   ];
-  assert.deepEqual(TIERS, table.map(([id, symbolDistance, tombDistance, price]) => ({ id, symbolDistance, tombDistance, price })));
-  for (const t of TIERS) {
-    assert.equal(t.tombDistance, 2 * t.symbolDistance, `${t.id}: the tomb walk is twice a symbol walk`);
-    assert.equal(t.price, t.symbolDistance / 10, `${t.id}: the fence asks a tenth of a symbol walk`);
+  assert.deepEqual(TIERS, table.map(([id, symbolSearches, tombSearches, price]) => ({ id, symbolSearches, tombSearches, price })));
+  const total = (t) => RULES.keyLength * t.symbolSearches + t.tombSearches;
+  for (const [i, t] of TIERS.entries()) {
+    // A mission a week, three to a tier: past the first steps, under 10% more walking a week.
+    if (i >= 2) assert.ok(total(t) / total(TIERS[i - 1]) <= 1.1 ** 3 + 0.005, `${t.id}: grows at most a third on the last tier`);
+    // About two missions' worth of coins (some 1.24 a search) buys a lost artifact back.
+    assert.ok(t.price % 5 === 0 && Math.abs(t.price - 2.5 * total(t)) <= 2.5, `${t.id}: 2.5 a search, to a nearest 5`);
   }
 });
 
@@ -37,7 +40,7 @@ test('missions match docs/lista-misji.md', () => {
   assert.deepEqual(MISSIONS, readyMissions());
   for (const m of MISSIONS) assert.ok(ARTIFACTS.includes(m.artifact), m.artifact);
   assert.equal(new Set(MISSIONS.map((m) => m.artifact)).size, MISSIONS.length, 'one mission per artifact');
-  assert.deepEqual(missionDef('cup'), { artifact: 'cup', tier: 'copper', rank: 1, symbolDistance: 300, tombDistance: 600, price: 30 });
+  assert.deepEqual(missionDef('cup'), { artifact: 'cup', tier: 'copper', rank: 1, symbolSearches: 3, tombSearches: 6, price: 40 });
   assert.equal(missionDef('chalice').rank, 3);
   assert.equal(missionDef('comb').tier, 'wood');
   assert.equal(missionDef('skull'), null);

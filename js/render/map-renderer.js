@@ -167,7 +167,7 @@ export class MapRenderer {
     return { cache: coarse, sm };
   }
 
-  // scene: { worldOff, grid, vault, balls, tombs, player, zone }
+  // scene: { worldOff, grid, vault, balls, tombs, player }
   // opts.zooming: a pinch / smooth zoom is in progress (stretch the base, refill later).
   render(s, cam, time, opts = {}) {
     if (!this.ready || this.gl.isContextLost()) return;
@@ -176,7 +176,7 @@ export class MapRenderer {
     const view = { w: W, h: H, x: cam.x, y: cam.y, k: cam.ppm * this.dpr, dpr: this.dpr };
     const { cache, sm } = this.baseFor(s, cam, !!opts.zooming);
 
-    // 1. Cached base plus searched areas, vault ring, mission zones, GPS accuracy.
+    // 1. Cached base plus searched areas, vault ring, GPS accuracy.
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.scene.fbo);
     gl.viewport(0, 0, W, H);
     gl.disable(gl.BLEND);
@@ -190,8 +190,6 @@ export class MapRenderer {
     gl.uniform2i(u.u_shift, sm?.shift?.[0] ?? 0, sm?.shift?.[1] ?? 0);
     gl.uniform2f(u.u_g0, sm?.g0?.[0] ?? 0, sm?.g0?.[1] ?? 0);
     gl.uniform1f(u.u_gs, sm?.gs ?? 1);
-    const zone = s.zone;
-    gl.uniform4f(u.u_zone, zone?.x ?? 0, zone?.y ?? 0, zone?.radius ?? 0, zone ? 1 : 0);
     // Only areas whose 200 m influence can reach the screen cost shader time.
     const reachX = W / 2 / view.k + 200, reachY = H / 2 / view.k + 200;
     let count = 0;

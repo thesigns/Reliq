@@ -57,10 +57,9 @@ Czerwień służy do tras i akcentów.
    - Wnętrze jest lawowane tuszem, a krawędź to linia tuszu.
    - Nowy obszar rozlewa się animacją.
    - Starszy obszar blednie, ale jego kształt się nie zmienia. Granica jest zawsze dokładnie tą, którą liczy gra.
-6. **Strefa misji.** Okrąg dystansu etapu i celownik w punkcie startu etapu.
-7. **Grobowce.** Rysunek wrót grobowca; stuknięcie pokazuje dymek z numerem. Zamknięty grobowiec aktywnej misji pulsuje.
-8. **Gracz.** Mosiężna igła kompasu, która obraca się zgodnie z kierunkiem telefonu. Bez danych z kompasu pokazuje kierunek ruchu. Dokładność GPS pokazuje okrąg rysowany jakby ołówkiem.
-9. **Post-processing.** Color grading, miękka winieta i ziarno filmowe.
+6. **Grobowce.** Rysunek wrót grobowca; stuknięcie pokazuje dymek z numerem. Zamknięty grobowiec aktywnej misji pulsuje.
+7. **Gracz.** Mosiężna igła kompasu, która obraca się zgodnie z kierunkiem telefonu. Bez danych z kompasu pokazuje kierunek ruchu. Dokładność GPS pokazuje okrąg rysowany jakby ołówkiem.
+8. **Post-processing.** Color grading, miękka winieta i ziarno filmowe.
 
 ### Kluczowe momenty
 
@@ -155,13 +154,13 @@ tests/            *.test.js (node --test)
 - Suma odcinków odpada, bo drgania GPS na stojąco potrafią ją zawyżyć ponad 10 km/h.
 - Potrzebne jest ≥ 15 s historii. Do tego czasu przycisk pokazuje „Ustalanie pozycji…”.
 
-**Misje.** Poziomy (`TIERS`) i misje (`MISSIONS`) są w `js/game/rules.js`, z `docs/lista-misji.md`. `missionDef(artifact)` daje dystanse i cenę u pasera.
+**Misje.** Poziomy (`TIERS`) i misje (`MISSIONS`) są w `js/game/rules.js`, z `docs/lista-misji.md`. `missionDef(artifact)` daje liczby przeszukań etapów (`symbolSearches`, `tombSearches`) i cenę u pasera.
 
 **Wynik przeszukania** (`rollLoot` w `game.js`):
-1. Etap symbolu i przeszukanie co najmniej w dystansie symbolu od startu etapu: nowy symbol klucza.
-2. Ostatni etap i przeszukanie co najmniej w dystansie grobowca: grobowiec. Otwarte grobowce znikają z mapy i nie blokują nowych.
+1. Etap symbolu i ostatnie z jego przeszukań: nowy symbol klucza.
+2. Ostatni etap i ostatnie z jego przeszukań: grobowiec. Otwarte grobowce znikają z mapy i nie blokują nowych.
 3. W przeciwnym razie zwykłe losowanie: 65% śmieć, 35% moneta.
-- Start etapu (`stageStart`) to najstarsze aktywne przeszukanie z tego etapu. Etap jest oceniany, zanim liczy się obszar bieżącego przeszukania.
+- Licznik etapu to `mission.dug`: rośnie przy każdym udanym przeszukaniu w misji, zeruje się po symbolu i nie zależy od wygasania obszarów. `missionCheck` daje `have`, `need` i `ok` (następne przeszukanie kończy etap).
 - Klucz (3 różne symbole z 8) jest losowany przy rozpoczęciu misji i zapisywany w stanie.
 
 **Losowanie.** `crypto.getRandomValues`. Kolejność misji w poziomie tasuje ziarno `state.seed`, losowane przy zakładaniu skarbca.
@@ -186,7 +185,7 @@ Zapis obsługuje `js/core/store.js`, a kształt stanu, walidację i migracje `js
   coins: { [coinId]: count },           // w skarbcu
   satchel: { coins: { [coinId]: count }, artifacts: [{ id, n, t, from }] },  // plecak
   money,                                // ze sprzedaży monet paserowi
-  mission: { n, artifact, t, key: [s1, s2, s3], shards: [symbol], stageAt } | null,  // stageAt: początek bieżącego etapu
+  mission: { n, artifact, t, key: [s1, s2, s3], shards: [symbol], dug } | null,  // dug: przeszukania w bieżącym etapie
   tombs: [{ n, lat, lon, t, opened, artifact }],   // zamknięty tylko grobowiec aktywnej misji
   artifacts: [{ id, n, t, from: 'tomb' | 'fence' }],  // artefakty w skarbcu
   lost: [{ n, artifact, t }],           // utracone misje; paser sprzedaje ich artefakty
@@ -371,12 +370,14 @@ Statusy etapów poniżej to zapis historii: opisują stan z chwili zamknięcia e
 
 Pełna lista zmian dla graczy jest w `changelogs.md`.
 
+**Etapy liczone w przeszukaniach** (2026-10-18): symbol i grobowiec wymagają określonej liczby przeszukań zamiast dystansu w linii prostej od startu etapu. Dystans na wysokich poziomach karał chodzenie zygzakiem i w kółko, a w małych miejscowościach trudno o kilka kilometrów w jedną stronę. Przeszukany teren i tak wymusza ruch po nowym terenie. Licznik (`mission.dug`) nie wygasa z obszarami, więc etap da się rozłożyć na wiele spacerów. Tabela poziomów: jedna misja na tydzień, przyrost wysiłku najwyżej ~10% tygodniowo od poziomu brązowego, cena u pasera 2,5 za wymagane przeszukanie. Pierścień i celownik strefy misji zniknęły z mapy; postęp pokazuje etykieta misji („3 / 5” z paskiem). Stare zapisy z trwającą misją dostają licznik z przeszukań etapu, które są jeszcze na mapie. Przy okazji rozpoczęcie misji przestało czyścić przeszukane obszary (dało się otworzyć wrota, wziąć misję i kopać od nowa w tym samym miejscu).
+
 **Plecak (wcześniej „sakwa”) i powrót do skarbca** (2026-10-16): monety i artefakt trafiają do plecaka, a składa się je w promieniu skarbca (GPS do 100 m). Ceremonia to scena 3D: low-poly skrzynia z `scripts/blender/chest.py` (korpus, wieko na zawiasie, stos złota), monety lecące łukiem z brzękiem i iskrami w kolorze rzadkości, artefakt zawisający nad skrzynią, trzask wieka i podsumowanie. Nowa misja dopiero po złożeniu artefaktu. Dźwięki: `clink`, `creak`, `slam`, `latch` w `audio.js`. Panel ⚙: „Plecak: +6 monet”, „Teleport do skarbca”.
 
 ### Otwarte kwestie (stan na 2026-10-17)
 
 - **Treść misji.** Są 24 (po 3 na poziom); docelowo ~60, każda z modelem low-poly, szkicem i lore.
-- **Testy w terenie.** Lista rzeczy do sprawdzenia jest w statusie E8. Do tego: czy dystanse poziomów dobrze się chodzą.
+- **Testy w terenie.** Lista rzeczy do sprawdzenia jest w statusie E8. Do tego: czy liczby przeszukań poziomów dobrze się chodzą.
 - **Do rozważenia:** eksport i import zapisu (iOS potrafi skasować dane niezainstalowanej strony) oraz przenoszenie skarbca (GDD: „na razie nie można”).
 
 ## 6. Wydajność i bateria

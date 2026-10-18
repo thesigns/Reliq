@@ -6,7 +6,7 @@
 import { TIERS, MISSIONS } from '../js/game/rules.js';
 import { MODELS } from '../js/render/models/index.js';
 import { VERSION } from '../js/version.js';
-import { t, getLang, setLang, formatDistance } from '../js/i18n/i18n.js';
+import { t, getLang, setLang } from '../js/i18n/i18n.js';
 import { program } from '../js/render/gl.js';
 import { VS, FS, buildArtifactMesh, perspective, mul, rotX, rotY, scaleM, translate } from '../js/render/artifact3d.js';
 
@@ -40,7 +40,7 @@ function render() {
     const sec = document.createElement('section');
     sec.className = 'tier';
     sec.style.setProperty('--tier', TIER_INK[tier.id]);
-    const meta = t('gallery.tierMeta', { symbol: formatDistance(tier.symbolDistance), tomb: formatDistance(tier.tombDistance), price: tier.price });
+    const meta = t('gallery.tierMeta', { symbol: tier.symbolSearches, tomb: tier.tombSearches, price: tier.price });
     sec.innerHTML = `<div class="tier-head"><h2>${esc(t('tier.label', { tier: t(`tiers.${tier.id}`) }))}</h2><span class="meta">${esc(meta)}</span></div><div class="shelf"></div>`;
     const shelf = sec.querySelector('.shelf');
     for (const { artifact: id } of missions) {

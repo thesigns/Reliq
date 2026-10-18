@@ -194,7 +194,7 @@ export class Journal {
       const offer = this.deps.missionOffer();
       if (!offer || offer.done) return;
       const notes = [...lore(offer.artifact),
-        { text: t('journal.tombs.warning', { stages: RULES.keyLength + 1, symbols: RULES.keyLength, days: RULES.missionTtlMs / 864e5 }) }];
+        { text: t('journal.tombs.warning', { stages: RULES.keyLength + 1, symbols: RULES.keyLength, searches: RULES.keyLength * offer.symbolSearches + offer.tombSearches, days: RULES.missionTtlMs / 864e5 }) }];
       this.deps.openMissionPage({
         n: offer.n, artifact: offer.artifact, status: { text: t('notes.available') }, notes,
         actions: [{ id: 'start', label: t('journal.tombs.start'), primary: true }],

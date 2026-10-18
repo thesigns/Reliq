@@ -104,13 +104,13 @@ test('searched areas expire after 6 hours', () => {
 
 const DAY = 24 * HOUR;
 
-// The cup's mission (copper tier) under way as Mission I, with a known key. Its walks:
-// S to each symbol, TD to the tomb. rng: what the next rolls return.
-const S = missionDef('cup').symbolDistance;
-const TD = missionDef('cup').tombDistance;
-function onMission({ rng = seq(...JUNK_ROLL), shards = [] } = {}) {
+// The cup's mission (copper tier) under way as Mission I, with a known key. Its stages:
+// S searches to each symbol, TS to the tomb. rng: what the next rolls return.
+const S = missionDef('cup').symbolSearches;
+const TS = missionDef('cup').tombSearches;
+function onMission({ rng = seq(...JUNK_ROLL), shards = [], dug = 0 } = {}) {
   const g = newGame({ rng });
-  g.state.mission = { n: 1, artifact: 'cup', t: T0, key: ['fish', 'bird', 'fly'], shards, stageAt: T0 };
+  g.state.mission = { n: 1, artifact: 'cup', t: T0, key: ['fish', 'bird', 'fly'], shards, dug };
   return g;
 }
 
@@ -169,91 +169,82 @@ test('a mission added later to an easier tier is offered next, to everyone', () 
   assert.equal(game.missionOffer().artifact, before);
 });
 
-test('starting a mission clears the areas and rolls a key', () => {
+test('starting a mission keeps the areas and rolls a key', () => {
   const { game, state } = newGame({ rng: seq(0, 0, 0) });
-  state.searches.push({ ...fixAt(300, 0), t: T0 - HOUR }, { ...fixAt(600, 0), t: T0 - 1 });
+  const old = [{ ...fixAt(300, 0), t: T0 - HOUR }, { ...fixAt(600, 0), t: T0 - 1 }];
+  state.searches.push(...old);
   const first = game.missionOffer().artifact;
   assert.deepEqual(game.startMission(T0), { ok: true, n: 1, artifact: first });
-  assert.deepEqual(state.searches, []);
-  assert.deepEqual(state.mission, { n: 1, artifact: first, t: T0, key: ['fish', 'spider', 'fly'], shards: [], stageAt: T0 });
+  assert.deepEqual(state.searches, old, 'no fresh ground on the spot');
+  assert.equal(game.searchStatus(fixAt(300, 0), READY, T0 + 1).code, 'searched');
+  assert.deepEqual(state.mission, { n: 1, artifact: first, t: T0, key: ['fish', 'spider', 'fly'], shards: [], dug: 0 });
   assert.equal(game.missionOffer(), null, 'no offer while a mission is active');
   assert.equal(game.startMission(T0).ok, false);
   assert.equal(newGame({ withVault: false }).game.startMission(T0).ok, false);
 });
 
-test('the first search of a stage only marks its start', () => {
-  const { game } = onMission();
-  const r = game.search(fixAt(300, 0), READY, T0 + 1);
-  assert.equal(r.loot.type, 'junk');
-  const c = game.missionCheck(fixAt(300, S + 1), T0 + 2);
-  assert.equal(c.stage, 'symbol');
-  assert.deepEqual(c.start, r.area);
-  assert.ok(Math.abs(c.distance - (S + 1)) < 1e-6);
-  assert.equal(c.ok, true);
-});
-
-test('a search far enough from the start gives a shard and starts the next stage there', () => {
+test('every search counts towards the stage, and its last one gives a shard', () => {
   const { game, state } = onMission({ rng: seq(...JUNK_ROLL, ...JUNK_ROLL, 0.99) });
-  game.search(fixAt(300, 0), READY, T0 + 1);
-  assert.equal(game.search(fixAt(299 + S, 0), READY, T0 + 2).loot.type, 'junk', 'a metre short');
-  const r = game.search(fixAt(300 + S, 300), READY, T0 + 3);
+  let c = game.missionCheck(null, T0);
+  assert.deepEqual([c.stage, c.have, c.need, c.ok], ['symbol', 0, S, false]);
+  assert.equal(game.search(fixAt(300, 0), READY, T0 + 1).loot.type, 'junk');
+  assert.equal(game.missionCheck(null, T0 + 1).have, 1);
+  // Back towards the start: no distance to cover, only fresh ground.
+  assert.equal(game.search(fixAt(0, 300), READY, T0 + 2).loot.type, 'junk');
+  c = game.missionCheck(null, T0 + 2);
+  assert.deepEqual([c.have, c.ok], [2, true], 'the next search pays out');
+  const r = game.search(fixAt(-300, 0), READY, T0 + 3);
   assert.deepEqual(r.loot, { type: 'shard', symbol: 'fly', n: 1, have: 1, of: 3, next: S });
   assert.deepEqual(state.mission.shards, ['fly']);
+  assert.equal(state.mission.dug, 0, 'the next stage starts afresh');
   assert.deepEqual(state.satchel.coins, {}, 'the shard replaces the find');
-  const c = game.missionCheck(fixAt(300 + S, 301 + S), T0 + 4);
-  assert.deepEqual(c.start, r.area, 'no break: the next walk counts from the shard');
-  assert.equal(c.ok, true);
+  assert.equal(state.searches.length, 3, 'the shard\'s search still leaves an area');
 });
 
-test('the next stage counts from where the shard was found, not from earlier searches', () => {
-  const { game } = onMission({ rng: seq(...JUNK_ROLL, 0, ...JUNK_ROLL, 0) });
+test('the count outlives the searched areas', () => {
+  const { game } = onMission({ rng: seq(...JUNK_ROLL, ...JUNK_ROLL, 0) });
   game.search(fixAt(300, 0), READY, T0);
-  assert.equal(game.search(fixAt(301 + S, 0), READY, T0 + 1).loot.type, 'shard');
-  assert.equal(game.search(fixAt(300 + 2 * S, 0), READY, T0 + 2).loot.type, 'junk', 'far from the first search, short of the shard');
-  assert.equal(game.search(fixAt(301 + S, S + 1), READY, T0 + 3).loot.type, 'shard');
+  game.search(fixAt(300, 0), READY, T0 + 7 * HOUR);
+  assert.equal(game.activeSearches(T0 + 7 * HOUR).length, 1, 'the first area is gone');
+  assert.equal(game.missionCheck(null, T0 + 7 * HOUR).have, 2);
+  assert.equal(game.search(fixAt(300, 0), READY, T0 + 14 * HOUR).loot.type, 'shard', 'the same walk, day after day');
 });
 
-test('the last shard points to the tomb walk', () => {
-  const { game } = onMission({ shards: ['fish', 'bird'], rng: seq(...JUNK_ROLL, 0) });
+test('a search that is refused does not count', () => {
+  const { game } = onMission();
   game.search(fixAt(300, 0), READY, T0);
-  const r = game.search(fixAt(301 + S, 0), READY, T0 + 1);
-  assert.equal(r.loot.next, TD);
-  assert.equal(game.missionCheck(fixAt(301 + S, TD + 1), T0 + 2).stage, 'tomb');
+  assert.equal(game.search(fixAt(310, 0), READY, T0 + 1).ok, false);
+  assert.equal(game.search(fixAt(50, 0), READY, T0 + 2).ok, false);
+  assert.equal(game.missionCheck(null, T0 + 3).have, 1);
 });
 
-test('when the stage start expires, the next oldest search takes over', () => {
-  const { game, state } = onMission();
-  const a = { ...fixAt(300, 0), t: T0 };
-  const b = { ...fixAt(300, 300), t: T0 + HOUR };
-  state.searches.push(a, b);
-  const there = fixAt(300, 299 - S);
-  assert.deepEqual(game.missionCheck(there, T0 + 5 * HOUR).start, a);
-  assert.equal(game.missionCheck(there, T0 + 5 * HOUR).ok, false);
-  const later = game.missionCheck(there, T0 + 6 * HOUR);
-  assert.deepEqual(later.start, b);
-  assert.equal(later.ok, true);
+test('the last shard points to the tomb stage', () => {
+  const { game } = onMission({ shards: ['fish', 'bird'], dug: S - 1, rng: seq(0) });
+  const r = game.search(fixAt(300, 0), READY, T0);
+  assert.equal(r.loot.type, 'shard');
+  assert.equal(r.loot.next, TS);
+  const c = game.missionCheck(null, T0 + 1);
+  assert.deepEqual([c.stage, c.have, c.need], ['tomb', 0, TS]);
 });
 
-test('after the third shard the last walk finds the tomb', () => {
-  const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'], rng: seq(...JUNK_ROLL, ...JUNK_ROLL) });
-  game.search(fixAt(300, 0), READY, T0);
-  assert.equal(game.missionCheck(fixAt(300 + TD, 0), T0).stage, 'tomb');
-  assert.equal(game.search(fixAt(299 + TD, 0), READY, T0 + 1).loot.type, 'junk', 'a metre short');
-  const fix = fixAt(300, TD + 1);
+test('after the third shard the last stage finds the tomb', () => {
+  const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'], rng: seq(...JUNK_ROLL) });
+  assert.equal(game.missionCheck(null, T0).stage, 'tomb');
+  state.mission.dug = TS - 2;
+  assert.equal(game.search(fixAt(300, 0), READY, T0).loot.type, 'junk', 'one short');
+  const fix = fixAt(600, 0);
   const r = game.search(fix, READY, T0 + 2);
   assert.deepEqual(r.loot.tomb, { n: 1, lat: fix.lat, lon: fix.lon, t: T0 + 2, opened: false, artifact: 'cup' });
-  assert.equal(state.searches.length, 3, 'the search still leaves an area');
+  assert.equal(state.searches.length, 2, 'the search still leaves an area');
   const c = game.missionCheck(fix, T0 + 3);
   assert.equal(c.stage, 'gate');
   assert.equal(c.gate.ok, true);
 });
 
 test('an opened tomb does not stand in the way of a new one', () => {
-  const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'] });
-  state.tombs.push({ n: 2, ...fixAt(305 + TD, 0), t: T0, opened: true, artifact: 'vase' });
-  state.searches.push({ ...fixAt(300, 0), t: T0 });
-  assert.equal(game.missionCheck(fixAt(300 + TD, 0), T0).ok, true, '5 m from the old tomb');
-  assert.equal(game.search(fixAt(300 + TD, 0), READY, T0 + 1).loot.type, 'tomb');
+  const { game, state } = onMission({ shards: ['fish', 'bird', 'fly'], dug: TS - 1 });
+  state.tombs.push({ n: 2, ...fixAt(305, 0), t: T0, opened: true, artifact: 'vase' });
+  assert.equal(game.search(fixAt(300, 0), READY, T0 + 1).loot.type, 'tomb', '5 m from the old tomb');
 });
 
 test('without a mission, searches give only junk and coins', () => {
@@ -327,10 +318,10 @@ test('the fence buys coins one at a time', () => {
 test('a lost artifact is at the fence at once, at its tier\'s price', () => {
   const { game, state } = newGame();
   state.lost = [{ n: 2, artifact: 'vase', t: T0 }];
-  state.money = 79;
-  assert.deepEqual(game.fenceOffers(), [{ n: 2, artifact: 'vase', price: 80, ok: false }]);
+  state.money = 64;
+  assert.deepEqual(game.fenceOffers(), [{ n: 2, artifact: 'vase', price: 65, ok: false }]);
   assert.equal(game.buyArtifact(2, T0 + 1).ok, false, 'not enough money');
-  state.money = 80;
+  state.money = 65;
   assert.deepEqual(game.buyArtifact(2, T0 + 1), { ok: true, artifact: 'vase' });
   assert.equal(state.money, 0);
   assert.deepEqual(state.lost, [{ n: 2, artifact: 'vase', t: T0 }], 'the mission stays lost');

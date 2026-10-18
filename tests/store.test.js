@@ -13,7 +13,7 @@ function fakeStorage(initial = {}) {
   };
 }
 
-const MISSION = { n: 2, artifact: 'vase', t: 7, key: ['cat', 'fly', 'man'], shards: ['fly'], stageAt: 8 };
+const MISSION = { n: 2, artifact: 'vase', t: 7, key: ['cat', 'fly', 'man'], shards: ['fly'], dug: 4 };
 
 test('empty storage gives a fresh state', () => {
   const s = new Store(fakeStorage()).load(123);
@@ -69,7 +69,7 @@ test('migrate drops malformed entries', () => {
     coins: { nummus: 2, bad: -1, worse: 1.5 },
     money: -5,
     seed: -4,
-    mission: { n: 9, artifact: 'skull', t: 1, key: ['cat', 'fly', 'man'], shards: [], stageAt: 1 },
+    mission: { n: 9, artifact: 'skull', t: 1, key: ['cat', 'fly', 'man'], shards: [], dug: 0 },
     tombs: [{ n: 1, lat: 1, lon: 2, t: 3, opened: true, artifact: 'cup' }, { n: 2, lat: 1, lon: 2, t: 3 }, { n: 3, lat: 1, lon: 2, t: 3, opened: true, artifact: 'skull' }],
     artifacts: [{ id: 'cup', n: 1, t: 3, from: 'tomb' }, { id: 'cup', n: 1, t: 3, from: 'gift' }, { id: 'skull', n: 4, t: 3, from: 'tomb' }],
     lost: [{ n: 2, artifact: 'vase', t: 3 }, { n: 99, artifact: 'skull', t: 3 }, { n: 3, artifact: 'cup' }, { n: 4, t: 3 }],
@@ -100,6 +100,14 @@ test('a mission needs a valid key; foreign and repeated shards are dropped', () 
   assert.equal(broken.mission, null);
   const s = migrate({ v: SAVE_VERSION, mission: { ...MISSION, shards: ['man', 'man', 'dog'] } }, 0);
   assert.deepEqual(s.mission, { ...MISSION, shards: ['man'] });
+});
+
+test('a mission saved with a stage start counts the stage\'s searches still on the map', () => {
+  const { dug, ...rest } = MISSION;
+  const searches = [5, 8, 9].map((t) => ({ lat: 52, lon: 21, t }));
+  assert.equal(migrate({ v: SAVE_VERSION, searches, mission: { ...rest, stageAt: 8 } }, 0).mission.dug, 2);
+  assert.equal(migrate({ v: SAVE_VERSION, mission: rest }, 0).mission.dug, 0);
+  assert.equal(migrate({ v: SAVE_VERSION, mission: { ...MISSION, dug: -1 } }, 0).mission.dug, 0);
 });
 
 test('a closed tomb survives only with its mission', () => {

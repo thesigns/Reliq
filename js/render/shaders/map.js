@@ -135,7 +135,6 @@ uniform vec4 u_balls[64];   // x, y, spawn scale, age (0..1 of lifetime)
 uniform int u_count;
 uniform vec3 u_vault;       // x, y, present
 uniform vec4 u_player;      // x, y, accuracy, present
-uniform vec4 u_zone;        // mission: centre of the walk, distance to leave it (m), shown
 // The cached base layer (a toroidal texture, see base-cache.js), copied at a whole-pixel
 // shift when it matches the zoom, otherwise stretched: g = u_g0 + fragCoord * u_gs.
 uniform sampler2D u_base;
@@ -153,13 +152,6 @@ vec3 baseColor() {
 
 const vec3 INK = vec3(0.231, 0.141, 0.078);
 const vec3 SIENNA = vec3(0.50, 0.22, 0.10);
-const vec3 OXBLOOD = vec3(0.55, 0.1, 0.08);
-
-float dashes(vec2 d, float r, float cssPpm, float dashPx, float duty) {
-  float n = max(12.0, floor(6.2832 * r * cssPpm / dashPx));
-  float t = fract(atan(d.y, d.x) / 6.2832 * n);
-  return smoothstep(0.0, 0.04, t) * (1.0 - smoothstep(duty, duty + 0.06, t));
-}
 
 vec4 layer(vec4 dst, vec3 c, float a) {
   a = clamp(a, 0.0, 1.0);
@@ -197,19 +189,6 @@ void main() {
       acc = layer(acc, INK, (1.0 - smoothstep(0.8, 1.6, abs(rpx))) * dash * 0.8);
       acc = layer(acc, INK, (1.0 - smoothstep(0.25, 0.85, abs(rpx + 5.0))) * 0.35);
     }
-  }
-
-  // Mission: how far this walk must go (beyond the ring).
-  if (u_zone.w > 0.5) {
-    vec2 d = local - u_zone.xy;
-    float rpx = (length(d) - u_zone.z) * cssPpm;
-    float inside = 1.0 - smoothstep(-0.8, 0.8, rpx);
-    acc = layer(acc, OXBLOOD, inside * exp(rpx / 18.0) * 0.16);
-    if (abs(rpx) < 1.7) acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.9, 1.7, abs(rpx))) * dashes(d, u_zone.z, cssPpm, 16.0, 0.6) * 0.85);
-    // The walk's start, where the distance counts from: a small inked target.
-    float spx = length(d) * cssPpm;
-    acc = layer(acc, OXBLOOD, (1.0 - smoothstep(0.6, 1.3, abs(spx - 6.5))) * 0.9);
-    acc = layer(acc, OXBLOOD, (1.0 - smoothstep(1.6, 2.4, spx)) * 0.9);
   }
 
   float f = 0.0, ksum = 0.0, fresh = 0.0, wet = 0.0;

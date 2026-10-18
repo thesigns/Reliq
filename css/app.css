@@ -131,13 +131,6 @@ html.inspect #app {
 #map-labels .region-forest { font-size: 19px; color: rgba(44, 50, 18, .92); }
 #map-labels .region-hills { font-size: 17px; }
 #map-labels .region-plains { font-size: 17px; letter-spacing: .38em; }
-#map-labels .zone-label {
-  font-variant: normal;
-  letter-spacing: .04em;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--oxblood);
-}
 
 .map-tip {
   position: absolute;
